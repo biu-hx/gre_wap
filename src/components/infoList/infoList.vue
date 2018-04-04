@@ -1,6 +1,4 @@
 <template>
-  <div style="height: 100%">
-    <!--<view-box ref="viewBox">-->
       <ul slot="default" class="articleList bg_f">
         <li v-for="i in 10">
           <div class="artContiner">
@@ -14,9 +12,6 @@
           </div>
         </li>
       </ul>
-    <!--</view-box>-->
-  </div>
-
 </template>
 
 <script type="text/ecmascript-6">
@@ -31,12 +26,6 @@
 </script>
 
 <style>
-  html, body {
-    height: 100%;
-    width: 100%;
-    overflow-x: hidden;
-  }
-
   .articleList {
     padding:0 20px;
   }
@@ -70,7 +59,7 @@
   .artTit {
     color: #333333;
     line-height: 40px;
-    font-size: 32px; /*px*/
+    font-size: 30px;
     max-height: 80px;
     margin-bottom: 20px;
   }

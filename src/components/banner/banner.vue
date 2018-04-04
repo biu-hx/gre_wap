@@ -37,8 +37,8 @@
 </script>
 <style>
   .swiper-pagination .swiper-pagination-bullet {
-    width: 12px;
-    height: 12px;
+    width: 6px;
+    height: 6px;
     background: none;
     opacity: 1;
     outline: none;
