@@ -1,8 +1,8 @@
 <template>
   <swiper class="bg_f" :options="swiperOption" ref="mySwiper">
-    <swiper-slide><img src="../../assets/images/index/banner.png" alt=""></swiper-slide>
-    <swiper-slide><img src="../../assets/images/index/banner.png" alt=""></swiper-slide>
-    <swiper-slide><img src="../../assets/images/index/banner.png" alt=""></swiper-slide>
+    <swiper-slide><img src="/static/images/index/banner.png" alt=""></swiper-slide>
+    <swiper-slide><img src="/static/images/index/banner.png" alt=""></swiper-slide>
+    <swiper-slide><img src="/static/images/index/banner.png" alt=""></swiper-slide>
     <div class="swiper-pagination" slot="pagination"></div>
   </swiper>
 </template>
@@ -37,12 +37,12 @@
 </script>
 <style>
   .swiper-pagination .swiper-pagination-bullet {
-    width: 6px;
-    height: 6px;
+    width: 12px;
+    height: 12px;
     background: none;
     opacity: 1;
     outline: none;
-    border: 2px solid #ffffff; /*no*/
+    border: 1px solid #ffffff; /*no*/
   }
 
   .swiper-pagination .swiper-pagination-bullet-active {

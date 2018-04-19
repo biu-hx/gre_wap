@@ -20,7 +20,8 @@
   }
 </script>
 
-<style>
+<style lang="less">
+  @import '~vux/src/styles/1px.less';
   #app {
     height: 100%;
     box-sizing: border-box;

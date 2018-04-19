@@ -1,37 +1,55 @@
 <template>
   <div id="index">
+    <div class="indexHeader">
+      <div class="cell_empty tl"></div>
+      <div><img class="logo" src="/static/images/index/logo.png" height="35" alt=""></div>
+      <div class="cell_empty tr">
+        <router-link to="/userCenter">
+          <img class="user" src="/static/images/index/user.png" alt="">
+        </router-link>
+      </div>
+    </div>
+    <tab :line-width="2" active-color="#5a5ee4" :scroll-threshold="6" default-color="#444444" custom-bar-width="40px">
+      <tab-item :selected="0==i" :key="i" v-for="(item,i) in header">{{item}}</tab-item>
+    </tab>
     <banner></banner>
     <ul class="pageTo bg_f">
       <li>
-        <img src="../assets/images/index/pageIcon.png" alt="">
-        <p class="barName">搜题</p>
+        <router-link to="/searchTopic">
+          <img src="/static/images/index/pageIcon.png" alt="">
+          <p class="barName">搜题</p>
+        </router-link>
       </li>
       <li>
-        <img src="../assets/images/index/pageIcon_2.png" alt="">
-        <p class="barName">做题</p>
+        <router-link to="/greMarking">
+          <img src="/static/images/index/pageIcon_2.png" alt="">
+          <p class="barName">做题</p>
+        </router-link>
       </li>
       <li>
-        <img src="../assets/images/index/pageIcon_3.png" alt="">
+        <img src="/static/images/index/pageIcon_3.png" alt="">
         <p class="barName">GRE课程</p>
       </li>
       <li>
         <router-link to="/active">
-        <img src="../assets/images/index/pageIcon_4.png" alt="">
-        <p class="barName">GRE活动</p>
+          <img src="/static/images/index/pageIcon_4.png" alt="">
+          <p class="barName">GRE活动</p>
         </router-link>
       </li>
       <li>
-        <img src="../assets/images/index/pageIcon_5.png" alt="">
+        <img src="/static/images/index/pageIcon_5.png" alt="">
         <p class="barName">GRE机精真题</p>
       </li>
       <li>
-        <img src="../assets/images/index/pageIcon_6.png" alt="">
-        <p class="barName">GRE备考</p>
+        <router-link to="/reference">
+          <img src="/static/images/index/pageIcon_6.png" alt="">
+          <p class="barName">GRE备考</p>
+        </router-link>
       </li>
       <li>
         <router-link to="/information">
-        <img src="../assets/images/index/pageIcon_7.png" alt="">
-        <p class="barName">GRE资讯</p>
+          <img src="/static/images/index/pageIcon_7.png" alt="">
+          <p class="barName">GRE资讯</p>
         </router-link>
       </li>
       <li class="listEmpty"></li>
@@ -40,7 +58,7 @@
     <div class="cellWrap bg_f">
       <div class="mask">
         <div class="maskTit">
-          <img class="icon" src="../assets/images/index/tv.png" width="18" alt="">
+          <img class="icon" src="/static/images/index/tv.png" width="18" alt="">
           <span>雷哥GRE精品课程</span>
         </div>
       </div>
@@ -49,13 +67,13 @@
     <ul class="courseList bg_f">
       <li>
         <div class="courseImg">
-          <img src="../assets/images/index/coure_img.png" alt="">
+          <img src="/static/images/index/coure_img.png" alt="">
           <p class="courseTime">寒假+每周周末晚间开课</p>
         </div>
         <p class="courseName">GRE一对一VIP定制课</p>
         <div class="punmInfo">
           <div class="pnum">
-            <img src="../assets/images/index/pnum.png" width="15" alt="">
+            <img src="/static/images/index/pnum.png" width="15" alt="">
             <span>报名人数：268</span>
           </div>
           <span class="bmBtn">报名</span>
@@ -63,13 +81,13 @@
       </li>
       <li>
         <div class="courseImg">
-          <img src="../assets/images/index/coure_img.png" alt="">
+          <img src="/static/images/index/coure_img.png" alt="">
           <p class="courseTime">寒假+每周周末晚间开课</p>
         </div>
         <p class="courseName">GRE一对一VIP定制课</p>
         <div class="punmInfo">
           <div class="pnum">
-            <img src="../assets/images/index/pnum.png" width="15" alt="">
+            <img src="/static/images/index/pnum.png" width="15" alt="">
             <span>报名人数：268</span>
           </div>
           <span class="bmBtn">报名</span>
@@ -77,13 +95,13 @@
       </li>
       <li>
         <div class="courseImg">
-          <img src="../assets/images/index/coure_img.png" alt="">
+          <img src="/static/images/index/coure_img.png" alt="">
           <p class="courseTime">寒假+每周周末晚间开课</p>
         </div>
         <p class="courseName">GRE一对一VIP定制课</p>
         <div class="punmInfo">
           <div class="pnum">
-            <img src="../assets/images/index/pnum.png" width="15" alt="">
+            <img src="/static/images/index/pnum.png" width="15" alt="">
             <span>报名人数：268</span>
           </div>
           <span class="bmBtn">报名</span>
@@ -91,13 +109,13 @@
       </li>
       <li>
         <div class="courseImg">
-          <img src="../assets/images/index/coure_img.png" alt="">
+          <img src="/static/images/index/coure_img.png" alt="">
           <p class="courseTime">寒假+每周周末晚间开课</p>
         </div>
         <p class="courseName">GRE一对一VIP定制课</p>
         <div class="punmInfo">
           <div class="pnum">
-            <img src="../assets/images/index/pnum.png" width="15" alt="">
+            <img src="/static/images/index/pnum.png" width="15" alt="">
             <span>报名人数：268</span>
           </div>
           <span class="bmBtn">报名</span>
@@ -108,71 +126,31 @@
     <div class="cellWrap bg_f">
       <div class="mask">
         <div class="maskTit">
-          <img class="icon" src="../assets/images/index/bk.png" width="20" alt="">
+          <img class="icon" src="/static/images/index/bk.png" width="20" alt="">
           <span>GRE备考</span>
         </div>
       </div>
       <a class="link" href="#">MORE</a>
     </div>
+    <tab :line-width="2" active-color="#5a5ee4" :scroll-threshold="6" default-color="#333333" custom-bar-width="40px">
+      <tab-item :selected="0==i" :key="i" v-for="(item,i) in tabItem">{{item}}</tab-item>
+    </tab>
     <ul class="articleList bg_f">
-      <li>
+      <li v-for="i in 5">
         <div class="artContiner">
           <div class="artLeft">
-            <p class="ellipsis-2 artTit">号外！号外！填空1200精项刷 词团强烈来袭</p>
+            <p class="ellipsis-2 artTit">{{i}}-号外！号外！填空1200精项刷 词团强烈来袭</p>
             <p class="artTime">2018-01-15 15:06:36</p>
           </div>
           <div class="artRight">
-            <img src="../assets/images/index/artImg.png" alt="">
+            <img src="/static/images/index/artImg.png" alt="">
           </div>
         </div>
       </li>
-      <li>
-        <div class="artContiner">
-          <div class="artLeft">
-            <p class="ellipsis-2 artTit">号外！号外！填空1200精项刷 词团强烈来袭</p>
-            <p class="artTime">2018-01-15 15:06:36</p>
-          </div>
-          <div class="artRight">
-            <img src="../assets/images/index/artImg.png" alt="">
-          </div>
-        </div>
-      </li>
-      <li>
-        <div class="artContiner">
-          <div class="artLeft">
-            <p class="ellipsis-2 artTit">号外！号外！填空1200精项刷 词团强烈来袭</p>
-            <p class="artTime">2018-01-15 15:06:36</p>
-          </div>
-          <div class="artRight">
-            <img src="../assets/images/index/artImg.png" alt="">
-          </div>
-        </div>
-      </li>
-      <li>
-        <div class="artContiner">
-          <div class="artLeft">
-            <p class="ellipsis-2 artTit">号外！号外！填空1200精项刷 词团强烈来袭</p>
-            <p class="artTime">2018-01-15 15:06:36</p>
-          </div>
-          <div class="artRight">
-            <img src="../assets/images/index/artImg.png" alt="">
-          </div>
-        </div>
-      </li>
-      <li>
-        <div class="artContiner">
-          <div class="artLeft">
-            <p class="ellipsis-2 artTit">号外！号外！填空1200精项刷 词团强烈来袭</p>
-            <p class="artTime">2018-01-15 15:06:36</p>
-          </div>
-          <div class="artRight">
-            <img src="../assets/images/index/artImg.png" alt="">
-          </div>
-        </div>
-      </li>
+
     </ul>
-    <div class="bg_f addImg_1"><img src="../assets/images/index/deImg.png" alt=""></div>
-    <div class="bg_f addImg"><img src="../assets/images/index/addImg.png" alt=""></div>
+    <div class="bg_f addImg_1"><img src="/static/images/index/deImg.png" alt=""></div>
+    <div class="bg_f addImg"><img src="/static/images/index/addImg.png" alt=""></div>
     <div class="bg_f copyRight">
       2018 greonline.cn All Rights Reserved 京ICP备16000003号-3<br>京公网安备11010802017681 免责声明
     </div>
@@ -182,24 +160,60 @@
 
 <script type="text/ecmascript-6">
   import banner from './banner/banner'
+  import {Tab, TabItem, ViewBox} from 'vux'
 
   export default {
     name: "index",
+    data() {
+      return {
+        header: ['GMAT', 'GRE', 'TOELF', 'IELTS', 'SAT', '留学'],
+        tabItem: ['热门', '词汇', '阅读', '填空', '数学', '写作']
+      }
+    },
     components: {
-      banner
+      banner,
+      Tab,
+      TabItem,
+      ViewBox
     },
     methods: {}
 
   }
 </script>
 
-<style>
+<style scoped>
   #index {
     background: #eeeeee;
   }
 
   .bg_f {
     background: #ffffff;
+  }
+
+  .vux-tab .vux-tab-item {
+    font-size: 30px; /*px*/
+  }
+
+  .indexHeader {
+    display: flex;
+    padding: 15px 20px;
+    box-sizing: border-box;
+    justify-content: space-between;
+    align-items: center;
+    flex-flow: row wrap;
+    background: #444444;
+  }
+
+  .indexHeader .cell_empty {
+    flex-basis: 80px;
+  }
+
+  .indexHeader .logo {
+    width: 170px;
+  }
+
+  .indexHeader .user {
+    width: 42px;
   }
 
   .pageTo {
@@ -403,5 +417,4 @@
     text-align: center;
     color: #3c3c3c;
   }
-
 </style>

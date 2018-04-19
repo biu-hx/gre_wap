@@ -7,7 +7,7 @@
               <p class="artTime">2018-01-15 15:06:36</p>
             </div>
             <div class="artRight">
-              <img src="../../assets/images/index/artImg.png" alt="">
+              <img src="/static/images/index/artImg.png" alt="">
             </div>
           </div>
         </li>

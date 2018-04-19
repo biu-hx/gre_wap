@@ -64,7 +64,9 @@ ul{list-style-type: none;margin: 0;padding: 0;}
   -webkit-line-clamp: 6;
   overflow: hidden;
 }
-
+.bg_f{
+  background: #ffffff;
+}
 
 body{
   height: 100%;
