@@ -44,9 +44,8 @@
     </ul>
   </div>
 </template>
-
 <script type="text/ecmascript-6">
-  import {XHeader, Tab, TabItem,} from 'vux'
+  import {XHeader, Tab, TabItem} from 'vux'
 
   export default {
     name: "searchTopic",
@@ -63,7 +62,7 @@
       }
     },
     components: {
-      XHeader, Tab, TabItem,
+      XHeader, Tab, TabItem
     },
     methods: {
       activeA(index) {

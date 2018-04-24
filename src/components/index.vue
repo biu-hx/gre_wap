@@ -37,11 +37,13 @@
         </router-link>
       </li>
       <li>
+        <router-link to="/bkIndex">
         <img src="/static/images/index/pageIcon_5.png" alt="">
         <p class="barName">GRE机精真题</p>
+        </router-link>
       </li>
       <li>
-        <router-link to="/reference">
+        <router-link to="/bkIndex">
           <img src="/static/images/index/pageIcon_6.png" alt="">
           <p class="barName">GRE备考</p>
         </router-link>

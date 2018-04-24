@@ -80,6 +80,16 @@ const search = (resolve) => {
     resolve(module)
   })
 };
+const bkIndex = (resolve) => {
+  import('../components/bk/bkIndex').then((module) => {
+    resolve(module)
+  })
+};
+const bkDownload = (resolve) => {
+  import('../components/bk/bkDownload').then((module) => {
+    resolve(module)
+  })
+};
 
 export default new Router({
   // mode: 'history',
@@ -157,6 +167,16 @@ export default new Router({
       path: '/search',
       name: 'search',
       component: search,
+    },
+    {
+      path: '/bkIndex',
+      name: 'bkIndex',
+      component: bkIndex,
+    },
+    {
+      path: '/bkDownload',
+      name: 'bkDownload',
+      component: bkDownload,
     },
   ]
 })
