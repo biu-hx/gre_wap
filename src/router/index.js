@@ -90,6 +90,11 @@ const bkDownload = (resolve) => {
     resolve(module)
   })
 };
+const courseDetails = (resolve) => {
+  import('../components/course/courseDetails').then((module) => {
+    resolve(module)
+  })
+};
 
 export default new Router({
   // mode: 'history',
@@ -177,6 +182,11 @@ export default new Router({
       path: '/bkDownload',
       name: 'bkDownload',
       component: bkDownload,
+    },
+    {
+      path: '/courseDetails',
+      name: 'courseDetails',
+      component: courseDetails,
     },
   ]
 })

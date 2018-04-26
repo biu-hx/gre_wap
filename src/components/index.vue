@@ -27,8 +27,10 @@
         </router-link>
       </li>
       <li>
+        <router-link to="/courseDetails">
         <img src="/static/images/index/pageIcon_3.png" alt="">
         <p class="barName">GRE课程</p>
+        </router-link>
       </li>
       <li>
         <router-link to="/active">
@@ -43,7 +45,7 @@
         </router-link>
       </li>
       <li>
-        <router-link to="/bkIndex">
+        <router-link to="/reference">
           <img src="/static/images/index/pageIcon_6.png" alt="">
           <p class="barName">GRE备考</p>
         </router-link>
