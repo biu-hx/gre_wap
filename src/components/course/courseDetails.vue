@@ -79,7 +79,7 @@
             <span>咨询</span>
           </div>
         </div>
-        <button class="bottomRight bottomItem">立即购买</button>
+        <button class="bottomRight bottomItem"><router-link to="/confirmOrder">立即购买</router-link></button>
       </div>
     </view-box>
 
@@ -352,6 +352,10 @@
   }
   .bottomRight:active{
     background: #4144a2;
+  }
+  .bottomRight a{
+    display: block;
+    color: #ffffff;
   }
   .priceName{
     padding-left: 10px;

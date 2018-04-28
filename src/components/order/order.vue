@@ -10,15 +10,18 @@
           <div>订单号：lgw14992402770</div>
           <div>2017-07-05 15:37:57 </div>
         </div>
-        <div class="flex courseWrap">
-          <div class="courseImg"><img src="/static/images/index/artImg.png" alt=""></div>
-          <div class="courseData">
-            <h1 class="courseName ellipsis-2">雷哥GRE全程经典强化班</h1>
-            <div class="courseNum">
-              <span class="price">￥600元</span>
-              <span class="num">x 1</span>
+        <div class="courseWrap">
+          <router-link class="flex" to="/confirmOrder">
+            <div class="courseImg"><img src="/static/images/index/artImg.png" alt=""></div>
+            <div class="courseData">
+              <h1 class="courseName ellipsis-2">雷哥GRE全程经典强化班</h1>
+              <div class="courseNum">
+                <span class="price">￥600元</span>
+                <span class="num">x 1</span>
+              </div>
             </div>
-          </div>
+          </router-link>
+
         </div>
         <div class="handle flex">
           <router-link to="/orderDetails" class="linkBtn">立即付款</router-link>

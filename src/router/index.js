@@ -95,6 +95,16 @@ const courseDetails = (resolve) => {
     resolve(module)
   })
 };
+const payAway = (resolve) => {
+  import('../components/payAway/payAway').then((module) => {
+    resolve(module)
+  })
+};
+const confirmOrder = (resolve) => {
+  import('../components/order/confirmOrder').then((module) => {
+    resolve(module)
+  })
+};
 
 export default new Router({
   // mode: 'history',
@@ -187,6 +197,16 @@ export default new Router({
       path: '/courseDetails',
       name: 'courseDetails',
       component: courseDetails,
+    },
+    {
+      path: '/payAway',
+      name: 'payAway',
+      component: payAway,
+    },
+    {
+      path: '/confirmOrder',
+      name: 'confirmOrder',
+      component: confirmOrder,
     },
   ]
 })

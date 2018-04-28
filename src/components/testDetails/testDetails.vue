@@ -1,5 +1,5 @@
 <template>
-  <div class="testDetails" style="height: 100%">
+  <div id="testDetails" style="height: 100%">
     <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="51px">
       <x-header slot="header" class="header bg_f">
         <span class="headerTit"><strong class="curNum">2</strong>/20</span>
@@ -210,7 +210,9 @@
     word-break: break-word;
   }
 
-
+  #testDetails>>>.weui-cells_checkbox .weui-check:checked + .weui-icon-checked:before{
+    color: #5a5ee4;
+  }
 
 
 

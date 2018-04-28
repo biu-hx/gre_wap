@@ -23,7 +23,7 @@
         <!--未付款 显示-->
         <div class="handle flex">
             <div class="delet">删除订单</div>
-            <div class="buy">付款</div>
+            <div class="buy"><router-link to="/payAway">付款</router-link></div>
         </div>
       </div>
       <!--已付款 显示-->
@@ -124,5 +124,9 @@
     color: #ffffff;
     background: #5a5ee4;
     padding: 30px 0;
+  }
+  .buy a{
+    display: block;
+    color: #ffffff;
   }
 </style>
