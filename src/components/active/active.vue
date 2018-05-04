@@ -1,34 +1,30 @@
 import index from "../../router";
 <template>
     <div id="active">
-      <div class="adImg"><img src="/static/images/index/banner.png" alt=""></div>
+      <div class="adImg"><img :src="$store.state.httpUrl+adImg" alt=""></div>
       <tab :line-width="2" active-color="#5a5ee4"  default-color="#333333" custom-bar-width="70px" >
-        <tab-item :selected="0==i" :key="i" v-for="(item,i) in list">{{item}}</tab-item>
-        <!--<tab-item selected>全部活动</tab-item>-->
-        <!--<tab-item>公开课</tab-item>-->
-        <!--<tab-item>刷题团</tab-item>-->
-        <!--<tab-item>单词团</tab-item>-->
+        <tab-item :selected="0==i" :key="i" v-for="(item,i) in list" @on-item-click="handler(i)">{{item}}</tab-item>
     </tab>
       <ul class="courseLIst">
-        <li v-for="i in 10">
+        <li v-for="(item,index) in curData.data">
           <div class="container">
             <div class="courseImg tm relative">
               <div class="tagWap ani">
-                <p class="tag_p1">公开课</p>
-                <p class="tag_p2">进行中</p>
+                <p class="tag_p1">{{item.catName}}</p>
+                <p class="tag_p2">{{item.status}}</p>
               </div>
-              <img src="/static/images/active/coures_1.png" alt="">
-              <p class="ani starTime">开始时间:2018.3.23</p>
+              <img :src="$store.state.httpUrl2+item.image" alt="">
+              <p class="ani starTime">开始时间:{{item.cnName}}</p>
             </div>
             <div class="courseInfo">
-              <h1 class="acTit ellipsis-2">GRE 21天脱白计划+超全资料赠送月</h1>
+              <h1 class="acTit ellipsis-2">{{item.name}}</h1>
               <div style="margin-bottom: 4px;">
                 <img src="/static/images/active/pnum.png" class="acIcon" alt="">
-                <span class="icon_data">报名人数：336</span>
+                <span class="icon_data">报名人数：{{item.numbering}}</span>
               </div>
               <div>
                 <img src="/static/images/active/time.png" class="acIcon" alt="">
-                <span class="icon_data">剩余天数：12</span>
+                <span class="icon_data">剩余天数：{{item.days}}</span>
               </div>
             </div>
           </div>
@@ -44,7 +40,9 @@ import index from "../../router";
         name: "active",
      data(){
        return{
-         index:0,
+         adImg:'',
+         resData:'',
+         curData:'',
          list:['全部活动', '公开课', '刷题团', '单词团'],
 
        }
@@ -53,11 +51,36 @@ import index from "../../router";
         Tab,
         TabItem,
         ViewBox
+      },
+      mounted(){
+        const _this = this;
+        this.axios.get('/cn/wap-api/activity')
+          .then(function (response) {
+            _this.adImg = response.data.carousel[0].image;
+            _this.resData = response.data.data;
+            _this.curData = response.data.data.all;
+          })
+      },
+      methods:{
+        handler(index) {
+          if (index + 1 == 1) {
+            this.curData = this.resData.all
+          }
+          if (index + 1 == 2) {
+            this.curData = this.resData.openClass
+          }
+          if (index + 1 == 3) {
+            this.curData = this.resData.brushing
+          }
+          if (index + 1 == 4) {
+            this.curData = this.resData.wordGroup
+          }
+        }
       }
     }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
   .courseLIst{
     padding: 0 20px;
   }

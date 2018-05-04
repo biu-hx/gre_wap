@@ -1,5 +1,5 @@
 <template>
-      <ul slot="default" class="articleList bg_f">
+      <ul class="articleList bg_f">
         <li v-for="i in 10">
           <div class="artContiner">
             <div class="artLeft">
@@ -25,7 +25,7 @@
 
 </script>
 
-<style>
+<style scoped>
   .articleList {
     padding:0 20px;
   }

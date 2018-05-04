@@ -12,7 +12,12 @@
     <tab :line-width="2" active-color="#5a5ee4" :scroll-threshold="6" default-color="#444444" custom-bar-width="40px">
       <tab-item :selected="0==i" :key="i" v-for="(item,i) in header">{{item}}</tab-item>
     </tab>
-    <banner></banner>
+    <swiper class="bg_f" :options="swiperOption" ref="mySwiper">
+      <swiper-slide :key="index"  v-for="(item,index) in bannerItem">
+        <img :src="$store.state.httpUrl+item.image" alt="">
+      </swiper-slide>
+      <div class="swiper-pagination" slot="pagination"></div>
+    </swiper>
     <ul class="pageTo bg_f">
       <li>
         <router-link to="/searchTopic">
@@ -28,8 +33,8 @@
       </li>
       <li>
         <router-link to="/courseDetails">
-        <img src="/static/images/index/pageIcon_3.png" alt="">
-        <p class="barName">GRE课程</p>
+          <img src="/static/images/index/pageIcon_3.png" alt="">
+          <p class="barName">GRE课程</p>
         </router-link>
       </li>
       <li>
@@ -40,8 +45,8 @@
       </li>
       <li>
         <router-link to="/bkIndex">
-        <img src="/static/images/index/pageIcon_5.png" alt="">
-        <p class="barName">GRE机精真题</p>
+          <img src="/static/images/index/pageIcon_5.png" alt="">
+          <p class="barName">GRE机精真题</p>
         </router-link>
       </li>
       <li>
@@ -69,58 +74,17 @@
       <a class="link" href="#">MORE</a>
     </div>
     <ul class="courseList bg_f">
-      <li>
+      <li v-for="item in resData.activity">
         <div class="courseImg">
-          <img src="/static/images/index/coure_img.png" alt="">
-          <p class="courseTime">寒假+每周周末晚间开课</p>
+          <!--<img src="url+/static/images/index/coure_img.png" alt="">-->
+          <img :src="$store.state.httpUrl+item.image" alt="">
+          <p class="courseTime">{{item.commencement}}</p>
         </div>
-        <p class="courseName">GRE一对一VIP定制课</p>
+        <p class="courseName">{{item.name}}</p>
         <div class="punmInfo">
           <div class="pnum">
             <img src="/static/images/index/pnum.png" width="15" alt="">
-            <span>报名人数：268</span>
-          </div>
-          <span class="bmBtn">报名</span>
-        </div>
-      </li>
-      <li>
-        <div class="courseImg">
-          <img src="/static/images/index/coure_img.png" alt="">
-          <p class="courseTime">寒假+每周周末晚间开课</p>
-        </div>
-        <p class="courseName">GRE一对一VIP定制课</p>
-        <div class="punmInfo">
-          <div class="pnum">
-            <img src="/static/images/index/pnum.png" width="15" alt="">
-            <span>报名人数：268</span>
-          </div>
-          <span class="bmBtn">报名</span>
-        </div>
-      </li>
-      <li>
-        <div class="courseImg">
-          <img src="/static/images/index/coure_img.png" alt="">
-          <p class="courseTime">寒假+每周周末晚间开课</p>
-        </div>
-        <p class="courseName">GRE一对一VIP定制课</p>
-        <div class="punmInfo">
-          <div class="pnum">
-            <img src="/static/images/index/pnum.png" width="15" alt="">
-            <span>报名人数：268</span>
-          </div>
-          <span class="bmBtn">报名</span>
-        </div>
-      </li>
-      <li>
-        <div class="courseImg">
-          <img src="/static/images/index/coure_img.png" alt="">
-          <p class="courseTime">寒假+每周周末晚间开课</p>
-        </div>
-        <p class="courseName">GRE一对一VIP定制课</p>
-        <div class="punmInfo">
-          <div class="pnum">
-            <img src="/static/images/index/pnum.png" width="15" alt="">
-            <span>报名人数：268</span>
+            <span>报名人数：{{item.viewCount}}</span>
           </div>
           <span class="bmBtn">报名</span>
         </div>
@@ -134,24 +98,23 @@
           <span>GRE备考</span>
         </div>
       </div>
-      <a class="link" href="#">MORE</a>
+      <router-link class="link" to="/reference">MORE</router-link>
     </div>
     <tab :line-width="2" active-color="#5a5ee4" :scroll-threshold="6" default-color="#333333" custom-bar-width="40px">
-      <tab-item :selected="0==i" :key="i" v-for="(item,i) in tabItem">{{item}}</tab-item>
+      <tab-item :selected="0==i" :key="i" v-for="(item,i) in tabItem" @on-item-click="handler(i)">{{item}}</tab-item>
     </tab>
     <ul class="articleList bg_f">
-      <li v-for="i in 5">
+      <li v-for="(item,index) in resBkdata">
         <div class="artContiner">
           <div class="artLeft">
-            <p class="ellipsis-2 artTit">{{i}}-号外！号外！填空1200精项刷 词团强烈来袭</p>
-            <p class="artTime">2018-01-15 15:06:36</p>
+            <p class="ellipsis-2 artTit">{{item.title}}</p>
+            <p class="artTime">{{item.createTime}}</p>
           </div>
           <div class="artRight">
-            <img src="/static/images/index/artImg.png" alt="">
+            <img :src="$store.state.httpUrl+item.image" alt="">
           </div>
         </div>
       </li>
-
     </ul>
     <div class="bg_f addImg_1"><img src="/static/images/index/deImg.png" alt=""></div>
     <div class="bg_f addImg"><img src="/static/images/index/addImg.png" alt=""></div>
@@ -163,24 +126,74 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import banner from './banner/banner'
   import {Tab, TabItem, ViewBox} from 'vux'
 
   export default {
     name: "index",
     data() {
       return {
+        resData: '',
+        resBkdata: '',
+        bannerItem:'',
+        currentTab: '0',
         header: ['GMAT', 'GRE', 'TOELF', 'IELTS', 'SAT', '留学'],
-        tabItem: ['热门', '词汇', '阅读', '填空', '数学', '写作']
+        tabItem: ['热门', '词汇', '阅读', '填空', '数学', '写作'],
+        swiperOption: {
+          notNextTick: true,
+          autoplay: {
+            delay: 3000,
+            disableOnInteraction: false,
+          },
+          loop: true,
+          observer: true,
+          observeParents: true,
+          setWrappermtze: true,
+          autoHeight: true,
+          // height: 300,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+          },
+        }
       }
     },
     components: {
-      banner,
       Tab,
       TabItem,
       ViewBox
     },
-    methods: {}
+    mounted() {
+      const _this = this;
+      this.axios.get('/cn/wap-api/index')
+        .then(function (response) {
+          _this.resData = response.data;
+          _this.bannerItem = response.data.carousel;
+          _this.resBkdata = response.data.oneweek;
+        })
+    }
+    ,
+    methods: {
+      handler(index) {
+        if (index + 1 == 1) {
+          this.resBkdata = this.resData.oneweek
+        }
+        if (index + 1 == 2) {
+          this.resBkdata = this.resData.words
+        }
+        if (index + 1 == 3) {
+          this.resBkdata = this.resData.read
+        }
+        if (index + 1 == 4) {
+          this.resBkdata = this.resData.blank
+        }
+        if (index + 1 == 5) {
+          this.resBkdata = this.resData.math
+        }
+        if (index + 1 == 6) {
+          this.resBkdata = this.resData.write
+        }
+      }
+    }
 
   }
 </script>
@@ -191,6 +204,18 @@
   }
 
   .bg_f {
+    background: #ffffff;
+  }
+  #index>>>.swiper-pagination .swiper-pagination-bullet {
+    width: 12px;
+    height: 12px;
+    background: none;
+    opacity: 1;
+    outline: none;
+    border: 1px solid #ffffff; /*no*/
+  }
+
+  #index>>>.swiper-pagination .swiper-pagination-bullet-active {
     background: #ffffff;
   }
 
