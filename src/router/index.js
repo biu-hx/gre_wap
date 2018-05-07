@@ -105,6 +105,11 @@ const confirmOrder = (resolve) => {
     resolve(module)
   })
 };
+const articleDetails = (resolve) => {
+  import('../components/articleDetails/articleDetails').then((module) => {
+    resolve(module)
+  })
+};
 
 export default new Router({
   // mode: 'history',
@@ -207,6 +212,11 @@ export default new Router({
       path: '/confirmOrder',
       name: 'confirmOrder',
       component: confirmOrder,
+    },
+    {
+      path: '/articleDetails',
+      name: 'articleDetails',
+      component: articleDetails,
     },
   ]
 })

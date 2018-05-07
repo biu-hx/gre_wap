@@ -177,7 +177,7 @@
     outline: none;
     border-radius: 5px; /*no*/
     background: #5a5ee4;
-    font-size: 32px; /*px*/
+    font-size: 28px; /*px*/
   }
 
   .dataItem {

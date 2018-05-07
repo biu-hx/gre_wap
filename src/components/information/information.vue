@@ -1,34 +1,37 @@
 <template>
   <div id="information">
     <swiper class="bg_f" :options="swiperOption" ref="mySwiper">
-      <swiper-slide :key="index"  v-for="(item,index) in bannerItem">
+      <swiper-slide :key="index" v-for="(item,index) in bannerItem">
         <img :src="$store.state.httpUrl+item.image" alt="">
       </swiper-slide>
       <div class="swiper-pagination" slot="pagination"></div>
     </swiper>
     <ul class="articleList bg_f">
       <li v-for="(item,index) in dataList">
-        <div class="artContiner">
-          <div class="artLeft">
-            <p class="ellipsis-2 artTit">{{item.title}}</p>
-            <p class="artTime">{{item.createTime}}</p>
+        <router-link :to="{path:'/articleDetails',query: {id: item.id}}">
+          <div class="artContiner">
+            <div class="artLeft">
+              <p class="ellipsis-2 artTit">{{item.title}}</p>
+              <p class="artTime">{{item.createTime}}</p>
+            </div>
+            <div class="artRight">
+              <img :src="$store.state.httpUrl+item.image" alt="">
+            </div>
           </div>
-          <div class="artRight">
-            <img :src="$store.state.httpUrl+item.image" alt="">
-          </div>
-        </div>
+        </router-link>
       </li>
     </ul>
   </div>
 </template>
 <script type="text/ecmascript-6">
-  import { ViewBox } from 'vux'
+  import {ViewBox} from 'vux'
+
   export default {
     name: 'information',
     data() {
       return {
-        bannerItem:'',
-        dataList:'',
+        bannerItem: '',
+        dataList: '',
         swiperOption: {
           notNextTick: true,
           autoplay: {
@@ -51,8 +54,8 @@
     components: {
       ViewBox,
     },
-    mounted(){
-      const _this=this;
+    mounted() {
+      const _this = this;
       this.axios.get('/cn/wap-api/consult')
         .then(function (response) {
           _this.bannerItem = response.data.carousel;
@@ -63,7 +66,7 @@
 </script>
 
 <style scoped>
-  #information>>>.swiper-pagination .swiper-pagination-bullet {
+  #information >>> .swiper-pagination .swiper-pagination-bullet {
     width: 12px;
     height: 12px;
     background: none;
@@ -72,11 +75,12 @@
     border: 1px solid #ffffff; /*no*/
   }
 
-  #information>>>.swiper-pagination .swiper-pagination-bullet-active {
+  #information >>> .swiper-pagination .swiper-pagination-bullet-active {
     background: #ffffff;
   }
+
   .articleList {
-    padding:0 20px;
+    padding: 0 20px;
   }
 
   .articleList li {

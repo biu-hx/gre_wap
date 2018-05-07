@@ -10,9 +10,12 @@ import store from './store';
 import axios from 'axios';
 import qs from 'qs'
 import VueAxios from 'vue-axios'
-// import Vuex from './store';
 import 'lib-flexible'
 import 'es6-promise/auto'
+
+// 时间格式化
+Vue.use(require('vue-moment'));
+
 // swiper组件
 Vue.use(VueAwesomeSwiper);
 /*vux 组件*/
