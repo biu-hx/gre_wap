@@ -19,13 +19,14 @@
         </div>
         <div class="articleText" v-html="article.description"></div>
         <!--详细内容列表-->
-        <ul class="listData"><li v-for="item in hot" @click="update(item.id)">{{item.name}}</li>
+        <ul class="listData">
+          <li v-for="item in hot" @click="update(item.id)">{{item.name}}</li>
         </ul>
         <!--评论-->
-        <div v-show="reply.count>0">
-          <div class="replyTit">全部评论({{reply.count}})</strong></div>
+        <div v-show="reply.data.length>0">
+          <div class="replyTit">全部评论({{reply.data.length}})</strong></div>
           <div class="replyWrap">
-            <div v-for="item in reply.data" class="replyItem">
+            <div v-for="(item,index) in reply.data" v-if="(index+1)<=5" class="replyItem">
               <div class="userHead"><img :src="item.image?$store.state.httpUrl+item.image:'/static/images/default.png'" alt=""></div>
               <div class="replyRight">
                 <div class="replyTime">
@@ -35,7 +36,7 @@
                   </div>
                   <div>
                     <i class="icon good"></i>
-                    <span style="vertical-align: middle;">20</span>
+                    <span style="vertical-align: middle;">{{item.fine}}</span>
                   </div>
                 </div>
                 <div class="replyText">{{item.content}}</div>
@@ -44,9 +45,10 @@
           </div>
         </div>
       </div>
+      <toast v-model="toastStatu" :text="toastText" width="4rem" type="text" :time="1000" position="bottom"></toast>
       <div slot="bottom" class="bottom">
-        <input class="replyInt" type="text" placeholder="评论...">
-        <div class="replyNum relative">
+        <input class="replyInt" type="text" placeholder="评论..." v-model="repley_val">
+        <div class="replyNum relative" @click="userReply(id)">
           <badge class="badge_1 ani" text="123"></badge>
         </div>
         <div class="goodNum relative">
@@ -59,29 +61,36 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import {XHeader,Tab, TabItem, Tabbar, TabbarItem, ViewBox, Badge} from 'vux'
+  import {XHeader, Tab, TabItem, Tabbar, TabbarItem, ViewBox, Badge, Toast} from 'vux'
 
   export default {
     name: "bkDownload",
     data() {
       return {
+        id: '',
         article: '',
         hot: '',
         reply: '',
+        repley_val: '',
+        toastStatu: false,
+        toastText: '',
       }
     },
     components: {
-      XHeader, Tab, TabItem, Tabbar, TabbarItem, ViewBox, Badge
+      XHeader, Tab, TabItem, Tabbar, TabbarItem, ViewBox, Badge, Toast
     },
     activated() {
+      this.id = this.$route.query.id;
       this.getData(this.$route.query.id);
     },
     methods: {
       getData(id) {
+        let uid = this.$store.state.userInfo.uid;
         this.$nextTick(function () {
           const _this = this;
-          this.axios.get("/cn/wap-api/article-detail?contentid=" + id)
+          this.axios.get("/cn/wap-api/article-detail?contentid=" + id + "&uid=" + uid)
             .then(function (response) {
+              _this.id = id;
               _this.article = response.data.data[0];
               _this.hot = response.data.hotarticle;
               _this.reply = response.data.userComment;
@@ -94,6 +103,40 @@
         setTimeout(() => {
           this.$refs.viewBox.scrollTo(0)
         }, 200)
+      },
+      // 评论
+      userReply(id) {
+        const _this = this;
+        let store = this.$store;
+        let data = {
+          userInfo: store.state.userInfo,
+          content: _this.repley_val,
+        };
+        if (this.repley_val) {
+          this.axios.post('/cn/wap-api/article-comment', {
+            content: data.content,
+            uid: data.userInfo.uid,
+            contentId: id
+          }).then(function (res) {
+            _this.toastText = res.data.message;
+            _this.toastStatu = true;
+            _this.repley_val = '';
+            // 评论成功 追加数据
+            const addTime = new Date().getTime();
+            _this.reply.data.unshift({
+              nickname: data.userInfo.nickname,
+              content: data.content,
+              image: data.userInfo.image,
+              fine: 0,
+              createTime: parseInt(addTime / 1000),
+            });
+          })
+        } else {
+          _this.toastText = '请输入评论内容';
+          _this.toastStatu = true;
+          return false;
+        }
+
       }
     }
   }
@@ -102,6 +145,15 @@
 <style scoped>
   #bkDownload {
     height: 100%;
+  }
+
+  #bkDownload >>> .weui-toast.vux-toast-bottom {
+    bottom: 140px; /*px*/
+  }
+
+  #bkDownload >>> .weui-toast_text .weui-toast__content {
+    font-size: 14px; /*no*/
+    padding: 12px 6px; /*px*/
   }
 
   .header {

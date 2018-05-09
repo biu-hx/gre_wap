@@ -26,10 +26,10 @@
             <div class="dataItem">
               <div class="itemLeft">
                 <img class="winrIcon" src="/static/images/bk/winr.png" alt="">
-                <span class="winrName">数学.docx </span>
+                <span class="winrName">{{info.datumTitle[0]}}</span>
                 <span class="winrDownnum">(下载次数: 75)</span>
               </div>
-              <button class="downBtn">下载</button>
+              <button class="downBtn" @click="download">下载</button>
             </div>
           </div>
           <!--未回复 显示-->
@@ -47,8 +47,8 @@
         <div v-show="reply.length>0">
           <div class="replyTit">全部评论（{{reply.length}}）</div>
           <div class="replyWrap">
-            <div v-for="item in reply" class="replyItem">
-              <div class="userHead"><img src="/static/images/bk/userHead.png" alt=""></div>
+            <div v-for="(item,index) in reply" v-if="(index+1)<=5" class="replyItem">
+              <div class="userHead"><img :src="item.image?$store.state.httpUrl+item.image:'/static/images/default.png'" alt=""></div>
               <div class="replyRight">
                 <div class="replyTime">
                   <div>
@@ -57,7 +57,7 @@
                   </div>
                   <div>
                     <i class="icon good"></i>
-                    <span style="vertical-align: middle;">20</span>
+                    <span style="vertical-align: middle;">{{item.fine}}</span>
                   </div>
                 </div>
                 <div class="replyText">{{item.content}}</div>
@@ -68,10 +68,10 @@
         </div>
 
       </div>
-      <toast v-model="toastStatu" text="toastText" width="4rem" type="text" :time="800" position="bottom"></toast>
+      <toast v-model="toastStatu" :text="toastText" width="4rem" type="text" :time="1000" position="bottom"></toast>
       <div slot="bottom" class="bottom">
         <input class="replyInt" type="text" placeholder="评论..." v-model="repley_val">
-        <div class="replyNum relative" @click="userReply()">
+        <div class="replyNum relative" @click="userReply(id)">
           <badge class="badge_1 ani" text="123"></badge>
         </div>
         <div class="goodNum relative">
@@ -84,7 +84,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-  // import qs from 'qs'
   import {XHeader, Tab, TabItem, Tabbar, TabbarItem, ViewBox, Badge, Toast} from 'vux'
 
   export default {
@@ -109,13 +108,15 @@
       this.getData(this.$route.query.id);
     },
     methods: {
+      // 获取帖子数据
       getData(id) {
-        this.id = id;
+        let uid = this.$store.state.userInfo.uid;
         this.$nextTick(function () {
           const _this = this;
-          // this.axios.get("http://bbs.cc/cn/wap-api/problem-detail?id=" + id)
-          this.axios.get("http://bbs.viplgw.cn/cn/wap-api/problem-detail?id=" + id)
+          this.axios.get("http://bbs.cc/cn/wap-api/problem-detail?id=" + id + "&uid=" + uid)
+          // this.axios.get("http://bbs.viplgw.cn/cn/wap-api/problem-detail?id=" + id + "&uid=" + uid)
             .then(function (res) {
+              _this.id = id;
               _this.info = res.data.data;
               _this.hot = res.data.hot;
               _this.reply = res.data.reply;
@@ -129,20 +130,69 @@
           this.$refs.viewBox.scrollTo(0)
         }, 200)
       },
-      userReply() {
+      // 下载
+      download() {
+        let downUrl = this.$store.state.httpUrl3 + this.info.datum[0];
+        let ua = navigator.userAgent.toLowerCase();
+        //android终端
+        let isAndroid = ua.indexOf('Android') > -1 || ua.indexOf('Adr') > -1;
+        //ios终端
+        let isiOS = !!ua.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+        if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {
+          //ios
+          window.open(downUrl);
+        } else if (/(Android)/i.test(navigator.userAgent)) {
+          //android
+          window.location = downUrl;
+        }
+        // 微信浏览器判断
+        // if (isWeixinBrowser()) {
+        //   this.$router.push({
+        //     path: '/product'
+        //   })
+        // } else {}
+        // function isWeixinBrowser() {
+        //   return (/micromessenger/.test(ua)) ? true : false;
+        // }
+      },
+      // 评论
+      userReply(id) {
         const _this = this;
-        // this.axios.post('http://bbs.cc/cn/wap-api/post-reply', {
-        this.axios.post('http://bbs.viplgw.cn/cn/wap-api/post-reply', {
-          content: this.repley_val,
-          type: '',
-          uid: '9762',
-          id: this.id
-        }).then(function (res) {
-          _this.toastText = res.data.message;
+        let store = this.$store;
+        let data = {
+          userInfo: store.state.userInfo,
+          content: _this.repley_val,
+        };
+        if (this.repley_val) {
+          this.axios.post('http://bbs.cc/cn/wap-api/post-reply', {
+            // this.axios.post('http://bbs.viplgw.cn/cn/wap-api/post-reply', {
+            content: data.content,
+            type: '',
+            uid: data.userInfo.uid,
+            id: id
+          }).then(function (res) {
+            _this.toastText = res.data.message;
+            _this.toastStatu = true;
+            _this.repley_val = '';
+            if (_this.is_reply != 1) {
+              _this.is_reply = 1;
+            }
+            // 评论成功 追加数据
+            const addTime = new Date().getTime();
+            _this.reply.unshift({
+              nickname: data.userInfo.nickname,
+              content: data.content,
+              image: data.userInfo.image,
+              // fine:0,
+              createTime: parseInt(addTime / 1000),
+            });
+          })
+        } else {
+          _this.toastText = '请输入评论内容';
           _this.toastStatu = true;
-        })
-
-      }
+          return false;
+        }
+      },
     }
 
   }
@@ -155,6 +205,11 @@
 
   #bkDownload >>> .weui-toast.vux-toast-bottom {
     bottom: 140px; /*px*/
+  }
+
+  #bkDownload >>> .weui-toast_text .weui-toast__content {
+    font-size: 14px; /*no*/
+    padding: 12px 6px; /*px*/
   }
 
   .header {

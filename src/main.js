@@ -35,8 +35,8 @@ Vue.use(VueAxios, axios);
 Vue.config.productionTip = false;
 // axios 配置
 axios.defaults.timeout = 5000;
-axios.defaults.baseURL = 'http://www.greonline.cn';
-// axios.defaults.baseURL = 'http://gre.cc';
+// axios.defaults.baseURL = 'http://www.greonline.cn';
+axios.defaults.baseURL = 'http://gre.cc';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 axios.defaults.transformRequest = [function(data) {
   return qs.stringify(data)
