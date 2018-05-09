@@ -85,6 +85,22 @@ const bkIndex = (resolve) => {
     resolve(module)
   })
 };
+// 子模板 测试
+const list_1 = (resolve) => {
+  import('../components/bk/bkList/list_1').then((module) => {
+    resolve(module)
+  })
+};
+const list_2 = (resolve) => {
+  import('../components/bk/bkList/list_2').then((module) => {
+    resolve(module)
+  })
+};
+const list_3 = (resolve) => {
+  import('../components/bk/bkList/list_3').then((module) => {
+    resolve(module)
+  })
+};
 const bkDownload = (resolve) => {
   import('../components/bk/bkDownload').then((module) => {
     resolve(module)
@@ -192,6 +208,12 @@ export default new Router({
       path: '/bkIndex',
       name: 'bkIndex',
       component: bkIndex,
+      child:[
+        { path:'/list_1',component:list_1},
+        { path:'/list_2',component:list_2},
+        { path:'/list_3',component:list_3},
+      ]
+
     },
     {
       path: '/bkDownload',

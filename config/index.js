@@ -16,7 +16,15 @@ module.exports = {
         target: 'http://gre.cc',
         changeOrigin: true,
         pathRewrite: {
-          '^/list': ''
+          '^/api': ''
+        }
+      },
+      '/bbs': {
+        // target: 'http://bbs.viplgw.cn',
+        target: 'http://bbs.cc',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/bbs': ''
         }
       }
     },

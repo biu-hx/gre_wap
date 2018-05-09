@@ -13,6 +13,7 @@
     </tab>
     <ul class="articleList bg_f">
       <li v-for="(item,index) in resBkdata">
+        <router-link :to="{path:'/articleDetails',query: {id: item.id}}">
         <div class="artContiner">
           <div class="artLeft">
             <p class="ellipsis-2 artTit">{{item.title}}</p>
@@ -22,6 +23,7 @@
             <img :src="$store.state.httpUrl+item.image" alt="">
           </div>
         </div>
+        </router-link>
       </li>
     </ul>
   </div>

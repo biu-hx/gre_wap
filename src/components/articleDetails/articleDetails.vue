@@ -1,6 +1,6 @@
 <template>
   <div id="bkDownload">
-    <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="62px">
+    <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="60px">
       <x-header class="header" slot="header" :left-options="{backText: ''}">
         <span>备考文章</span>
         <div slot="right">
@@ -43,7 +43,6 @@
             </div>
           </div>
         </div>
-
       </div>
       <div slot="bottom" class="bottom">
         <input class="replyInt" type="text" placeholder="评论...">
@@ -60,7 +59,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import moment from 'moment/moment'
   import {XHeader,Tab, TabItem, Tabbar, TabbarItem, ViewBox, Badge} from 'vux'
 
   export default {
@@ -112,6 +110,7 @@
     top: 0;
     left: 0;
     width: 100%;
+    z-index: 10;
   }
 
   .scIcon {
@@ -159,7 +158,7 @@
   .listData li {
     font-size: 28px; /*px*/
     background: #f3f3f3;
-    padding: 24px 0; /*px*/
+    padding: 24px 10px; /*px*/
     border-bottom: 1px solid #dcdcdc; /*no*/
   }
 

@@ -105,6 +105,7 @@
     </tab>
     <ul class="articleList bg_f">
       <li v-for="(item,index) in resBkdata">
+        <router-link :to="{path:'/articleDetails',query: {id: item.id}}">
         <div class="artContiner">
           <div class="artLeft">
             <p class="ellipsis-2 artTit">{{item.title}}</p>
@@ -114,6 +115,7 @@
             <img :src="$store.state.httpUrl+item.image" alt="">
           </div>
         </div>
+        </router-link>
       </li>
     </ul>
     <div class="bg_f addImg_1"><img src="/static/images/index/deImg.png" alt=""></div>
@@ -318,7 +320,7 @@
     display: flex;
     flex-flow: row wrap;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     padding: 30px 20px 0;
     margin-bottom: 20px;
   }

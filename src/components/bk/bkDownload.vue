@@ -1,98 +1,150 @@
 <template>
   <div id="bkDownload">
-    <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="62px">
-    <x-header class="header" slot="header" :left-options="{backText: ''}">
-      <span>GRE备考资料下载</span>
-      <div slot="right">
-        <!--<router-link to="/search">-->
+    <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="60px">
+      <x-header class="header" slot="header" :left-options="{backText: ''}">
+        <span>GRE备考资料下载</span>
+        <div slot="right">
+          <!--<router-link to="/search">-->
           <img class="scIcon" src="/static/images/bk/share.png" alt="">
-        <!--</router-link>-->
-      </div>
-    </x-header>
-    <div slot="default" class="content">
-      <div class="cardTop">
-        <h1 class="ellipsis cardName">GRE阅读 陈琦-阅读24套</h1>
-        <div class="cardInfo">
-          <span>2018-2-22 14:02</span>
-          <span><img class="eyes" src="/static/images/bk/eyes.png" alt="">2780</span>
+          <!--</router-link>-->
         </div>
-      </div>
-      <div class="cardName2">陈琦-阅读24套  </div>
-      <!--下载版块-->
-      <div class="hideContent">
-        <!--已回复 显示-->
-        <div style="display: none">
-          <p class="tm cardHint">本帖隐藏的内容  </p>
-          <div class="dataItem">
-            <div class="itemLeft">
-              <img class="winrIcon" src="/static/images/bk/winr.png" alt="">
-              <span class="winrName">数学.docx </span>
-              <span class="winrDownnum">(下载次数: 75)</span>
-            </div>
-            <button class="downBtn">下载</button>
+      </x-header>
+      <div slot="default" class="content">
+        <div class="cardTop">
+          <h1 class="ellipsis_3 cardName">{{info.title}}</h1>
+          <div class="cardInfo">
+            <span>{{parseInt(info.createTime) | moment('YYYY-MM-DD')}}</span>
+            <span><img class="eyes" src="/static/images/bk/eyes.png" alt="">{{info.viewCount}}</span>
           </div>
         </div>
-        <!--未回复 显示-->
-        <div class="showHint tm">
-          <img class="lock" src="/static/images/bk/lock.png" alt="">
-          <span>游客，如果您要查看本帖隐藏内容请<strong>回复</strong></span>
-        </div>
-
-      </div>
-      <!--详细内容列表-->
-      <ul class="listData">
-        <li>【GRE阅读】GRE阅读白皮书全部文章和题目</li>
-        <li>【GRE阅读】陈琦-阅读24套</li>
-        <li>【GRE词汇】巴郎词表中文版</li>
-        <li>【GRE数学】GRE数学资料</li>
-      </ul>
-      <!--评论-->
-      <div>
-        <div class="replyTit">全部评论（3）</div>
-        <div class="replyWrap">
-          <div v-for="i in 6" class="replyItem">
-            <div class="userHead"><img src="/static/images/bk/userHead.png" alt=""></div>
-            <div class="replyRight">
-              <div class="replyTime">
-                <div>
-                  <span class="nickName">用户名 {{i}}</span>
-                  <span>2018.2.22</span>
-                </div>
-                <div>
-                  <i class="icon good"></i>
-                  <span style="vertical-align: middle;">20</span>
-                </div>
+        <div class="cardName2" v-html="info.content"></div>
+        <!--下载版块-->
+        <div class="hideContent">
+          <!--已回复 显示-->
+          <div v-if="is_reply!=0">
+            <p class="tm cardHint">本帖隐藏的内容 </p>
+            <div class="dataItem">
+              <div class="itemLeft">
+                <img class="winrIcon" src="/static/images/bk/winr.png" alt="">
+                <span class="winrName">数学.docx </span>
+                <span class="winrDownnum">(下载次数: 75)</span>
               </div>
-              <div class="replyText">申请美国研究生到底选择GRE还是GMAT呢？ 这是很多学员比较困惑的问题。</div>
+              <button class="downBtn">下载</button>
             </div>
           </div>
+          <!--未回复 显示-->
+          <div v-else class="showHint tm">
+            <img class="lock" src="/static/images/bk/lock.png" alt="">
+            <span>游客，如果您要查看本帖隐藏内容请<strong>回复</strong></span>
+          </div>
+
+        </div>
+        <!--详细内容列表-->
+        <ul class="listData">
+          <li v-for="item in hot" @click="update(item.id)">{{item.title}}</li>
+        </ul>
+        <!--评论-->
+        <div v-show="reply.length>0">
+          <div class="replyTit">全部评论（{{reply.length}}）</div>
+          <div class="replyWrap">
+            <div v-for="item in reply" class="replyItem">
+              <div class="userHead"><img src="/static/images/bk/userHead.png" alt=""></div>
+              <div class="replyRight">
+                <div class="replyTime">
+                  <div>
+                    <span class="nickName">{{item.nickname}}</span>
+                    <span>{{parseInt(item.createTime) | moment('YYYY-MM-DD')}}</span>
+                  </div>
+                  <div>
+                    <i class="icon good"></i>
+                    <span style="vertical-align: middle;">20</span>
+                  </div>
+                </div>
+                <div class="replyText">{{item.content}}</div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
       </div>
-
-    </div>
-    <div slot="bottom" class="bottom">
-      <input class="replyInt" type="text" placeholder="评论...">
-      <div class="replyNum relative">
-        <badge class="badge_1 ani" text="123"></badge>
+      <toast v-model="toastStatu" text="toastText" width="4rem" type="text" :time="800" position="bottom"></toast>
+      <div slot="bottom" class="bottom">
+        <input class="replyInt" type="text" placeholder="评论..." v-model="repley_val">
+        <div class="replyNum relative" @click="userReply()">
+          <badge class="badge_1 ani" text="123"></badge>
+        </div>
+        <div class="goodNum relative">
+          <badge class="badge_1 ani" text="123"></badge>
+        </div>
+        <div class="scBtn relative"></div>
       </div>
-      <div class="goodNum relative">
-        <badge class="badge_1 ani" text="123"></badge>
-      </div>
-      <div class="scBtn relative"></div>
-    </div>
     </view-box>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  import {XHeader, Tab, TabItem, Tabbar, TabbarItem, ViewBox, Badge} from 'vux'
+  // import qs from 'qs'
+  import {XHeader, Tab, TabItem, Tabbar, TabbarItem, ViewBox, Badge, Toast} from 'vux'
 
   export default {
     name: "bkDownload",
     components: {
-      XHeader, Tab, TabItem, Tabbar, TabbarItem, ViewBox, Badge
+      XHeader, Tab, TabItem, Tabbar, TabbarItem, ViewBox, Badge, Toast
     },
+    data() {
+      return {
+        id: '',
+        info: '',
+        hot: '',
+        reply: '',
+        is_reply: '',
+        repley_val: '',
+        toastStatu: false,
+        toastText: '',
+      }
+    },
+    activated() {
+      this.id = this.$route.query.id;
+      this.getData(this.$route.query.id);
+    },
+    methods: {
+      getData(id) {
+        this.id = id;
+        this.$nextTick(function () {
+          const _this = this;
+          // this.axios.get("http://bbs.cc/cn/wap-api/problem-detail?id=" + id)
+          this.axios.get("http://bbs.viplgw.cn/cn/wap-api/problem-detail?id=" + id)
+            .then(function (res) {
+              _this.info = res.data.data;
+              _this.hot = res.data.hot;
+              _this.reply = res.data.reply;
+              _this.is_reply = res.data.is_reply;
+            })
+        })
+      },
+      update(id) {
+        this.getData(id);
+        setTimeout(() => {
+          this.$refs.viewBox.scrollTo(0)
+        }, 200)
+      },
+      userReply() {
+        const _this = this;
+        // this.axios.post('http://bbs.cc/cn/wap-api/post-reply', {
+        this.axios.post('http://bbs.viplgw.cn/cn/wap-api/post-reply', {
+          content: this.repley_val,
+          type: '',
+          uid: '9762',
+          id: this.id
+        }).then(function (res) {
+          _this.toastText = res.data.message;
+          _this.toastStatu = true;
+        })
+
+      }
+    }
+
   }
 </script>
 
@@ -100,12 +152,18 @@
   #bkDownload {
     height: 100%;
   }
-  .header{
+
+  #bkDownload >>> .weui-toast.vux-toast-bottom {
+    bottom: 140px; /*px*/
+  }
+
+  .header {
     background: #5a5ee4;
     position: absolute;
-    top:0;
+    top: 0;
     left: 0;
     width: 100%;
+    z-index: 10;
   }
 
   .scIcon {
@@ -203,7 +261,7 @@
   .listData li {
     font-size: 28px; /*px*/
     background: #f3f3f3;
-    padding: 24px 0; /*px*/
+    padding: 24px 10px; /*px*/
     border-bottom: 1px solid #dcdcdc; /*no*/
   }
 
@@ -240,16 +298,18 @@
     background: url("/static/images/bk/goodIcon.png") no-repeat 0 0;
     background-size: contain;
   }
-  .replyWrap .replyItem:last-child{
+
+  .replyWrap .replyItem:last-child {
     border-bottom: none;
   }
+
   .replyItem {
     display: flex;
     padding: 20px 0;
     flex-flow: row nowrap;
     justify-content: space-between;
     align-items: flex-start;
-    border-bottom: 1px solid #cfcfcf;/*no*/
+    border-bottom: 1px solid #cfcfcf; /*no*/
   }
 
   .replyRight {
@@ -322,7 +382,7 @@
 
   .replyInt {
     height: 64px; /*px*/
-    width: 53%;
+    width: 54%;
     box-sizing: border-box;
     padding: 0 15px;
     border-radius: 8px; /*no*/
@@ -333,16 +393,19 @@
   .bottom > > > .vux-badge {
     background: #5a5ee4;
   }
-  .showHint .lock{
-      width: 30px;/*px*/
+
+  .showHint .lock {
+    width: 30px; /*px*/
     vertical-align: bottom;
     margin-right: 20px;
   }
-  .showHint span{
-    font-size: 28px;/*px*/
+
+  .showHint span {
+    font-size: 28px; /*px*/
     vertical-align: bottom;
   }
-  .showHint strong{
+
+  .showHint strong {
     color: #5a5ee4;
   }
 </style>
