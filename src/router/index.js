@@ -15,8 +15,25 @@ const information = (resolve) => {
     resolve(module)
   })
 };
+// 活动
 const active = (resolve) => {
   import('../components/active/active').then((module) => {
+    resolve(module)
+  })
+};
+const activeDetails = (resolve) => {
+  import('../components/active/activeDetails').then((module) => {
+    resolve(module)
+  })
+};
+// 活动子组件 测试
+const item_1 = (resolve) => {
+  import('../components/active/child/item_1').then((module) => {
+    resolve(module)
+  })
+};
+const item_2 = (resolve) => {
+  import('../components/active/child/item_1').then((module) => {
     resolve(module)
   })
 };
@@ -85,7 +102,7 @@ const bkIndex = (resolve) => {
     resolve(module)
   })
 };
-// 子模板 测试
+// 机经真题子组件 测试
 const list_1 = (resolve) => {
   import('../components/bk/bkList/list_1').then((module) => {
     resolve(module)
@@ -106,6 +123,7 @@ const bkDownload = (resolve) => {
     resolve(module)
   })
 };
+// 课程
 const courseDetails = (resolve) => {
   import('../components/course/courseDetails').then((module) => {
     resolve(module)
@@ -143,6 +161,15 @@ export default new Router({
       path: '/active',
       name: 'active',
       component: active,
+    },
+    {
+      path: '/activeDetails',
+      name: 'activeDetails',
+      component: activeDetails,
+      child: [
+        {path: '/item_1', component: item_1},
+        {path: '/item_2', component: item_2},
+      ]
     },
     {
       path: '/reference',
@@ -208,10 +235,10 @@ export default new Router({
       path: '/bkIndex',
       name: 'bkIndex',
       component: bkIndex,
-      child:[
-        { path:'/list_1',component:list_1},
-        { path:'/list_2',component:list_2},
-        { path:'/list_3',component:list_3},
+      child: [
+        {path: '/list_1', component: list_1},
+        {path: '/list_2', component: list_2},
+        {path: '/list_3', component: list_3},
       ]
 
     },

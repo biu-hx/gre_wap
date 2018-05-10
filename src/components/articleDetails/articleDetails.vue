@@ -34,7 +34,7 @@
                     <span class="nickName">{{item.nickname}}</span>
                     <span>{{item.createTime | moment("YYYY-MM-DD")}}</span>
                   </div>
-                  <div>
+                  <div @click="userFine(id,2,item.id,item.fine,index)">
                     <i class="icon good"></i>
                     <span style="vertical-align: middle;">{{item.fine}}</span>
                   </div>
@@ -49,12 +49,12 @@
       <div slot="bottom" class="bottom">
         <input class="replyInt" type="text" placeholder="评论..." v-model="repley_val">
         <div class="replyNum relative" @click="userReply(id)">
-          <badge class="badge_1 ani" text="123"></badge>
+          <badge v-show="reply.data.length>0" class="badge_1 ani" :text="reply.data.length"></badge>
         </div>
-        <div class="goodNum relative">
-          <badge class="badge_1 ani" text="123"></badge>
+        <div class="goodNum relative" @click="userFine(id,1)">
+          <badge v-show="article.fine>0" class="badge_2 ani" :text="article.fine"></badge>
         </div>
-        <div class="scBtn relative"></div>
+        <div class="relative scBtn" :class="collectStatu === 0 ?'scNo':'scYes'" @click="collect(id)"></div>
       </div>
     </view-box>
   </div>
@@ -74,6 +74,7 @@
         repley_val: '',
         toastStatu: false,
         toastText: '',
+        collectStatu: '',
       }
     },
     components: {
@@ -94,6 +95,7 @@
               _this.article = response.data.data[0];
               _this.hot = response.data.hotarticle;
               _this.reply = response.data.userComment;
+              _this.collectStatu = response.data.collecte;
             })
 
         })
@@ -128,6 +130,7 @@
               content: data.content,
               image: data.userInfo.image,
               fine: 0,
+              id:res.data.id,
               createTime: parseInt(addTime / 1000),
             });
           })
@@ -137,7 +140,72 @@
           return false;
         }
 
-      }
+      },
+      // 用户点赞
+      userFine(id, type, commentId, fine,index) {
+        let data;
+        const _this = this;
+        if (type === 1) {
+          data = {
+            contentId: id,
+            type: type,
+          };
+        } else {
+          data = {
+            fine: fine,
+            contentId: id,
+            type: type,
+            commentId: commentId,
+          };
+        }
+        this.axios.post('/cn/wap-api/add-fine', data).then(function (res) {
+          if (res.data.code === 1) {
+            // 文章点赞成功
+            if (type === 1) {
+              _this.article.fine = res.data.fine;
+            }
+            // 评论点赞成功
+            if (type === 2) {
+              _this.reply.data[index].fine=parseInt(_this.reply.data[index].fine)+1;
+              _this.article.fine = res.data.allfine;
+            }
+
+
+          } else {
+            _this.toastText = res.data.message;
+            _this.toastStatu = true;
+          }
+
+
+        })
+      },
+      // 文章收藏
+      collect(contentId) {
+        const _this = this;
+        let userInfo = this.$store.state.userInfo;
+        let data = {
+          collecte: this.collectStatu === 0 ? 1 : 2,
+          contentId: contentId,
+          uid: userInfo.uid,
+        };
+        this.axios.post('/cn/wap-api/content-collection', data).then(function (res) {
+          if (res.data.code === 1) {
+            if (data.collecte === 1) {
+              _this.toastText = '收藏成功';
+              _this.toastStatu = true;
+              _this.collectStatu = 1;
+            } else {
+              _this.toastText = '取消成功';
+              _this.toastStatu = true;
+              _this.collectStatu = 0;
+            }
+          } else {
+            _this.toastText = '收藏失败';
+            _this.toastStatu = true;
+          }
+        })
+      },
+
     }
   }
 </script>
@@ -310,12 +378,24 @@
   .scBtn {
     width: 55px; /*px*/
     height: 51px; /*px*/
+  }
+
+  .scYes {
+    background: url("/static/images/collect_suc.png") no-repeat 0 0;
+    background-size: contain;
+  }
+
+  .scNo {
     background: url("/static/images/bk/icon_1.png") no-repeat 0 0;
     background-size: contain;
   }
 
   .badge_1 {
-    right: -50px; /*px*/
+    left: 56px; /*px*/
+    top: -18px; /*px*/
+  }
+  .badge_2 {
+    left: 40px; /*px*/
     top: -18px; /*px*/
   }
 

@@ -13,7 +13,7 @@
       <tab-item :selected="0==i" :key="i" v-for="(item,i) in header">{{item}}</tab-item>
     </tab>
     <swiper class="bg_f" :options="swiperOption" ref="mySwiper">
-      <swiper-slide :key="index"  v-for="(item,index) in bannerItem">
+      <swiper-slide :key="index" v-for="(item,index) in bannerItem">
         <img :src="$store.state.httpUrl+item.image" alt="">
       </swiper-slide>
       <div class="swiper-pagination" slot="pagination"></div>
@@ -75,19 +75,20 @@
     </div>
     <ul class="courseList bg_f">
       <li v-for="item in resData.activity">
-        <div class="courseImg">
-          <!--<img src="url+/static/images/index/coure_img.png" alt="">-->
-          <img :src="$store.state.httpUrl+item.image" alt="">
-          <p class="courseTime">{{item.commencement}}</p>
-        </div>
-        <p class="courseName">{{item.name}}</p>
-        <div class="punmInfo">
-          <div class="pnum">
-            <img src="/static/images/index/pnum.png" width="15" alt="">
-            <span>报名人数：{{item.viewCount}}</span>
+        <router-link :to="{path:'/courseDetails',query: {id: item.id}}">
+          <div class="courseImg">
+            <img :src="$store.state.httpUrl+item.image" alt="">
+            <p class="courseTime">{{item.commencement}}</p>
           </div>
-          <span class="bmBtn">报名</span>
-        </div>
+          <p class="courseName">{{item.name}}</p>
+          <div class="punmInfo">
+            <div class="pnum">
+              <img src="/static/images/index/pnum.png" width="15" alt="">
+              <span>报名人数：{{item.viewCount}}</span>
+            </div>
+            <span class="bmBtn">报名</span>
+          </div>
+        </router-link>
       </li>
     </ul>
     <!--标题栏-->
@@ -106,15 +107,15 @@
     <ul class="articleList bg_f">
       <li v-for="(item,index) in resBkdata">
         <router-link :to="{path:'/articleDetails',query: {id: item.id}}">
-        <div class="artContiner">
-          <div class="artLeft">
-            <p class="ellipsis-2 artTit">{{item.title}}</p>
-            <p class="artTime">{{item.createTime}}</p>
+          <div class="artContiner">
+            <div class="artLeft">
+              <p class="ellipsis-2 artTit">{{item.title}}</p>
+              <p class="artTime">{{item.createTime}}</p>
+            </div>
+            <div class="artRight">
+              <img :src="$store.state.httpUrl+item.image" alt="">
+            </div>
           </div>
-          <div class="artRight">
-            <img :src="$store.state.httpUrl+item.image" alt="">
-          </div>
-        </div>
         </router-link>
       </li>
     </ul>
@@ -136,7 +137,7 @@
       return {
         resData: '',
         resBkdata: '',
-        bannerItem:'',
+        bannerItem: '',
         currentTab: '0',
         header: ['GMAT', 'GRE', 'TOELF', 'IELTS', 'SAT', '留学'],
         tabItem: ['热门', '词汇', '阅读', '填空', '数学', '写作'],
@@ -208,7 +209,8 @@
   .bg_f {
     background: #ffffff;
   }
-  #index>>>.swiper-pagination .swiper-pagination-bullet {
+
+  #index >>> .swiper-pagination .swiper-pagination-bullet {
     width: 12px;
     height: 12px;
     background: none;
@@ -217,7 +219,7 @@
     border: 1px solid #ffffff; /*no*/
   }
 
-  #index>>>.swiper-pagination .swiper-pagination-bullet-active {
+  #index >>> .swiper-pagination .swiper-pagination-bullet-active {
     background: #ffffff;
   }
 

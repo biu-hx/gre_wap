@@ -14,6 +14,7 @@ const store = new Vuex.Store({
     httpUrl: 'http://www.greonline.cn',
     httpUrl2: 'http://open.viplgw.cn',
     httpUrl3: 'http://bbs.viplgw.cn',
+    httpUrl4: 'http://open.viplgw.cn',
   },
   actions: {
     isLogin({commit}) {
