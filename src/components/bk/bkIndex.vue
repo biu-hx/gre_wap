@@ -20,7 +20,6 @@
   import list_2 from './bkList/list_2'
   import list_3 from './bkList/list_3'
   import {Tab, TabItem} from 'vux'
-
   export default {
     name: "bkIndex",
     data() {
@@ -38,8 +37,7 @@
     mounted() {
       const _this = this;
       this.axios({
-        // url: 'http://bbs.cc/cn/wap-api/real-problem'
-        url: 'http://bbs.viplgw.cn/cn/wap-api/real-problem'
+        url: this.$store.state.http_bbs+'/cn/wap-api/real-problem'
       }).then(function (res) {
         _this.today = res.data.today;
         _this.count = res.data.count;

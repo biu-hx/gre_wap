@@ -27,7 +27,7 @@
           <div class="replyTit">全部评论({{reply.data.length}})</strong></div>
           <div class="replyWrap">
             <div v-for="(item,index) in reply.data" v-if="(index+1)<=5" class="replyItem">
-              <div class="userHead"><img :src="item.image?$store.state.httpUrl+item.image:'/static/images/default.png'" alt=""></div>
+              <div class="userHead"><img :src="item.image?$store.state.http_gre+item.image:'/static/images/default.png'" alt=""></div>
               <div class="replyRight">
                 <div class="replyTime">
                   <div>

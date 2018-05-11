@@ -2,14 +2,19 @@
   <div id="courseDetails">
     <view-box ref="viewBox" body-padding-bottom="62px">
       <div class="content">
-        <div class="head"><img src="/static/images/course/course.png" alt=""></div>
+        <div class="head"><img :src="$store.state.http_gre+resData.data.image" alt=""></div>
         <div class="dataWrap bg_f">
           <div class="content_1">
             <h1 class="courseName">{{resData.data.title}}</h1>
             <div class="courseDe">{{resData.data.answer}}</div>
             <div class="dataBg">
               <div style="margin-right: 10px;"><i class="iconBg icon_1"></i><span>报名人数：{{resData.data.alternatives}}</span></div>
-              <div class="ellipsis" style="flex: 1;"><i class="iconBg icon_2"></i><span>距离报名结束：{{resData.data.article}}</span></div>
+              <div v-if="typeof (resData.data.article)!='string'" class="ellipsis tr" style="flex: 1;">
+                <i class="iconBg icon_2"></i><span>距离报名结束：{{countText}}</span>
+              </div>
+              <div v-else class="ellipsis tr" style="flex: 1;">
+                <i class="iconBg icon_2"></i><span>距离报名结束：{{resData.data.article}}</span>
+              </div>
             </div>
             <div class="startTime">
               <div><span class="blue">{{resData.data.duration}}</span><span style="padding-left: 10px">{{resData.data.commencement}}</span></div>
@@ -20,7 +25,7 @@
                 <div class="rowName">性<strong style="padding: 0 8px">价</strong>比</div>
                 <div class="default_de">{{resData.data.performance}}</div>
               </div>
-              <div v-show="resData.tag[0].child.length>0" class="infoRow" style="align-items: flex-start">
+              <div v-if="resData.tag.length>0" class="infoRow" style="align-items: flex-start">
                 <div class="rowName">课程标签</div>
                 <div class="infoTag">
                   <span v-for="(item,index) in resData.tag[0].child">{{item.name}}</span>
@@ -69,7 +74,6 @@
           </div>
         </div>
       </div>
-
       <div class="bottom bg_f">
         <div class="bottomLeft bottomItem">
           <div class="priceWrap_2">
@@ -78,8 +82,8 @@
           </div>
           <div class="consultBtn">
             <a href="mqqwpa://im/chat?chat_type=wpa&uin=1746295647&version=1&src_type=web&web_src=http://m.haishiit.com/">
-            <i class="icon_3"></i>
-            <span>咨询</span>
+              <i class="icon_3"></i>
+              <span>咨询</span>
             </a>
           </div>
         </div>
@@ -101,7 +105,9 @@
       return {
         tabItem: ['课程介绍', '授课名师', '学习资料', '用户评价(9)'],
         id: '',
-        resData:'',
+        resData: '',
+        countVal: '',
+        countText: '',
       }
     },
     components: {
@@ -110,6 +116,9 @@
     activated() {
       this.id = this.$route.query.id;
       this.getData(this.$route.query.id);
+      let time = setInterval(() => {
+        this.countTime(this.countVal--);
+      }, 1000);
     },
     methods: {
       getData(id) {
@@ -117,15 +126,33 @@
           const _this = this;
           this.axios.get("/cn/wap-api/course-detail?contentid=" + id)
             .then(function (res) {
-               _this.resData=res.data;
+              _this.resData = res.data;
+              _this.countVal = res.data.data.article;
             })
 
         })
+      },
+      countTime(time) {
+        let mouth = parseInt(time / 60 / 60 / 24 / 30);
+        let day = parseInt(time / 60 / 60 / 24 % 30);
+        let hour = parseInt(time / 60 / 60 % 24);
+        let minute = parseInt(time / 60 % 60);
+        let seconds = parseInt(time % 60);
+        if (mouth > 0) {
+          return this.countText = mouth + "月" + day + "天" + hour + "小时" + minute + "分钟" + seconds + "秒";
+        }
+        if (day > 0) {
+          return this.countText = day + "天" + hour + "小时" + minute + "分钟" + seconds + "秒";
+        } else {
+          return this.countText = hour + "小时" + minute + "分钟" + seconds + "秒";
+        }
       }
-    }
+    },
+
 
   }
 </script>
+
 
 <style scoped>
   #courseDetails {
@@ -228,7 +255,8 @@
     color: #888888;
     font-size: 28px; /*px*/
   }
-  .rowName strong{
+
+  .rowName strong {
     font-weight: normal;
   }
 

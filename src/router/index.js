@@ -5,6 +5,21 @@ Vue.use(Router);
 // 引入组件
 // import index from '../components/index'
 // import information from '../components/information/information'
+const login = (resolve) => {
+  import('../components/isLogin/login').then((module) => {
+    resolve(module)
+  })
+};
+const register = (resolve) => {
+  import('../components/isLogin/register').then((module) => {
+    resolve(module)
+  })
+};
+const foundPassword = (resolve) => {
+  import('../components/isLogin/foundPassword').then((module) => {
+    resolve(module)
+  })
+};
 const index = (resolve) => {
   import('../components/index').then((module) => {
     resolve(module)
@@ -151,6 +166,21 @@ export default new Router({
     {
       path: "/",
       component: index
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: login,
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: register,
+    },
+    {
+      path: '/foundPassword',
+      name: 'foundPassword',
+      component: foundPassword,
     },
     {
       path: '/information',

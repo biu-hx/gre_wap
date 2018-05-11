@@ -14,7 +14,7 @@
     </tab>
     <swiper class="bg_f" :options="swiperOption" ref="mySwiper">
       <swiper-slide :key="index" v-for="(item,index) in bannerItem">
-        <img :src="$store.state.httpUrl+item.image" alt="">
+        <img :src="$store.state.http_gre+item.image" alt="">
       </swiper-slide>
       <div class="swiper-pagination" slot="pagination"></div>
     </swiper>
@@ -77,7 +77,7 @@
       <li v-for="item in resData.activity">
         <router-link :to="{path:'/courseDetails',query: {id: item.id}}">
           <div class="courseImg">
-            <img :src="$store.state.httpUrl+item.image" alt="">
+            <img :src="$store.state.http_gre+item.image" alt="">
             <p class="courseTime">{{item.commencement}}</p>
           </div>
           <p class="courseName">{{item.name}}</p>
@@ -113,7 +113,7 @@
               <p class="artTime">{{item.createTime}}</p>
             </div>
             <div class="artRight">
-              <img :src="$store.state.httpUrl+item.image" alt="">
+              <img :src="$store.state.http_gre+item.image" alt="">
             </div>
           </div>
         </router-link>
@@ -173,8 +173,7 @@
           _this.bannerItem = response.data.carousel;
           _this.resBkdata = response.data.oneweek;
         })
-    }
-    ,
+    },
     methods: {
       handler(index) {
         if (index + 1 == 1) {

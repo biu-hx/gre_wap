@@ -2,7 +2,7 @@
   <div id="activeDetails">
     <view-box ref="viewBox" body-padding-bottom="62px">
       <div class="content">
-        <div class="head"><img :src="$store.state.httpUrl4+resData.data.data.image" alt=""></div>
+        <div class="head"><img :src="$store.state.http_open+resData.data.data.image" alt=""></div>
         <div class="dataWrap bg_f">
           <div class="content_1">
             <h1 class="courseName">{{resData.parent.title}}</h1>

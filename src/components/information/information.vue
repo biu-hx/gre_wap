@@ -2,7 +2,7 @@
   <div id="information">
     <swiper class="bg_f" :options="swiperOption" ref="mySwiper">
       <swiper-slide :key="index" v-for="(item,index) in bannerItem">
-        <img :src="$store.state.httpUrl+item.image" alt="">
+        <img :src="$store.state.http_gre+item.image" alt="">
       </swiper-slide>
       <div class="swiper-pagination" slot="pagination"></div>
     </swiper>
@@ -15,7 +15,7 @@
               <p class="artTime">{{item.createTime}}</p>
             </div>
             <div class="artRight">
-              <img :src="$store.state.httpUrl+item.image" alt="">
+              <img :src="$store.state.http_gre+item.image" alt="">
             </div>
           </div>
         </router-link>

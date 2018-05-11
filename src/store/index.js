@@ -9,12 +9,12 @@ const store = new Vuex.Store({
     userInfo: {
       uid: '9762',
       image: '',
-      nickname:'xxxxx',
+      nickname: 'xxxxx',
     },
-    httpUrl: 'http://www.greonline.cn',
-    httpUrl2: 'http://open.viplgw.cn',
-    httpUrl3: 'http://bbs.viplgw.cn',
-    httpUrl4: 'http://open.viplgw.cn',
+    http_gre: 'http://www.greonline.cn',
+    http_open: 'http://open.viplgw.cn',
+    // http_bbs: 'http://bbs.viplgw.cn',
+    http_bbs: 'http://bbs.cc',
   },
   actions: {
     isLogin({commit}) {

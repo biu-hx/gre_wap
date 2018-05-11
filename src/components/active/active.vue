@@ -1,7 +1,7 @@
 import index from "../../router";
 <template>
   <div id="active">
-    <div class="adImg"><img :src="$store.state.httpUrl+adImg" alt=""></div>
+    <div class="adImg"><img :src="$store.state.http_gre+adImg" alt=""></div>
     <tab :line-width="2" active-color="#5a5ee4" default-color="#333333" custom-bar-width="70px">
       <tab-item :selected="0==i" :key="i" v-for="(item,i) in list" @on-item-click="handler(i)">{{item}}</tab-item>
     </tab>
@@ -14,7 +14,7 @@ import index from "../../router";
                 <p class="tag_p1">{{item.catName}}</p>
                 <p class="tag_p2">{{item.status}}</p>
               </div>
-              <img :src="$store.state.httpUrl2+item.image" alt="">
+              <img :src="$store.state.http_open+item.image" alt="">
               <p class="ani starTime">开始时间:{{item.cnName}}</p>
             </div>
             <div class="courseInfo">

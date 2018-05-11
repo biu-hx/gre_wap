@@ -20,7 +20,7 @@
             <p class="artTime">{{item.createTime}}</p>
           </div>
           <div class="artRight">
-            <img :src="$store.state.httpUrl+item.image" alt="">
+            <img :src="$store.state.http_gre+item.image" alt="">
           </div>
         </div>
         </router-link>

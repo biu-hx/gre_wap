@@ -48,7 +48,7 @@
           <div class="replyTit">全部评论（{{reply.length}}）</div>
           <div class="replyWrap">
             <div v-for="(item,index) in reply" v-if="(index+1)<=5" class="replyItem">
-              <div class="userHead"><img :src="item.image?$store.state.httpUrl+item.image:'/static/images/default.png'" alt=""></div>
+              <div class="userHead"><img :src="item.image?$store.state.http_gre+item.image:'/static/images/default.png'" alt=""></div>
               <div class="replyRight">
                 <div class="replyTime">
                   <div>
@@ -115,8 +115,7 @@
         let uid = this.$store.state.userInfo.uid;
         this.$nextTick(function () {
           const _this = this;
-          // this.axios.get("http://bbs.cc/cn/wap-api/problem-detail?id=" + id + "&uid=" + uid)
-          this.axios.get("http://bbs.viplgw.cn/cn/wap-api/problem-detail?id=" + id + "&uid=" + uid)
+          this.axios.get(this.$store.state.http_bbs+"/cn/wap-api/problem-detail?id=" + id + "&uid=" + uid)
             .then(function (res) {
               _this.id = id;
               _this.info = res.data.data;
@@ -136,7 +135,7 @@
       },
       // 下载
       download() {
-        let downUrl = this.$store.state.httpUrl3 + this.info.datum[0];
+        let downUrl = this.$store.state.http_bbs + this.info.datum[0];
         let ua = navigator.userAgent.toLowerCase();
         //android终端
         let isAndroid = ua.indexOf('Android') > -1 || ua.indexOf('Adr') > -1;
@@ -168,8 +167,7 @@
           content: _this.repley_val,
         };
         if (this.repley_val) {
-          // this.axios.post('http://bbs.cc/cn/wap-api/post-reply', {
-            this.axios.post('http://bbs.viplgw.cn/cn/wap-api/post-reply', {
+            this.axios.post(this.$store.state.http_bbs+'/cn/wap-api/post-reply', {
             content: data.content,
             type: '',
             uid: data.userInfo.uid,
@@ -216,8 +214,7 @@
             replyId: commentId,
           };
         }
-        this.axios.post('http://bbs.viplgw.cn/cn/wap-api/add-fine', data).then(function (res) {
-        // this.axios.post('http://bbs.cc/cn/wap-api/add-fine', data).then(function (res) {
+        this.axios.post(this.$store.state.http_bbs+'/cn/wap-api/add-fine', data).then(function (res) {
           if (res.data.code === 1) {
             // 文章点赞成功
             if (type === 1) {
@@ -247,8 +244,7 @@
           postId : contentId,
           uid: userInfo.uid,
         };
-        this.axios.post('http://bbs.viplgw.cn/cn/wap-api/post-collecte', data).then(function (res) {
-        // this.axios.post('http://bbs.cc/cn/wap-api/post-collecte', data).then(function (res) {
+        this.axios.post(this.$store.state.http_bbs+'/cn/wap-api/post-collecte', data).then(function (res) {
           if (res.data.code === 1) {
             if (data.collecte === 1) {
               _this.toastText = '收藏成功';
