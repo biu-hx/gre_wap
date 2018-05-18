@@ -1,7 +1,7 @@
 <template>
-  <div id="recordMarking" style="height: 100%;">
+  <div id="recordMarking3" style="height: 100%;">
     <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="60px">
-      <x-header class="header" :left-options="{backText: ''}">收藏题目</x-header>
+      <x-header class="header" :left-options="{backText: ''}">做题记录</x-header>
       <tab :line-width="2" active-color="#5a5ee4" :scroll-threshold="4" default-color="#444444" custom-bar-width="70px">
         <tab-item selected @on-item-click="handle(1)">全部题型</tab-item>
         <tab-item @on-item-click="handle(2)">题目来源</tab-item>
@@ -13,12 +13,12 @@
         <div class="topicWrap" v-for="(item,index) in dataItem">
           <div class="flex nameWrap">
             <h1 class="name ellipsis">{{item.section}}{{item.source.name}}-{{item.id}}</h1>
-            <!--<span class="useTime">用时50s</span>-->
+            <span class="useTime">用时{{item.useTime}}s</span>
           </div>
           <div class="topicDe ellipsis-2">{{item.stem}}</div>
           <div class="answer flex">
-            <div v-if="item.user_answer" class="answerItem">
-              <span style="padding-right: 4px">我的答案:</span><strong :class="item.user_answer!=item.answer?'red':'green'">{{item.user_answer}}</strong>
+            <div v-if="item.qanswer" class="answerItem">
+              <span style="padding-right: 4px">我的答案:</span><strong :class="item.qanswer!=item.answer?'red':'green'">{{item.qanswer}}</strong>
             </div>
             <div v-else class="answerItem">
               <span style="padding-right: 4px">我的答案:</span><strong>——</strong>
@@ -50,7 +50,7 @@
     directives: {
       TransferDom
     },
-    name: "recordMarking",
+    name: "recordMarking3",
     data() {
       return {
         tabItem: ['全部题型', '题目来源', '题目难度'],
@@ -101,7 +101,7 @@
             level: _this.level,
             time: _this.time,
           };
-          _this.axios.get('/cn/wap-api/collecte-record', {params: data}).then(function (res) {
+          _this.axios.get('/cn/wap-api/error-record', {params: data}).then(function (res) {
             // 因VUX radio组件限制,需重构json对象为key=>value；
             let test = res.data.categorys;
             let test2 = res.data.sources;
@@ -184,7 +184,7 @@
           level: _this.level,
           time: _this.time,
         };
-        _this.axios.get('/cn/wap-api/collecte-record', {params: data}).then(function (res) {
+        _this.axios.get('/cn/wap-api/error-record', {params: data}).then(function (res) {
           if (res.data.data.length > 0) {
             _this.dataItem = res.data.data;
           } else {
@@ -202,11 +202,11 @@
 </script>
 
 <style scoped>
-  #recordMarking >>> .weui-toast.vux-toast-bottom {
+  #recordMarking3 >>> .weui-toast.vux-toast-bottom {
     bottom: 120px; /*px*/
   }
 
-  #recordMarking >>> .weui-toast_text .weui-toast__content {
+  #recordMarking3 >>> .weui-toast_text .weui-toast__content {
     font-size: 14px; /*no*/
     padding: 12px 6px; /*px*/
   }

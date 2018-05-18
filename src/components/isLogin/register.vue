@@ -1,13 +1,13 @@
 <template>
   <div id="register">
-    <x-header style="background: #99bd36;" :left-options="{backText: ''}">GRE做题</x-header>
+    <x-header style="background: #99bd36;" :left-options="{backText: ''}">注册</x-header>
     <div class="model_wrap">
       <div class="rowName">
-        <input class="rowInt" type="text" placeholder="手机号码/邮箱" v-model="phoneVal">
+        <input class="rowInt" type="text" placeholder="手机号码/邮箱" @blur="regex(phoneVal)" v-model="phoneVal">
       </div>
       <div class="rowName flex">
         <input style="width: 60%;" class="rowInt" type="text" placeholder="请输入验证码" v-model="codeYz">
-        <button class="sendBtn" @click="getCode">验证码</button>
+        <button class="sendBtn" :class="disabled?'sendOver':'sendStart'" :disabled="disabled" @click="getCode">{{codeTxt}}</button>
       </div>
       <div class="rowName">
         <input class="rowInt" type="password" placeholder="请输入密码(支持数字和大小写)" v-model="passwordVal">
@@ -22,92 +22,217 @@
         <router-link tag="span" :to="{name:'login'}">登录</router-link>
       </div>
     </div>
+    <loading :show="loadStatu" style="width: 4rem;" :text="loadText"></loading>
+    <toast v-model="toastStatu" :text="toastText" width="4rem" type="text" :time="1000" position="bottom"></toast>
   </div>
 </template>
 
 <script>
-  import {XHeader} from 'vux'
-  // type:typeNum,//1表示手机注册 2表示邮箱注册
-  //   phoneCode:phoneCode,
-  //   code:code_yz,
-  //   pass:password,
-  //   userName:username,
-  //   source:3//1是gmat 2是托福 3是留学
-  // reg 1(3|4|5|7|8)\d{9}
+  import {XHeader, Toast, Loading} from 'vux'
+
   const phoneReg = /^1[34578]\d{9}$/;//手机号校验正则
+  const passReg = /^[\da-zA-Z]{6,20}$/;//密码校验正则
   const emailReg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,4}$/;//邮箱验证;
   export default {
     name: "register",
     data() {
       return {
-        type: 1,
+        type: '',//1表示手机注册 2表示邮箱注册
         phoneVal: '',//手机号&邮箱
         codeYz: '',//验证码
         passwordVal: '',//密码
         rePasswordVal: '',//确认密码
-        passwordStatu:true,//两次输入是否相等
+        resCode: '',//返回的code
         code: "",    //手机验证码
-        count: 60,    //验证码倒计时
-        codeTxt: "获取验证码",        //验证码按钮文字
+        disabled: false,
+        time: 0,
+        codeTxt: "验证码",        //验证码按钮文字
         loginBtnActive: false,    //登录按钮是否可用
         codeBtnActive: false,    //获取验证码按钮是否可用
+        toastStatu: false,
+        toastText: '',
+        loadStatu: false,
+        loadText: '',
       }
     },
-    components: {XHeader},
-    watch:{
-      phoneVal:{
-        handler:function(curVal,oldVal){
+    components: {XHeader, Toast, Loading},
+    watch: {
+      phoneVal: {
+        handler: function (curVal, oldVal) {
           if (phoneReg.test(curVal)) {
             this.type = 1;
-            console.log("手机");
-          }else {
-            //弹窗提示格式有误
-            console.log('格式有误');
           }
           if (emailReg.test(curVal)) {
             this.type = 2;
-            console.log("邮箱");
-          }else {
-            //弹窗提示格式有误
-            console.log('格式有误');
           }
-
         },
-        deep:true
+        deep: true
       },
 
     },
     methods: {
+      // 验证用户名格式
+      regex(curVal) {
+        if (!phoneReg.test(curVal) && !emailReg.test(curVal)) {
+          //弹窗提示格式有误
+          this.type = '';
+          this.toastText = '手机号/邮箱格式有误';
+          this.toastStatu = true;
+        }
+      },
+      // 获取验证码
+      getCode() {
+        const _this = this;
+        if (_this.type === 1) {
+          let data = {
+            phoneNum: _this.phoneVal,
+            type: _this.type,
+          };
+          _this.axios.post('http://login.gmatonline.cn/cn/wap-api/phone-code', data)
+            .then(function (res) {
+              _this.toastText = res.data.message;
+              _this.toastStatu = true;
+              if (res.data.code === 1) {
+                _this.time = 60;
+                _this.disabled = true;
+                _this.timer();
+                _this.resCode = res.data.phonecode;
+              }
+            })
+        }
+        if (this.type === 2) {
+          let data = {
+            email: _this.phoneVal,
+            type: _this.type,
+          };
+          _this.axios.post('http://login.gmatonline.cn/cn/wap-api/send-mail', data)
+            .then(function (res) {
+              _this.toastText = res.data.message;
+              _this.toastStatu = true;
+              if (res.data.code === 1) {
+                _this.time = 60;
+                _this.disabled = true;
+                _this.timer();
+                _this.resCode = res.data.emailCode;
+              }
+            })
+        }
+      },
+      // 倒计时
+      timer() {
+        if (this.time > 0) {
+          this.time--;
+          this.codeTxt = this.time + "s 重新发送";
+          setTimeout(this.timer, 1000);
+        } else {
+          this.time = 0;
+          this.codeTxt = "验证码";
+          this.disabled = false;
+        }
+      },
+      // 注册
       register() {
+        const _this = this;
         this.$nextTick(function () {
-          const _this = this;
           let data = {
             registerStr: _this.phoneVal,
+            type: _this.type,
             code: _this.codeYz,
             pass: '',
-            type: _this.type,
             source: 22,
-            phoneCode: '',
+            phoneCode: _this.resCode,
           };
-          if(_this.passwordVal!=_this.rePasswordVal){
-            //弹窗提示密码不相等
+          if (!phoneReg.test(_this.phoneVal) && !emailReg.test(_this.phoneVal)) {
+            _this.toastText = '手机号/邮箱格式有误';
+            _this.toastStatu = true;
             return false;
-          }else {
-            data.pass=_this.passwordVal;
           }
-          console.log(data)
-          // this.axios.post('http://login.gmatonline.cn/cn/wap-api/register',data)
-          //   .then(function (res) {
-          //
-          //   })
+          if (!_this.codeYz) {
+            _this.toastText = '请输入验证码';
+            _this.toastStatu = true;
+            return false;
+          }
+          if (!passReg.test(_this.passwordVal)) {
+            _this.toastText = '密码由6-20位数字或字母组成';
+            _this.toastStatu = true;
+            return false;
+          }
+          if (_this.passwordVal != _this.rePasswordVal) {
+            //弹窗提示密码不相等
+            _this.toastText = '请确认密码是否相同';
+            _this.toastStatu = true;
+            return false;
+          } else {
+            data.pass = _this.passwordVal;
+          }
+          _this.axios.post('http://login.gmatonline.cn/cn/wap-api/register', data)
+            .then(function (res) {
+              _this.toastText = res.data.message;
+              _this.toastStatu = true;
+              if (res.data.code === 1) {
+                _this.login(data.registerStr, data.pass)
+              }
+            })
 
         })
       },
-      // 获取验证码
-      getCode(){
-        console.log('ready code')
-      }
+      // 注册成功后直接登录
+      login(userName, userPass) {
+        const _this = this;
+        let data = {
+          userName: userName,
+          userPass: userPass
+        };
+        if (data.userName) {
+          _this.axios.get('http://login.gmatonline.cn/cn/wap-api/check-login', {params: data}).then(function (res) {
+            let str = res.data;
+            let data2 = JSON.parse(str.substr(1, str.length - 2));
+            if (data2.code === 1) {
+              _this.loadStatu = true;
+              _this.uid = data2.uid;
+              let bbsData = {
+                uid: data2.uid,
+                phone: data2.phone,
+                email: data2.email,
+                username: data2.username,
+              };
+              let greData = {
+                uid: data2.uid,
+                phone: data2.phone,
+                email: data2.email,
+                username: data2.username,
+                password: data2.password,
+              };
+              //登录GRE
+              _this.axios.post('/cn/wap-api/login', greData).then(function (res) {
+                if (res.data.code === 1) {
+                  //登录BBS
+                  _this.axios.get(_this.$store.state.http_bbs + '/cn/wap-api/unify-login', {params: bbsData}).then(function (res) {
+                    if (res.data.code === 1) {
+                      localStorage.setItem('isLogin','true');
+                      localStorage.setItem('userInfo',JSON.stringify(data2));
+                      _this.$store.commit('isLogin',true);
+                      _this.$store.commit('userInfo',data2);
+                      _this.$router.push({name: 'index'});
+                      _this.loadStatu = false;
+                    }
+                  });
+                }
+              })
+            } else {
+              _this.toastText = data2.message;
+              _this.toastStatu = true;
+              return false;
+            }
+          })
+        } else {
+          _this.toastText = '账号密码有误';
+          _this.toastStatu = true;
+          return false;
+        }
 
+
+      }
 
     }
   }
@@ -116,6 +241,15 @@
 <style scoped>
   #register {
     height: 100%;
+  }
+
+  #register >>> .weui-toast.vux-toast-bottom {
+    bottom: 140px; /*px*/
+  }
+
+  #register >>> .weui-toast_text .weui-toast__content {
+    font-size: 14px; /*no*/
+    padding: 12px 6px; /*px*/
   }
 
   .flex {
@@ -139,7 +273,7 @@
     background: #f1f1f1;
     padding: 0 16px 0 34px;
     height: 90px;
-    font-size: 28px /*px*/;
+    font-size: 28px; /*px*/
     outline: none;
     border: none;
     border-radius: 4px; /*no*/
@@ -148,12 +282,20 @@
   .sendBtn {
     outline: none;
     border: none;
-    background: #f1c100;
+
     color: #ffffff;
     font-size: 28px; /*px*/
     height: 90px;
     width: 37%;
     border-radius: 4px; /*no*/
+  }
+
+  .sendStart {
+    background: #f1c100;
+  }
+
+  .sendOver {
+    background: #aba5b1;
   }
 
   #regBtn {

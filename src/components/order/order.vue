@@ -47,8 +47,19 @@
         Group,
         Tab,
       },
+      activated(){
+        this.getData();
+      },
       methods:{
+          getData(){
+            this.$nextTick(function () {
+              const _this=this;
+              let data={uid:_this.$store.state.userInfo.uid};
+              _this.axios.get('/cn/wap-api/my-order',{params:data}).then(function (res) {
 
+              })
+            })
+          }
       }
     }
 </script>

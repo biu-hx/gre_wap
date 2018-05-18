@@ -3,42 +3,42 @@
     <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="55px">
       <x-header slot="header" class="header">
         <span class="headerTit">做题结果</span>
-        <x-icon class="backIcon" slot="overwrite-left" type="ios-arrow-left" size="30"></x-icon>
+        <x-icon class="backIcon" @click="reBack" slot="overwrite-left" type="ios-arrow-left" size="30"></x-icon>
       </x-header>
       <div class="content">
         <div class="tm result_1 relative">
           <div class="ani tm resultImg"><img src="/static/images/testResult/result.png" alt=""></div>
-          <div class="topicNmaeWrap tm inm"><span class="tm inm topicNmae">RC-e2hqsj</span></div>
+          <div class="topicNmaeWrap tm inm"><span class="tm inm topicNmae">{{resData.name}}</span></div>
         </div>
-        <div class="tm result_2">正确率<strong>（6/10）</strong></div>
+        <div class="tm result_2">正确率<strong>（{{resData.doCorrect}}/{{resData.totalCount}}）</strong></div>
         <div class="circleWrap tm">
-          <x-circle :percent="80" :stroke-width="8" :trail-width="8" :stroke-color="['#fc9051', '#ff5d27']"
+          <x-circle :percent="resData.corretRate" :stroke-width="8" :trail-width="8" :stroke-color="['#fc9051', '#ff5d27']"
                     trail-color="#d2d2d2">
-            <span class="cir_num">60%</span>
+            <span class="cir_num">{{resData.corretRate}}%</span>
           </x-circle>
         </div>
         <div class="userData">
           <div class="flexWrap grid bg_f">
             <div class="flexItem vux-1px-r">
-              <p class="dataNum">12min</p>
+              <p class="dataNum">{{resData.totalTime}}</p>
               <p>总用时</p>
             </div>
             <div class="flexItem">
-              <p class="dataNum">1min</p>
+              <p class="dataNum">{{resData.averageTime}}</p>
               <p>平均用时</p>
             </div>
           </div>
         </div>
         <ul class="testDe">
-            <li v-for="i in 20">
-              <router-link class="linkBtn" :class=" i>7 ? 'right' : 'error' " to="/testDetails">
-              {{i}}
-              </router-link>
-            </li>
+          <li v-for="(item,index) in resData.questions">
+            <router-link class="linkBtn" :class=" item.correct>0 ? 'right' : 'error' " to="/testDetails">
+              {{index+1}}
+            </router-link>
+          </li>
         </ul>
       </div>
       <tabbar slot="bottom" class="vux-1px-t footer">
-        <tabbar-item class="vux-1px-r">
+        <tabbar-item class="vux-1px-r" @on-item-click="reStart">
           <span class="userExit" slot="label">重新做题</span>
         </tabbar-item>
         <!--未完成显示-->
@@ -59,15 +59,53 @@
     data() {
       return {
         strokeColor: ['#fc9051', '#ff5d27'],
+        resData: {
+          averageTime: '',
+          corretRate: '',
+          doCorrect: '',
+          name: '',
+          questions: [],
+          totalCount: '',
+          totalTime: '',
+        }
       }
     },
     components: {
       XHeader, Tabbar, TabbarItem, ViewBox, XCircle
     },
-    mounted() {
-      console.log(this.strokeColor);
+    activated() {
+      this.getData();
     },
-    methods: {}
+    methods: {
+      // 退出
+      reBack() {
+        this.$router.push({name: 'markingIndex'})
+      },
+      // 初始化数据
+      getData() {
+        this.$nextTick(function () {
+          const _this = this;
+          let data = {
+            uid: _this.$store.state.userInfo.uid,
+            libraryId: _this.$route.query.libraryId,
+          };
+          _this.axios.get('/cn/wap-api/make-result', {params: data}).then(function (res) {
+            _this.resData = res.data;
+          })
+        })
+      },
+      //重新做题
+      reStart() {
+        const _this = this;
+        let data = {
+          uid: _this.$store.state.userInfo.uid,
+          libraryId: _this.$route.query.libraryId,
+        };
+        _this.axios.get('/cn/wap-api/do-again', {params: data}).then(function (res) {
+
+        })
+      }
+    }
   }
 </script>
 
@@ -198,19 +236,29 @@
 
   .testDe {
     display: flex;
-    flex-flow:row wrap;
-    justify-content: flex-start;
+    flex-flow: row wrap;
+    justify-content: space-between;
     padding: 20px 30px;
     text-align: center;
   }
 
+  .testDe li {
+    width: 20%;
+    /*flex: 0 0 20%;*/
+  }
+
+  .testDe:after {
+    content: "";
+    flex: auto;
+  }
+
   .testDe li .linkBtn {
-    width: 62px;/*px*/
-    height: 62px;/*px*/
-    font-size: 36px;/*px*/
+    width: 62px; /*px*/
+    height: 62px; /*px*/
+    font-size: 36px; /*px*/
     color: #f42e2e;
-    margin: 20px 35px;/*px*/
-    line-height: 62px;/*px*/
+    margin: 16px auto; /*px*/
+    line-height: 62px; /*px*/
     border-radius: 6px; /*no*/
     display: block;
   }

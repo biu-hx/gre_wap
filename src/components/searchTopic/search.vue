@@ -5,42 +5,74 @@
       @result-click="resultClick"
       v-model="value" :results="results"
       @on-change="getResult"
-      @on-submit="onSubmit"
       placeholder="请输入题目信息"
       @on-cancel="onCancel">
     </Search>
+    <toast v-model="toastStatu" :text="toastText" width="4rem" type="text" :time="1200" position="bottom"></toast>
+    <!--@on-change="getResult"-->
+    <!--@on-submit="onSubmit"-->
+
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  import {Search} from 'vux'
+  import {Search, Toast} from 'vux'
 
   export default {
     name: "search",
     data() {
       return {
         results: [],
-        value: ''
+        value: '',
+        toastStatu: false,
+        toastText: '',
       }
     },
     components: {
-      Search
+      Search, Toast
     },
     mounted() {
       this.$refs.search.setFocus();
     },
     methods: {
       getResult(val) {
-        console.log('on-change', val);
-        this.results = val ? getResult(this.value) : []
+        const _this = this;
+        let data = {title: val};
+        if(val){
+          _this.axios.get('/cn/wap-api/search-title', {params: data}).then(function (res) {
+            if (res.data.length > 0) {
+              _this.results = getResult(val, res.data);
+            } else {
+              _this.results = [];
+              _this.toastText = '暂无当前数据';
+              _this.toastStatu = true;
+            }
+
+          })
+        }else {
+          return false;
+        }
+
       },
+      //点击结果列表
       resultClick(item) {
         window.alert('you click the result item: ' + JSON.stringify(item))
       },
-      onSubmit() {
-        this.$refs.search.setBlur();
-        console.log('??')
+      // 提交
+      onSubmit(val) {
+        const _this = this;
+        let data = {title: val};
+        _this.$refs.search.setBlur();
+        _this.axios.get('/cn/wap-api/search-title', {params: data}).then(function (res) {
+          if (res.data.length > 0) {
+            _this.results = getResult(val, res.data);
+          } else {
+            _this.results = [];
+          }
+          // _this.results = res.data.length>0 ? getResult(val,res.data) : [];
+        })
       },
+      //取消
       onCancel() {
         this.$router.push({path: '/searchTopic'});
         this.$refs.search.setFocus();
@@ -49,12 +81,14 @@
 
   }
 
-  function getResult(val) {
+  function getResult(val, item) {
     let rs = [];
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < item.length; i++) {
       rs.push({
+        // title: `${item[i].section + item[i].source.name + '-' + item[i].id}`,
         title: `${val}`,
-        desc: `The difficulty for nineteenth-century advocates of the claim th`,
+        // desc: `The difficulty for nineteenth-century advocates of the claim th`,
+        desc: `${item[i].stem}`,
         index: i
       })
     }
@@ -63,6 +97,15 @@
 </script>
 
 <style scoped>
+  #search >>> .weui-toast.vux-toast-bottom {
+    bottom: 120px; /*px*/
+  }
+
+  #search >>> .weui-toast_text .weui-toast__content {
+    font-size: 14px; /*no*/
+    padding: 12px 6px; /*px*/
+  }
+
   #search >>> .weui-search-bar {
     background: #5a5ee4;
   }

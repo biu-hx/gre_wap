@@ -1,56 +1,56 @@
 <template>
-  <div id="recordMarking" style="height: 100%;">
+  <div id="recordMarking2" style="height: 100%;">
     <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="60px">
-      <x-header class="header" :left-options="{backText: ''}">收藏题目</x-header>
-      <tab :line-width="2" active-color="#5a5ee4" :scroll-threshold="4" default-color="#444444" custom-bar-width="70px">
-        <tab-item selected @on-item-click="handle(1)">全部题型</tab-item>
-        <tab-item @on-item-click="handle(2)">题目来源</tab-item>
-        <tab-item @on-item-click="handle(3)">题目难度</tab-item>
-        <tab-item v-if="time" @on-item-click="handle(4)">收藏时间</tab-item>
-      </tab>
-      <!--题目列表-->
-      <div>
-        <div class="topicWrap" v-for="(item,index) in dataItem">
-          <div class="flex nameWrap">
-            <h1 class="name ellipsis">{{item.section}}{{item.source.name}}-{{item.id}}</h1>
-            <!--<span class="useTime">用时50s</span>-->
+    <x-header class="header" :left-options="{backText: ''}">做题记录</x-header>
+    <tab :line-width="2" active-color="#5a5ee4" :scroll-threshold="4" default-color="#444444" custom-bar-width="70px">
+      <tab-item selected @on-item-click="handle(1)">全部题型</tab-item>
+      <tab-item @on-item-click="handle(2)">题目来源</tab-item>
+      <tab-item @on-item-click="handle(3)">题目难度</tab-item>
+      <tab-item v-if="time" @on-item-click="handle(4)">收藏时间</tab-item>
+    </tab>
+    <!--题目列表-->
+    <div>
+      <div class="topicWrap" v-for="(item,index) in dataItem">
+        <div class="flex nameWrap">
+          <h1 class="name ellipsis">{{item.section}}{{item.source.name}}-{{item.id}}</h1>
+          <span class="useTime">用时{{item.useTime}}s</span>
+        </div>
+        <div class="topicDe ellipsis-2">{{item.stem}}</div>
+        <div class="answer flex">
+          <div v-if="item.qanswer" class="answerItem">
+            <span style="padding-right: 4px">我的答案:</span><strong :class="item.qanswer!=item.answer?'red':'green'">{{item.qanswer}}</strong>
           </div>
-          <div class="topicDe ellipsis-2">{{item.stem}}</div>
-          <div class="answer flex">
-            <div v-if="item.user_answer" class="answerItem">
-              <span style="padding-right: 4px">我的答案:</span><strong :class="item.user_answer!=item.answer?'red':'green'">{{item.user_answer}}</strong>
-            </div>
-            <div v-else class="answerItem">
-              <span style="padding-right: 4px">我的答案:</span><strong>——</strong>
-            </div>
-            <div class="answerItem"><span style="padding-right: 4px">正确答案:</span><strong class="green">{{item.answer}}</strong></div>
+          <div v-else class="answerItem">
+            <span style="padding-right: 4px">我的答案:</span><strong>——</strong>
           </div>
+          <div class="answerItem"><span style="padding-right: 4px">正确答案:</span><strong class="green">{{item.answer}}</strong></div>
         </div>
       </div>
-      <!--题目列表 End-->
-      <div v-transfer-dom>
-        <popup class="bg_f" v-model="show" max-height="50%">
-          <group gutter="0">
-            <radio v-show="tabIndex===1" :selected-label-style="{color:'#5a5ee4'}" v-model="option1" :options="options1" @on-change="change"></radio>
-            <radio v-show="tabIndex===2" :selected-label-style="{color:'#5a5ee4'}" v-model="option2" :options="options2" @on-change="change"></radio>
-            <radio v-show="tabIndex===3" :selected-label-style="{color:'#5a5ee4'}" v-model="option3" :options="options3" @on-change="change"></radio>
-            <radio v-show="tabIndex===4" :selected-label-style="{color:'#5a5ee4'}" v-model="option4" :options="options4" @on-change="change"></radio>
-          </group>
-        </popup>
-      </div>
-      <toast v-model="toastStatu" :text="toastText" width="4rem" type="text" :time="1500" position="bottom"></toast>
+    </div>
+    <!--题目列表 End-->
+    <div v-transfer-dom>
+      <popup class="bg_f" v-model="show" max-height="50%">
+        <group gutter="0">
+          <radio v-show="tabIndex===1" :selected-label-style="{color:'#5a5ee4'}" v-model="option1" :options="options1" @on-change="change"></radio>
+          <radio v-show="tabIndex===2" :selected-label-style="{color:'#5a5ee4'}" v-model="option2" :options="options2" @on-change="change"></radio>
+          <radio v-show="tabIndex===3" :selected-label-style="{color:'#5a5ee4'}" v-model="option3" :options="options3" @on-change="change"></radio>
+          <radio v-show="tabIndex===4" :selected-label-style="{color:'#5a5ee4'}" v-model="option4" :options="options4" @on-change="change"></radio>
+        </group>
+      </popup>
+    </div>
+    <toast v-model="toastStatu" :text="toastText" width="4rem" type="text" :time="1500" position="bottom"></toast>
     </view-box>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  import {XHeader, ViewBox, Radio, Tab, TabItem, Group, PopupRadio, TransferDom, Popup, Cell, Toast} from 'vux'
+  import {XHeader,ViewBox, Radio, Tab, TabItem, Group, PopupRadio, TransferDom, Popup, Cell,Toast} from 'vux'
 
   export default {
     directives: {
       TransferDom
     },
-    name: "recordMarking",
+    name: "recordMarking2",
     data() {
       return {
         tabItem: ['全部题型', '题目来源', '题目难度'],
@@ -101,7 +101,7 @@
             level: _this.level,
             time: _this.time,
           };
-          _this.axios.get('/cn/wap-api/collecte-record', {params: data}).then(function (res) {
+          _this.axios.get('/cn/wap-api/make-record', {params: data}).then(function (res) {
             // 因VUX radio组件限制,需重构json对象为key=>value；
             let test = res.data.categorys;
             let test2 = res.data.sources;
@@ -132,11 +132,11 @@
             _this.options2 = initData2;
             _this.options3 = initData3;
             _this.options4 = initData4;
-            if (res.data.data.length > 0) {
+            if(res.data.data.length>0){
               _this.dataItem = res.data.data;
-            } else {
-              _this.toastText = '暂无当前数据';
-              _this.toastStatu = true;
+            }else {
+              _this.toastText='暂无当前数据';
+              _this.toastStatu=true;
             }
             // 取json name属性返回数组；
             // _this.options1= res.data.categorys.map(v => {
@@ -184,12 +184,12 @@
           level: _this.level,
           time: _this.time,
         };
-        _this.axios.get('/cn/wap-api/collecte-record', {params: data}).then(function (res) {
-          if (res.data.data.length > 0) {
+        _this.axios.get('/cn/wap-api/make-record', {params: data}).then(function (res) {
+          if(res.data.data.length>0){
             _this.dataItem = res.data.data;
-          } else {
-            _this.toastText = '暂无当前数据';
-            _this.toastStatu = true;
+          }else {
+            _this.toastText='暂无当前数据';
+            _this.toastStatu=true;
           }
 
         })
@@ -202,19 +202,14 @@
 </script>
 
 <style scoped>
-  #recordMarking >>> .weui-toast.vux-toast-bottom {
+  #recordMarking2 >>> .weui-toast.vux-toast-bottom {
     bottom: 120px; /*px*/
   }
 
-  #recordMarking >>> .weui-toast_text .weui-toast__content {
+  #recordMarking2 >>> .weui-toast_text .weui-toast__content {
     font-size: 14px; /*no*/
     padding: 12px 6px; /*px*/
   }
-
-  .vux-tab .vux-tab-item {
-    font-size: 30px; /*px*/
-  }
-
   .header {
     background: #5a5ee4;
     position: absolute;
@@ -222,6 +217,9 @@
     left: 0;
     width: 100%;
     z-index: 10;
+  }
+  .vux-tab .vux-tab-item {
+    font-size: 30px; /*px*/
   }
 
   .flex {

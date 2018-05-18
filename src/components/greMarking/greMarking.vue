@@ -1,44 +1,30 @@
 <template>
   <div id="greMarking" style="height: 100%;">
-    <x-header style="background: #5a5ee4;" :left-options="{backText: ''}">GRE做题</x-header>
+    <x-header style="background: #5a5ee4;" @on-click-back="reBack" :left-options="{backText: '',preventGoBack:true}">GRE做题</x-header>
     <tab :line-width="2" active-color="#5a5ee4" :scroll-threshold="4" default-color="#444444" custom-bar-width="70px">
-      <tab-item :selected="0==i" :key="i" v-for="(item,i) in tabItem">{{item}}</tab-item>
+      <tab-item :selected="0==i" :key="i" v-for="(item,i) in tabItem" @on-item-click="handler">{{item}}</tab-item>
     </tab>
-    <div style="padding: 25px 40px">
-      <button-tab :height="35">
-        <button-tab-item selected>填空</button-tab-item>
-        <button-tab-item>阅读</button-tab-item>
-        <button-tab-item>数学</button-tab-item>
+    <!--单项显示-->
+    <div style="padding: 20px 40px 0">
+      <!--仅单项显示-->
+      <button-tab v-if="tabType<1" :height="35" style="margin-bottom: 20px">
+        <button-tab-item :selected="0==index" @on-item-click="handleBtn(item.id)" v-for="(item,index) in sectionA" :key="index">{{item.name}}
+        </button-tab-item>
       </button-tab>
     </div>
     <div class="testListWrap">
       <group class="testList" gutter="0">
-        <cell link="/markingIndex">
-          <span slot="title" class="testName">OG & 150真题</span>
-          <span class="testNum">0/200</span>
-        </cell>
-        <cell>
-          <span slot="title" class="testName">Xdf红/绿皮</span>
-          <span class="testNum">0/200</span>
-        </cell>
-        <cell>
-          <span slot="title" class="testName">Magoosh</span>
-          <span class="testNum">0/200</span>
-        </cell>
-        <cell>
-          <span slot="title" class="testName">陈琦36套</span>
-          <span slot="default" class="testNum">0/200</span>
-        </cell>
-        <cell>
-          <span slot="title" class="testName">Princeton</span>
-          <span class="testNum">0/200</span>
-        </cell>
-        <cell>
-          <span slot="title" class="testName">Kaplan</span>
-          <span class="testNum">0/200</span>
+        <!--link="/markingIndex"-->
+        <cell :border-intent="false"
+              :link="{path:'/markingIndex',query: {sourceId:tabType<1?item.id:'',sectionId:sectionId,knowId:tabType>0?item.id:''}}"
+              v-for="(item,index) in resDataItem" :key="index">
+          <span slot="title" class="testName">{{item.name}}</span>
+          <span class="testNum">{{item.totalDoNum}}/{{item.totalNum}}</span>
         </cell>
       </group>
     </div>
+
+    <!--考点显示-->
 
   </div>
 </template>
@@ -64,8 +50,11 @@
       return {
         tabItem: ['题目单项', '填空考点', '阅读考点', '数学考点'],
         show: false,
-        option1: '全部题型',
-        options1: ['全部题型', 'OG', 'Xdf红/绿皮', 'Magoosh', '陈琦36套', '陈虎平36套', ' 猴哥难题', 'Princeton', 'Kaplan'],
+        tabIndex: 1,//tab选中的项
+        sectionA: '',
+        tabType: 0,//0单项还是1考点
+        sectionId: 1,//链接需要的sectionId
+        resDataItem: '',
       }
     },
     components: {
@@ -77,6 +66,60 @@
       ButtonTab,
       ButtonTabItem
 
+    },
+    activated() {
+      this.getData();
+    },
+    methods: {
+      reBack(){
+        this.$router.push({name:'index'})
+      },
+      getData() {
+        this.$nextTick(function () {
+          // uid sectionId（单项id 默认为1-填空） type（0-题目单项 1-填空、填空、数学考点 默认为0）
+          const _this = this;
+          let data = {
+            uid: _this.$store.state.userInfo.uid,
+            sectionId: _this.sectionId,//二级导航 ID(后台返回的导航);
+            type: _this.tabType,//1是考点，0是单项；默认是0；
+          };
+          _this.axios.get('/cn/wap-api/make', {params: data}).then(function (res) {
+            _this.sectionA = res.data.sections;
+            _this.resDataItem = res.data.comes;
+          })
+        })
+      },
+      handler(index) {
+        this.tabType = index > 0 ? 1 : 0;
+        this.tabIndex = index + 1;
+        if (this.tabType > 0) {
+          // 参数为考点的id（依次为1,2,3）
+          this.sectionId = index;
+          this.upData(index);
+        } else {
+          // 参数为btnTab的id
+          this.upData(this.sectionId);
+        }
+
+      },
+      handleBtn(id) {
+        this.sectionId = id;
+        this.upData(id);
+      },
+      upData(sectionId) {
+        this.$nextTick(function () {
+          const _this = this;
+          let data = {
+            uid: _this.$store.state.userInfo.uid,
+            sectionId: sectionId,//二级导航 ID(后台返回的导航);
+            type: _this.tabType,//1是考点，0是单项；默认是0；
+          };
+          _this.axios.get('/cn/wap-api/make', {params: data}).then(function (res) {
+            _this.sectionA = res.data.sections;
+            _this.resDataItem = res.data.comes;
+          })
+        })
+      },
     }
   }
 </script>
@@ -130,14 +173,16 @@
   }
 
   .testList {
-    overflow: hidden;
+    /*max-height: 12.4rem;*/
+    max-height: 850px;
+    overflow-y: auto;
     border-radius: 12px; /*px*/
     border: 1px solid #d9d9d9; /*no*/
   }
 
   .testName {
-    font-size: 34px; /*px*/
-    color: #5a5ee4;
+    font-size: 32px; /*px*/
+    color: #333333;
   }
 
   .testNum {
@@ -146,10 +191,11 @@
   }
 
   .weui-cell {
-    padding: 18PX 15PX;
+    padding: 30px;
   }
-  .weui-cell:before{
+
+  .weui-cell:before {
     border-color: #d9d9d9;
-    border-top-width: 2px;/*no*/
+    border-top-width: 2px; /*no*/
   }
 </style>
