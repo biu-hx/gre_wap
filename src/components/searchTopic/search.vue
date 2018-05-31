@@ -8,6 +8,7 @@
       placeholder="请输入题目信息"
       @on-cancel="onCancel">
     </Search>
+    <loading :show="show" text=""></loading>
     <toast v-model="toastStatu" :text="toastText" width="4rem" type="text" :time="1200" position="bottom"></toast>
     <!--@on-change="getResult"-->
     <!--@on-submit="onSubmit"-->
@@ -16,12 +17,13 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import {Search, Toast} from 'vux'
+  import {Search, Toast,Loading} from 'vux'
 
   export default {
     name: "search",
     data() {
       return {
+        show:false,
         results: [],
         value: '',
         toastStatu: false,
@@ -29,7 +31,7 @@
       }
     },
     components: {
-      Search, Toast
+      Search, Toast,Loading
     },
     mounted() {
       this.$refs.search.setFocus();
@@ -38,6 +40,7 @@
       getResult(val) {
         const _this = this;
         let data = {title: val};
+        _this.show=true;
         if(val){
           _this.axios.get('/cn/wap-api/search-title', {params: data}).then(function (res) {
             if (res.data.length > 0) {
@@ -47,16 +50,20 @@
               _this.toastText = '暂无当前数据';
               _this.toastStatu = true;
             }
+            _this.$nextTick(function () {
+              _this.show=false;
+            })
 
           })
         }else {
+          _this.show=false;
           return false;
         }
 
       },
       //点击结果列表
       resultClick(item) {
-        window.alert('you click the result item: ' + JSON.stringify(item))
+        this.$router.push({name:'questionDetails',query:{type:1,qid:item.id}})
       },
       // 提交
       onSubmit(val) {
@@ -69,6 +76,9 @@
           } else {
             _this.results = [];
           }
+          _this.$nextTick(function () {
+            _this.show=false;
+          })
           // _this.results = res.data.length>0 ? getResult(val,res.data) : [];
         })
       },
@@ -86,6 +96,7 @@
     for (let i = 0; i < item.length; i++) {
       rs.push({
         // title: `${item[i].section + item[i].source.name + '-' + item[i].id}`,
+        id:`${item[i].id}`,
         title: `${val}`,
         // desc: `The difficulty for nineteenth-century advocates of the claim th`,
         desc: `${item[i].stem}`,

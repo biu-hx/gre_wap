@@ -6,40 +6,43 @@
         <div slot="overwrite-left" @click="reBack"><img class="exitIcon" src="/static/images/testDetails/exit.png" alt=""></div>
         <div slot="right"><img class="scIcon" src="/static/images/testDetails/sc_icon.png" alt=""></div>
       </x-header>
-      <!--题干-->
-      <div class="topicData" v-html="childData.question.details"></div>
-      <div class="quantWrap">
-        <div v-if="childData.quantityA">
-          <div class="tm"><span class="quantTit">Quantity A</span></div>
-          <div> The product of the integers from -11 to 11,  inclusive</div>
+
+      <!--阅读-->
+      <div v-if="childData.question.readArticle" class="readStemWrap">
+        <!--v-html="childData.question.readArticle"-->
+        <div v-if="typeId===7" class="readStem" :class="{'ellipsis-5':!showAll}">
+          <span v-for="(item,index) in childData.question.readStems" :class="curSpan!=index?'':'active'"
+                @click="selected($event,index)">{{item}}</span>
         </div>
-        <div v-if="childData.quantityB">
+        <div v-else class="readStem" :class="{'ellipsis-5':!showAll}" v-html="childData.question.readArticle"></div>
+        <div class="showAllBtn" @click="showAll=!showAll">{{btnText}}</div>
+      </div>
+      <!--题干-->
+      <div v-if="childData.question.details" class="topicData" v-html="childData.question.details"></div>
+      <!--quantity-->
+      <div class="quantWrap">
+        <div v-if="childData.question.quantityA" style="padding-bottom: 15px">
+          <div class="tm"><span class="quantTit">Quantity A</span></div>
+          <div v-html="childData.question.quantityA"></div>
+        </div>
+        <div v-if="childData.question.quantityB">
           <div class="tm"><span class="quantTit">Quantity B</span></div>
-          <div> The product of the integers from -11 to 11,  inclusive</div>
+          <div v-html="childData.question.quantityB"></div>
         </div>
       </div>
-      <!--题型组件-->
+      <!--选项题型组件-->
       <blank_1 :is="curTemp" v-if="flag" ref="child" v-bind:testData="childData,typeId" v-on:getChildAnswer="upAnswer"></blank_1>
-      <!--单双空选项-->
-      <!--<ul v-if="parseInt(resData.question.typeId)===3" class="blankWrap">-->
-      <!--<li class="actived">Blank(i)</li>-->
-      <!--<li>Blank(ii)</li>-->
-      <!--<li>Blank(iii)</li>-->
-      <!--</ul>-->
-      <!--选项-->
-      <!--<div>-->
-      <!--<checklist class="checkWrap" :max="maxVal" label-position="right" required :options="resData.question.options"-->
-      <!--@on-change="change"></checklist>-->
-      <!--</div>-->
+
       <!--底部-->
       <tabbar slot="bottom" class="vux-1px-t footer">
-        <tabbar-item class="vux-1px-r" @on-item-click="toggle(show)">
-          <span class="userExit" slot="label">查看解析</span>
-        </tabbar-item>
+        <!--<tabbar-item class="vux-1px-r" @on-item-click="toggle(show)">-->
+          <!--<span class="userExit" slot="label">查看解析</span>-->
+        <!--</tabbar-item>-->
         <tabbar-item @on-item-click="nextQuestion(resData.question.id)">
           <span class="userExit" slot="label">下一题</span>
         </tabbar-item>
       </tabbar>
+      <toast v-model="toastStatu" :text="toastText" width="4rem" type="text" :time="1200" position="bottom"></toast>
     </view-box>
     <!--解析-->
     <div v-transfer-dom>
@@ -67,7 +70,8 @@
   import blank_1 from "./child/blank_1"
   import blank_2 from "./child/blank_2"
   import blank_3 from "./child/blank_3"
-  import {XHeader, Tabbar, TabbarItem, ViewBox, Group, Checklist, Popup, TransferDom} from 'vux'
+  import blank_int from "./child/blank_int"
+  import {XHeader, Tabbar, TabbarItem, ViewBox, Group, Checklist, Popup, TransferDom,Toast} from 'vux'
 
   export default {
     directives: {
@@ -76,6 +80,7 @@
     name: "markingDetails",
     data() {
       return {
+        showAll: false,
         show: false,
         resData: {
           currentSite: '',
@@ -89,23 +94,38 @@
             optionsA: [],
             optionsB: [],
             optionsC: [],
-            quantityA:'',
-            quantityB:'',
+            quantityA: '',
+            quantityB: '',
+            readStem: '',
           },
+          pageType:0,
           maxVal: null,
+          trueAnswer:[],
+          userAnswer:[],
         },
         flag: false,
+        curSpan: '',
         typeId: '',//当前题型
         userAnswer: [],
         useTime: 0,//答题用时
         timeObj: '',//计时器
         curTemp: 'blank_1',//当前组件名
-        commonList: ['defiance', 'documentation', 'maintenance', 'theory', 'domination'],
+        toastStatu: false,
+        toastText: '',
       }
     },
     components: {
-      XHeader, Tabbar, TabbarItem, ViewBox, Group, Checklist, Popup, TransferDom,
-      blank_1, blank_2, blank_3
+      XHeader, Tabbar, TabbarItem, ViewBox, Group, Checklist, Popup, TransferDom,Toast,
+      blank_1, blank_2, blank_3, blank_int
+    },
+    computed: {
+      btnText() {
+        if (this.showAll === false) {  //对文字进行处理（枚举）
+          return "展开全部"
+        } else {
+          return "收起"
+        }
+      }
     },
     activated() {
       this.getData();
@@ -137,7 +157,7 @@
               if (resType === 1 || resType === 5 || resType === 8) {
                 _this.curTemp = 'blank_1';
                 _this.childData.maxVal = 1;
-                _this.childData.question.optionsA=resetArry(res.data.question.optionsA);
+                _this.childData.question.optionsA = resetArry(res.data.question.optionsA);
               } else if (resType === 2) {
                 _this.curTemp = 'blank_2';
                 _this.childData.maxVal = 1;
@@ -148,17 +168,19 @@
                 _this.curTemp = 'blank_1';
                 _this.childData.maxVal = 2;
                 _this.childData.question.optionsA = resetArry(res.data.question.optionsA);
+              } else if (resType === 10) {
+                _this.curTemp = 'blank_int';
               } else if (resType === 6 || resType === 9) {
                 _this.curTemp = 'blank_1';
-                _this.childData.maxVal = null;
+                _this.childData.maxVal = 10;
                 _this.childData.question.optionsA = resetArry(res.data.question.optionsA);
               } else {
                 _this.childData.maxVal = 1;
               }
 
             }
-            if(res.data.code===0){
-              _this.$router.push({name:'markingIndex'})
+            if (res.data.code === 0) {
+              _this.$router.push({name: 'testResult', query: {libraryId: _this.$route.query.libraryId}})
             }
           })
         })
@@ -167,7 +189,12 @@
       upAnswer(data) {
         this.userAnswer = data;
       },
-
+      // 句子点选
+      selected(e, index) {
+        let dom = e.target;
+        this.curSpan = index;
+        this.userAnswer=[dom.innerHTML];
+      },
       //下一题
       nextQuestion(id) {
         const _this = this;
@@ -175,18 +202,18 @@
           uid: _this.$store.state.userInfo.uid,
           questionId: id,
           libraryId: _this.$route.query.libraryId,
-          answer: _this.userAnswer.join(" "),
+          answer: _this.userAnswer.join(","),
           useTime: _this.useTime,
         };
-        clearInterval(_this.timeObj);
         // 判断题型、是否选择答案
         if (_this.userAnswer.includes('')) {
-          console.log('无答案');
+          _this.toastText='请选择答案';
+          _this.toastStatu=true;
           return false;
         } else {
-          console.log(data)
+          clearInterval(_this.timeObj);//清除计时器
           _this.axios.post('/cn/wap-api/make-topic', data).then(function (res) {
-            if(res.data.code===1){
+            if (res.data.code === 1) {
               location.reload();
             }
           });
@@ -215,6 +242,22 @@
 </script>
 
 <style scoped>
+  #markingDetails >>> .weui-toast.vux-toast-bottom {
+    bottom: 120px; /*px*/
+  }
+
+  #markingDetails >>> .weui-toast_text .weui-toast__content {
+    font-size: 14px; /*no*/
+    padding: 12px 6px; /*px*/
+  }
+  #markingDetails >>> .weui-cells {
+    font-size: 32px; /*px*/
+  }
+
+  #markingDetails >>> .weui-cell__bd {
+    font-size: 32px; /*px*/
+  }
+
   .header {
     width: 100%;
     position: absolute;
@@ -245,7 +288,7 @@
   }
 
   .headerTit {
-    font-size: 34px; /*px*/
+    font-size: 32px; /*px*/
     color: #888888;
   }
 
@@ -254,20 +297,61 @@
     color: #5a5ee4;
   }
 
-  .topicData {
+  .readStemWrap {
+    padding: 26px 20px 30px;
+    border-bottom: 16px solid #cccccc;
+  }
+
+  .readStem {
     color: #333333;
-    font-size: 34px; /*px*/
-    line-height: 60px; /*px*/
+    box-sizing: border-box;
+    font-size: 32px; /*px*/
+    line-height: 56px; /*px*/
+  }
+
+  .readStem span.active {
+    background: #5a5ee4!important;
+    color: #ffffff!important;
+  }
+
+  .readStem >>> p, .readStem >>> span {
+    color: #333333 !important;
+    background: none !important;
+    font-size: 32px !important; /*px*/
+    line-height: 56px !important; /*px*/
+  }
+
+  .showAllBtn {
+    padding-top: 18px;
+    font-size: 32px; /*px*/
+    color: #5a5ee4;
+    text-align: center;
+  }
+
+  .topicData {
+    color: #1b1a1a;
+    font-size: 32px; /*px*/
+    line-height: 56px; /*px*/
     padding: 26px 20px 30px;
   }
-  .quantWrap{
-    padding: 0 20px;
-    font-size: 32px;/*px*/
+
+  .topicData >>> p, .topicData >>> span {
+    color: #333333 !important;
+    background: none !important;
+    font-size: 32px !important; /*px*/
+    line-height: 56px !important; /*px*/
+  }
+
+  .quantWrap {
+    padding: 20px 20px;
+    font-size: 32px; /*px*/
     color: #333333;
   }
-  .quantTit{
+
+  .quantTit {
     display: inline-block;
     vertical-align: top;
+    padding-bottom: 4px;
     border-bottom: 1px solid #333333;
     margin-bottom: 12px;
   }
@@ -284,7 +368,7 @@
   }
 
   .answer {
-    padding-top: 34px;
+    padding-top: 32px;
     color: #333333;
     font-size: 36px; /*px*/
   }

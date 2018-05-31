@@ -12,7 +12,6 @@ import axios from 'axios';
 import VueAxios from 'vue-axios'
 import 'lib-flexible'
 import 'es6-promise/auto'
-
 require('vue2-animate/dist/vue2-animate.min.css');
 
 // 时间格式化
@@ -22,7 +21,6 @@ Vue.use(require('vue-moment'));
 Vue.use(VueAwesomeSwiper);
 /*vux 组件*/
 import {ViewBox, Tab, TabItem, Swiper, SwiperItem} from 'vux'
-
 Vue.use(ViewBox);
 Vue.use(Swiper);
 Vue.use(SwiperItem);
@@ -35,8 +33,8 @@ Vue.use(VueAxios, axios);
 Vue.config.productionTip = false;
 // axios 配置
 axios.defaults.timeout = 5000;
-// axios.defaults.baseURL = 'http://www.greonline.cn';
-axios.defaults.baseURL = 'http://gre.cc';
+axios.defaults.baseURL = 'http://www.greonline.cn';
+// axios.defaults.baseURL = 'http://gre.cc';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 axios.defaults.transformRequest = [function (data) {
   return qs.stringify(data)

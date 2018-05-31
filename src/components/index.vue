@@ -32,7 +32,7 @@
         </router-link>
       </li>
       <li>
-        <router-link to="/courseDetails">
+        <router-link to="/courseIndex">
           <img src="/static/images/index/pageIcon_3.png" alt="">
           <p class="barName">GRE课程</p>
         </router-link>
@@ -71,7 +71,7 @@
           <span>雷哥GRE精品课程</span>
         </div>
       </div>
-      <a class="link" href="#">MORE</a>
+      <router-link class="link" to="/courseIndex">MORE</router-link>
     </div>
     <ul class="courseList bg_f">
       <li v-for="item in resData.activity">
@@ -124,17 +124,18 @@
     <div class="bg_f copyRight">
       2018 greonline.cn All Rights Reserved 京ICP备16000003号-3<br>京公网安备11010802017681 免责声明
     </div>
-
+<loading :show="show" text=""></loading>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  import {Tab, TabItem, ViewBox} from 'vux'
+  import {Tab, TabItem, ViewBox,Loading} from 'vux'
 
   export default {
     name: "index",
     data() {
       return {
+        show:false,
         resData: '',
         resBkdata: '',
         bannerItem: '',
@@ -162,16 +163,21 @@
     },
     components: {
       Tab,
+      Loading,
       TabItem,
       ViewBox
     },
     mounted() {
       const _this = this;
+      _this.show=true;
       this.axios.get('/cn/wap-api/index')
         .then(function (response) {
           _this.resData = response.data;
           _this.bannerItem = response.data.carousel;
           _this.resBkdata = response.data.oneweek;
+          _this.$nextTick(function () {
+            _this.show=false;
+          })
         })
     },
     methods: {
@@ -203,6 +209,10 @@
 <style scoped>
   #index {
     background: #eeeeee;
+  }
+  #index >>> .vux-loading-no-text .weui-toast {
+    top: 50%;
+    margin-top: -49px; /*no*/
   }
 
   .bg_f {

@@ -112,7 +112,7 @@
     methods: {
       // 获取帖子数据
       getData(id) {
-        let uid = this.$store.state.userInfo.uid;
+        let uid = this.$store.state.userInfo.uid||'';
         this.$nextTick(function () {
           const _this = this;
           this.axios.get(this.$store.state.http_bbs+"/cn/wap-api/problem-detail?id=" + id + "&uid=" + uid)

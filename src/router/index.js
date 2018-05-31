@@ -148,6 +148,11 @@ const blank_3 = (resolve) => {
     resolve(module)
   })
 };
+const blank_int = (resolve) => {
+  import('../components/testDetails/child/blank_int').then((module) => {
+    resolve(module)
+  })
+};
 //结果详情
 const testResult = (resolve) => {
   import('../components/testResult/testResult').then((module) => {
@@ -157,6 +162,12 @@ const testResult = (resolve) => {
 //结果页题目详情
 const testDetails = (resolve) => {
   import('../components/testDetails/testDetails').then((module) => {
+    resolve(module)
+  })
+};
+//题目详情
+const questionDetails = (resolve) => {
+  import('../components/testDetails/questionDetails').then((module) => {
     resolve(module)
   })
 };
@@ -174,6 +185,12 @@ const search = (resolve) => {
 //备考
 const bkIndex = (resolve) => {
   import('../components/bk/bkIndex').then((module) => {
+    resolve(module)
+  })
+};
+//发帖
+const sendTz = (resolve) => {
+  import('../components/bk/sendTz').then((module) => {
     resolve(module)
   })
 };
@@ -199,8 +216,34 @@ const bkDownload = (resolve) => {
   })
 };
 // 课程
+const courseIndex = (resolve) => {
+  import('../components/course/courseIndex').then((module) => {
+    resolve(module)
+  })
+};
 const courseDetails = (resolve) => {
   import('../components/course/courseDetails').then((module) => {
+    resolve(module)
+  })
+};
+//子组件
+const course_item_1 = (resolve) => {
+  import('../components/course/child/item_1').then((module) => {
+    resolve(module)
+  })
+};
+const course_item_2 = (resolve) => {
+  import('../components/course/child/item_2').then((module) => {
+    resolve(module)
+  })
+};
+const course_item_3 = (resolve) => {
+  import('../components/course/child/item_3').then((module) => {
+    resolve(module)
+  })
+};
+const course_item_4 = (resolve) => {
+  import('../components/course/child/item_4').then((module) => {
     resolve(module)
   })
 };
@@ -216,6 +259,17 @@ const confirmOrder = (resolve) => {
 };
 const articleDetails = (resolve) => {
   import('../components/articleDetails/articleDetails').then((module) => {
+    resolve(module)
+  })
+};
+// 地址
+const addressWrap = (resolve) => {
+  import('../components/address/address').then((module) => {
+    resolve(module)
+  })
+};
+const adressEditor = (resolve) => {
+  import('../components/address/address_editor').then((module) => {
     resolve(module)
   })
 };
@@ -328,6 +382,7 @@ export default new Router({
         {path: '/blank_1',name:'blank_1' ,component: blank_1},
         {path: '/blank_2',name:'blank_2' ,component: blank_2},
         {path: '/blank_3',name:'blank_3' ,component: blank_3},
+        {path: '/blank_int',name:'blank_int' ,component: blank_int},
       ]
     },
     {
@@ -339,6 +394,23 @@ export default new Router({
       path: '/testDetails',
       name: 'testDetails',
       component: testDetails,
+      child:[
+        {path: '/blank_1',name:'blank_1' ,component: blank_1},
+        {path: '/blank_2',name:'blank_2' ,component: blank_2},
+        {path: '/blank_3',name:'blank_3' ,component: blank_3},
+        {path: '/blank_int',name:'blank_int' ,component: blank_int},
+      ]
+    },
+    {
+      path: '/questionDetails',
+      name: 'questionDetails',
+      component: questionDetails,
+      child:[
+        {path: '/blank_1',name:'blank_1' ,component: blank_1},
+        {path: '/blank_2',name:'blank_2' ,component: blank_2},
+        {path: '/blank_3',name:'blank_3' ,component: blank_3},
+        {path: '/blank_int',name:'blank_int' ,component: blank_int},
+      ]
     },
     {
       path: '/searchTopic',
@@ -362,14 +434,30 @@ export default new Router({
 
     },
     {
+      path: '/sendTz',
+      name: 'sendTz',
+      component: sendTz,
+    },
+    {
       path: '/bkDownload',
       name: 'bkDownload',
       component: bkDownload,
     },
     {
+      path: '/courseIndex',
+      name: 'courseIndex',
+      component: courseIndex,
+    },
+    {
       path: '/courseDetails',
       name: 'courseDetails',
       component: courseDetails,
+      child:[
+        {path:'/course_item_1',component:course_item_1},
+        {path:'/course_item_2',component:course_item_2},
+        {path:'/course_item_3',component:course_item_3},
+        {path:'/course_item_4',component:course_item_4},
+      ]
     },
     {
       path: '/payAway',
@@ -385,6 +473,16 @@ export default new Router({
       path: '/articleDetails',
       name: 'articleDetails',
       component: articleDetails,
+    },
+    {
+      path: '/addressWrap',
+      name: 'addressWrap',
+      component: addressWrap,
+    },
+    {
+      path: '/adressEditor',
+      name: 'adressEditor',
+      component: adressEditor,
     },
   ]
 })

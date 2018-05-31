@@ -16,6 +16,7 @@
   .tabContent_1 {
     padding: 30px 0;
     font-size: 28px; /*px*/
+    overflow-x: auto;
     /*color: #444444;*/
   }
 </style>

@@ -42,13 +42,14 @@
           <span class="userExit" slot="label">登录</span>
         </tabbar-item>
       </tabbar>
+      <loading :show="show" text=""></loading>
       <toast v-model="toastStatu" :text="toastText" width="4rem" type="text" :time="1000" position="bottom"></toast>
     </view-box>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  import {Group, Cell, Toast, Tabbar, TabbarItem, ViewBox} from 'vux'
+  import {Group, Cell, Toast, Tabbar, TabbarItem, ViewBox, Loading} from 'vux'
 
   export default {
     name: "userCenter",
@@ -71,6 +72,7 @@
           questionTotal: '0',
           correctRate: '0',
         },
+        show: false,
         toastStatu: false,
         toastText: '',
       }
@@ -79,6 +81,7 @@
       Group,
       Cell,
       Toast,
+      Loading,
       ViewBox,
       Tabbar,
       TabbarItem
@@ -88,18 +91,20 @@
     },
     methods: {
       getData() {
-        this.$nextTick(function () {
-          const _this = this;
-          //已登录&未登录状态
-          if (this.$store.state.isLogin) {
-            _this.axios.get('/cn/wap-api/personal', {params: {uid: this.$store.state.userInfo.uid}}).then(function (res) {
-              _this.resData = res.data;
+        const _this = this;
+        //已登录&未登录状态
+        if (this.$store.state.isLogin) {
+          _this.show = true;
+          _this.axios.get('/cn/wap-api/personal', {params: {uid: this.$store.state.userInfo.uid}}).then(function (res) {
+            _this.resData = res.data;
+            _this.$nextTick(function () {
+              _this.show = false;
             })
-          } else {
-            console.log('未登录')
-          }
+          })
+        } else {
+          console.log('未登录')
+        }
 
-        })
 
       },
       cellClick(url) {

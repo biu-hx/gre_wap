@@ -6,9 +6,11 @@
       <li :class="curTab===2?'actived':''" @click="tab(2)">Blank(ii)</li>
     </ul>
     <!--选项-->
-    <checklist v-show="curTab===1" class="checkWrap" :max="testData.maxVal" label-position="right" required :options="testData.question.optionsA"
+    <checklist v-show="curTab===1" class="checkWrap" :pageType="testData.pageType" :trueAnswer="testData.trueAnswer" :userAnswer="testData.userAnswer"
+               :max="testData.maxVal" label-position="right" required :options="testData.question.optionsA"
                @on-change="change"></checklist>
-    <checklist v-show="curTab===2" class="checkWrap" :max="testData.maxVal" label-position="right" required :options="testData.question.optionsB"
+    <checklist v-show="curTab===2" class="checkWrap" :pageType="testData.pageType" :trueAnswer="testData.trueAnswer" :userAnswer="testData.userAnswer"
+               :max="testData.maxVal" label-position="right" required :options="testData.question.optionsB"
                @on-change="change"></checklist>
   </div>
 </template>
@@ -29,13 +31,13 @@
       //选中事件
       change(val, label) {
         let checkText = label.join("");
-          if (this.curTab === 1) {
-            this.answerArry[0] = checkText;
-          }
-          if (this.curTab === 2) {
-            this.answerArry[1] = checkText;
-          }
-          this.$emit('getChildAnswer', this.answerArry);
+        if (this.curTab === 1) {
+          this.answerArry[0] = checkText;
+        }
+        if (this.curTab === 2) {
+          this.answerArry[1] = checkText;
+        }
+        this.$emit('getChildAnswer', this.answerArry);
       },
       tab(index) {
         this.curTab = index;

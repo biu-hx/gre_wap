@@ -12,8 +12,8 @@ const store = new Vuex.Store({
     userInfo: JSON.parse(localCooki.userInfo || 'false'),
     http_gre: 'http://www.greonline.cn',
     http_open: 'http://open.viplgw.cn',
-    // http_bbs: 'http://bbs.viplgw.cn',
-    http_bbs: 'http://bbs.cc',
+    http_bbs: 'http://bbs.viplgw.cn',
+    // http_bbs: 'http://bbs.cc',
   },
   // 事件触发
   actions: {

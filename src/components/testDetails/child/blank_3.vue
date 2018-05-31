@@ -7,11 +7,11 @@
       <li :class="curTab===3?'actived':''" @click="tab(3)">Blank(iii)</li>
     </ul>
     <!--选项-->
-    <checklist v-show="curTab===1" class="checkWrap" :max="testData.maxVal" label-position="right" required :options="testData.question.optionsA"
+    <checklist v-show="curTab===1" class="checkWrap" :pageType="testData.pageType" :trueAnswer="testData.trueAnswer" :userAnswer="testData.userAnswer" :max="testData.maxVal" label-position="right" required :options="testData.question.optionsA"
                @on-change="change"></checklist>
-    <checklist v-show="curTab===2" class="checkWrap" :max="testData.maxVal" label-position="right" required :options="testData.question.optionsB"
+    <checklist v-show="curTab===2" class="checkWrap" :pageType="testData.pageType" :trueAnswer="testData.trueAnswer" :userAnswer="testData.userAnswer" :max="testData.maxVal" label-position="right" required :options="testData.question.optionsB"
                @on-change="change"></checklist>
-    <checklist v-show="curTab===3" class="checkWrap" :max="testData.maxVal" label-position="right" required :options="testData.question.optionsC"
+    <checklist v-show="curTab===3" class="checkWrap" :pageType="testData.pageType" :trueAnswer="testData.trueAnswer" :userAnswer="testData.userAnswer" :max="testData.maxVal" label-position="right" required :options="testData.question.optionsC"
                @on-change="change"></checklist>
   </div>
 </template>

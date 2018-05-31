@@ -19,8 +19,7 @@
         </div>
       </div>
       <ul class="list">
-        <router-link tag="li" :to="{name:item.state===0?'markingDetails':'testResult',query: {libraryId : item.id}}"
-                     v-for="(item,index) in resData.questions" :key="index">
+        <li @click="routerLink(item.id,state)" v-for="(item,index) in resData.questions" :key="index">
           <div class="listLeft">
             <h1 class="topicName ellipsis">{{item.name}}</h1>
             <div class="flexWrap time">
@@ -34,19 +33,24 @@
             <div v-else-if="item.state===0&&item.doNum>0" class="handle continue tm">继续做题</div>
             <div v-else class="handle start tm">开始做题</div>
           </div>
-        </router-link>
+        </li>
       </ul>
     </view-box>
+    <loading :show="show2" text=""></loading>
+    <confirm theme="ios" v-model="show" :title="title" @on-confirm="onConfirm"></confirm>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  import {XHeader, Group, Cell, ViewBox} from 'vux'
+  import {XHeader, Group, Cell, Loading, ViewBox, Confirm} from 'vux'
 
   export default {
     name: "markingIndex",
     data() {
       return {
+        title: '当前未登录，是否前往登录？',
+        show: false,
+        show2: true,
         resData: {
           correctRate: '',
           doOver: '',
@@ -59,30 +63,50 @@
       XHeader,
       Cell,
       Group,
+      Confirm,
+      Loading,
       ViewBox
     },
     activated() {
       this.getData();
     },
     methods: {
-      reBack(){
-        this.$router.push({name:'greMarking'})
+      reBack() {
+        this.$router.push({name: 'greMarking'})
       },
       getData() {
-        this.$nextTick(function () {
-          const _this = this;
-          let data = {
-            uid: _this.$store.state.userInfo.uid,
-            sourceId: _this.$route.query.sourceId,
-            sectionId: _this.$route.query.sectionId,
-            knowId: _this.$route.query.knowId,
-          };
-          _this.axios.get('/cn/wap-api/make-source', {params: data}).then(function (res) {
-            _this.resData = res.data;
+        const _this = this;
+        _this.show2 = true;
+        let data = {
+          uid: _this.$store.state.userInfo.uid,
+          sourceId: _this.$route.query.sourceId,
+          sectionId: _this.$route.query.sectionId,
+          knowId: _this.$route.query.knowId,
+        };
+        _this.axios.get('/cn/wap-api/make-source', {params: data}).then(function (res) {
+          _this.resData = res.data;
+          _this.$nextTick(function () {
+            _this.show2 = false;
           })
         })
 
-      }
+
+      },
+      routerLink(libId, state) {
+        let isLogin = this.$store.state.isLogin;
+        if (isLogin) {
+          if(state===0){
+            this.$router.push({name: 'markingDetails', query: {libraryId: libId}})
+          }else {
+            this.$router.push({name: 'testResult', query: {libraryId: libId}})
+          }
+        } else {
+          this.show = true;
+        }
+      },
+      onConfirm() {
+        this.$router.push({name: 'login'})
+      },
     }
   }
 </script>
@@ -91,6 +115,27 @@
   #markingIndex {
     height: 100%;
     background: #f3f3f3;
+  }
+
+  #markingIndex >>> .weui-dialog__bd {
+    display: none;
+  }
+
+  #markingIndex >>> .weui-dialog__btn_primary {
+    color: #5a5ee4;
+  }
+
+  #markingIndex >>> .weui-dialog__btn {
+    font-size: 28px; /*px*/
+  }
+
+  #markingIndex >>> .weui-dialog__title {
+    font-size: 32px; /*px*/
+  }
+
+  #markingIndex >>> .vux-loading-no-text .weui-toast {
+    top: 50%;
+    margin-top: -49px; /*no*/
   }
 
   .header {

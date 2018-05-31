@@ -1,5 +1,5 @@
 <template>
-  <div id="recordMarking" style="height: 100%;">
+  <div id="myLeid" style="height: 100%;">
     <x-header style="background: #5a5ee4;" :left-options="{backText: ''}">我的雷豆</x-header>
     <div class="userLed flex tm">
       <div class="ledItem">
@@ -33,7 +33,7 @@
       <!--</tbody>-->
       <!--</table>-->
     </div>
-
+  <loading :show="show" text=""></loading>
   </div>
 </template>
 
@@ -41,12 +41,13 @@
   import ld_1 from './child/ld_1'
   import ld_2 from './child/ld_2'
   import ld_3 from './child/ld_3'
-  import {XHeader, Tab, TabItem, Group} from 'vux'
+  import {XHeader, Tab, TabItem, Loading} from 'vux'
 
   export default {
     name: "recordMarking",
     data() {
       return {
+        show:false,
         currentTab: 'ld_1',
         tabItem: ['雷豆明细', '收入雷豆', '支出雷豆', ''],
         resData: {
@@ -76,27 +77,30 @@
       ld_1,
       ld_2,
       ld_3,
+      Tab,
       XHeader,
       TabItem,
-      Tab
+      Loading,
     },
     activated() {
       this.getData();
     },
     methods: {
       getData() {
-        this.$nextTick(function () {
           const _this = this;
+          _this.show=true;
           //已登录&未登录状态
           if (this.$store.state.isLogin) {
-            _this.axios.post('/cn/wap-api/leidou  ', {uid: this.$store.state.userInfo.uid}).then(function (res) {
+            _this.axios.post('/cn/wap-api/leidou', {uid: this.$store.state.userInfo.uid}).then(function (res) {
               _this.resData = res.data;
+              _this.$nextTick(function () {
+                _this.show=false;
+              })
             })
           } else {
             console.log('未登录')
           }
 
-        })
       },
       handler(index) {
         this.currentTab = index;
@@ -106,6 +110,10 @@
 </script>
 
 <style scoped>
+  #myLeid >>> .vux-loading-no-text .weui-toast {
+    top: 50%;
+    margin-top: -49px; /*no*/
+  }
   .test {
     padding: 20px;
   }

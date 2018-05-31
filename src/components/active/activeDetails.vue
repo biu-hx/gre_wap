@@ -42,26 +42,32 @@
         </button>
       </div>
     </view-box>
-
+    <loading :show="show" text=""></loading>
   </div>
 </template>
 <script>
   import item_1 from './child/item_1'
   import item_2 from './child/item_2'
-  import {Tab, TabItem, ViewBox} from 'vux'
+  import {Tab, TabItem, ViewBox,Loading} from 'vux'
 
   export default {
     name: "activeDetails",
     data() {
       return {
+        show: false,
         tabItem: ['课程介绍', '授课名师'],
         currentTab: 'item_1',
         id: '',
-        resData: '',
+        resData: {
+          parent:{title:''},
+          data:{
+            data:{}
+          }
+        },
       }
     },
     components: {
-      Tab, TabItem, ViewBox, item_1, item_2
+      Tab, TabItem, ViewBox, item_1, item_2,Loading
     },
     activated() {
       this.id = this.$route.query.id;
@@ -69,13 +75,15 @@
     },
     methods: {
       getData(id) {
-        this.$nextTick(function () {
-          const _this = this;
-          this.axios.get("/cn/wap-api/activity-detail?contentid=" + id)
-            .then(function (res) {
-              _this.resData = res.data;
+        const _this = this;
+        _this.show = true;
+        this.axios.get("/cn/wap-api/activity-detail?contentid=" + id)
+          .then(function (res) {
+            _this.resData = res.data;
+            _this.$nextTick(function () {
+              _this.show = false;
             })
-        })
+          })
       },
       handler(index) {
         this.currentTab = index;
@@ -89,6 +97,11 @@
   #activeDetails {
     height: 100%;
     background: #eeeeee;
+  }
+
+  #activeDetails >>> .vux-loading-no-text .weui-toast {
+    top: 50%;
+    margin-top: -49px; /*no*/
   }
 
   .dataWrap {

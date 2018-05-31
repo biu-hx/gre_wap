@@ -10,8 +10,8 @@
     <tbody class="tm">
     <tr v-for="(item,index) in ldData.income">
       <td class="tl">{{item.behavior}}</td>
-      <td>-{{item.integral}}</td>
-      <td class="tr">{{item.createTime | moment('YYYY-MM-DD')}}</td>
+      <td>+{{item.integral}}</td>
+      <td class="tr">{{parseInt(item.createTime) | moment('YYYY-MM-DD')}}</td>
     </tr>
     </tbody>
   </table>

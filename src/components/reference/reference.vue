@@ -3,7 +3,7 @@
     <div class="iconWap">
       <ul class="pageTo bg_f">
         <li v-for="item in navs">
-          <img v-bind:src="item.navimg" alt="">
+          <img :src="item.navimg" alt="">
           <p class="barName">{{item.navtext}}</p>
         </li>
       </ul>
@@ -14,28 +14,30 @@
     <ul class="articleList bg_f">
       <li v-for="(item,index) in resBkdata">
         <router-link :to="{path:'/articleDetails',query: {id: item.id}}">
-        <div class="artContiner">
-          <div class="artLeft">
-            <p class="ellipsis-2 artTit">{{item.title}}</p>
-            <p class="artTime">{{item.createTime}}</p>
+          <div class="artContiner">
+            <div class="artLeft">
+              <p class="ellipsis-2 artTit">{{item.title}}</p>
+              <p class="artTime">{{item.createTime}}</p>
+            </div>
+            <div class="artRight">
+              <img :src="$store.state.http_gre+item.image" alt="">
+            </div>
           </div>
-          <div class="artRight">
-            <img :src="$store.state.http_gre+item.image" alt="">
-          </div>
-        </div>
         </router-link>
       </li>
     </ul>
+    <loading :show="show" text=""></loading>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  import {Tab, TabItem, ViewBox} from 'vux'
+  import {Tab, TabItem, ViewBox, Loading} from 'vux'
 
   export default {
     name: "reference",
     data() {
       return {
+        show: true,
         navs: [
           {navimg: '/static/images/reference/bk_1.png', navtext: 'GREvsGMAT'},
           {navimg: '/static/images/reference/bk_2.png', navtext: '考试地点'},
@@ -47,26 +49,31 @@
           {navimg: '/static/images/reference/bk_8.png', navtext: 'GRE入门'},
           {navimg: '/static/images/reference/bk_9.png', navtext: '考试介绍'},
         ],
-        resData:'',
+        resData: '',
         resBkdata: '',
         tabItem: ['热门', '词汇', '阅读', '填空', '数学', '写作']
       }
     },
     components: {
       Tab,
+      Loading,
       TabItem,
       ViewBox
     },
-    mounted(){
+    mounted() {
       const _this = this;
+      _this.show = true;
       this.axios.get('/cn/wap-api/beikao')
         .then(function (response) {
           _this.resData = response.data;
           _this.bannerItem = response.data.carousel;
           _this.resBkdata = response.data.oneweek;
+          _this.$nextTick(function () {
+            _this.show = false;
+          })
         })
     },
-    methods:{
+    methods: {
       handler(index) {
         if (index + 1 == 1) {
           this.resBkdata = this.resData.oneweek
@@ -92,6 +99,11 @@
 </script>
 
 <style scoped>
+  #reference >>> .vux-loading-no-text .weui-toast {
+    top: 50%;
+    margin-top: -49px; /*no*/
+  }
+
   .iconWap {
     box-sizing: border-box;
     padding: 28px 20px;
@@ -134,8 +146,9 @@
   .vux-tab .vux-tab-item {
     font-size: 28px; /*px*/
   }
+
   .articleList {
-    padding:0 20px;
+    padding: 0 20px;
   }
 
   .articleList li {

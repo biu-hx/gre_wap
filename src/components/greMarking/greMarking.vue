@@ -23,7 +23,7 @@
         </cell>
       </group>
     </div>
-
+    <loading :show="show2" text=""></loading>
     <!--考点显示-->
 
   </div>
@@ -32,14 +32,11 @@
 <script type="text/ecmascript-6">
   import {
     XHeader,
-    Radio,
     Tab,
     TabItem,
     Group,
-    PopupRadio,
-    TransferDom,
-    Popup,
     Cell,
+    Loading,
     ButtonTab,
     ButtonTabItem
   } from 'vux'
@@ -48,6 +45,7 @@
     name: "greMarking",
     data() {
       return {
+        show2: true,
         tabItem: ['题目单项', '填空考点', '阅读考点', '数学考点'],
         show: false,
         tabIndex: 1,//tab选中的项
@@ -61,6 +59,7 @@
       XHeader,
       Tab,
       Cell,
+      Loading,
       Group,
       TabItem,
       ButtonTab,
@@ -86,10 +85,12 @@
           _this.axios.get('/cn/wap-api/make', {params: data}).then(function (res) {
             _this.sectionA = res.data.sections;
             _this.resDataItem = res.data.comes;
+            _this.show2=false;
           })
         })
       },
       handler(index) {
+        this.show2=true;
         this.tabType = index > 0 ? 1 : 0;
         this.tabIndex = index + 1;
         if (this.tabType > 0) {
@@ -103,6 +104,7 @@
 
       },
       handleBtn(id) {
+        this.show2=true;
         this.sectionId = id;
         this.upData(id);
       },
@@ -117,6 +119,7 @@
           _this.axios.get('/cn/wap-api/make', {params: data}).then(function (res) {
             _this.sectionA = res.data.sections;
             _this.resDataItem = res.data.comes;
+            _this.show2=false;
           })
         })
       },
@@ -128,7 +131,10 @@
   #greMarking {
     background: #f3f3f3;
   }
-
+  #greMarking >>> .vux-loading-no-text .weui-toast {
+    top: 50%;
+    margin-top: -49px; /*no*/
+  }
   .vux-tab .vux-tab-item {
     font-size: 30px; /*px*/
   }
@@ -174,7 +180,7 @@
 
   .testList {
     /*max-height: 12.4rem;*/
-    max-height: 850px;
+    max-height: 740px;
     overflow-y: auto;
     border-radius: 12px; /*px*/
     border: 1px solid #d9d9d9; /*no*/

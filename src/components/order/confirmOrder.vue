@@ -7,48 +7,54 @@
           <div class="shipWrap vux-1px-b">
             <div class="shippingTit">
               <span class="titText">收货人信息</span>
-              <button class="edBtn">编辑</button>
+              <button class="edBtn">
+                <router-link tag="span" :to="{name:'adressEditor',query:{id:$route.query.id}}">编辑</router-link>
+              </button>
             </div>
             <div class="infoDe">(请填写真实姓名+联系方式，方便助教老师联系您正常上 课及后期服务)</div>
             <div class="userInfo">
               <div class="infoRow">
                 <span class="row_left">收<strong>货</strong>人：</span>
-                <span class="row_right">请填写收货人</span>
+                <!--<span class="row_right">请填写收货人</span>-->
+                <span class="row_right" :class="{'black':address.length>0}">{{name}}</span>
               </div>
               <div class="infoRow">
                 <span class="row_left">联系电话：</span>
-                <span class="row_right">请填写联系电话</span>
+                <!--<span class="row_right">请填写联系电话</span>-->
+                <span class="row_right" :class="{'black':address.length>0}">{{phone}}</span>
               </div>
               <div class="infoRow">
                 <span class="row_left">收货地址：</span>
-                <span class="row_right">请填写收货地址</span>
+                <!--<span class="row_right">请填写收货地址</span>-->
+                <span class="row_right" :class="{'black':address.length>0}">{{addressText}}</span>
               </div>
             </div>
           </div>
           <div class="courseInfo">
             <div class="courseWrap flex">
-              <div class="courseImg"><img src="/static/images/index/artImg.png" alt=""></div>
+              <div class="courseImg"><img :src="$store.state.http_gre+courseData.image" alt=""></div>
               <div class="courseData">
-                <h1 class="courseName ellipsis-2">雷哥GRE全程经典强化班</h1>
+                <h1 class="courseName ellipsis-2">{{courseData.title}}</h1>
                 <div class="courseNum flex">
-                  <span class="price">￥600元</span>
+                  <span class="price">￥{{courseData.price}}元</span>
                   <span class="num">x 1</span>
                 </div>
               </div>
             </div>
             <div class="buyNum flex">
               <span class="buyNum_tit">购买数量</span>
-              <inline-x-number style="display:block;" :min="1" width="60px"></inline-x-number>
+              <x-number style="padding: 0;" v-model="changeValue" :min="1"></x-number>
             </div>
             <div class="leidWrap vux-1px-t vux-1px-b">
-              <checklist class="leidRow" label-position="left" :options="leid" @on-change="change"></checklist>
+              <checklist class="leidRow" :pageType="0" :trueAnswer="[]" v-model="leidChecked" :userAnswer="[]" label-position="left" :options="leid"
+                         @on-change="change"></checklist>
               <div class="flex leidRow">
                 <span>雷豆总数</span>
-                <span>9555枚</span>
+                <span>{{leidNum}}枚</span>
               </div>
               <div class="leidRow leid_dq tr">
-                <span>可抵扣0元</span>
-                <input type="text" disabled placeholder="最多9555" value="">
+                <span>可抵扣{{leidNum*0.01}}元</span>
+                <input type="number" :placeholder="'最多'+leidNum" @change="counst(intLeid)" v-model="intLeid">
               </div>
             </div>
 
@@ -57,15 +63,15 @@
             <h1 class="billTit">结算</h1>
             <div class="billRow">
               <span class="billLeft">订单价格</span>
-              <span class="billRight">￥8000</span>
+              <span class="billRight">￥{{courseData.price*changeValue}}</span>
             </div>
             <div class="billRow">
               <span class="billLeft">已抵扣</span>
-              <span class="billRight">￥0</span>
+              <span class="billRight">￥{{intLeid/100}}</span>
             </div>
             <div class="billRow">
               <span class="billLeft">需支付</span>
-              <span class="billRight">￥8000</span>
+              <span class="billRight">￥{{courseData.price*changeValue-intLeid/100}}</span>
             </div>
 
           </div>
@@ -75,33 +81,148 @@
       <div class="bottom flex vux-1px-t">
         <div class="bottomItem payPrice">
           <span>应付</span>
-          <span>￥8000</span>
+          <span>￥{{courseData.price*changeValue-intLeid*0.01}}</span>
         </div>
         <div class="bottomItem" style="height: 100%">
-          <button class="payBtn">
-            <router-link to="/payAway">立即支付</router-link>
-          </button>
-
+          <button class="payBtn" @click="pay">立即支付</button>
         </div>
 
       </div>
     </view-box>
+    <loading :show="show2" text=""></loading>
+    <toast v-model="toastStatu" :text="toastText" width="4rem" type="text" :time="1200" position="bottom"></toast>
   </div>
 </template>
 
 <script>
-  import {XHeader, ViewBox, Radio, Group, Cell, InlineXNumber, Checklist} from 'vux'
+  import {XHeader, ViewBox, Radio, Group, Cell, XNumber, Checklist, Loading, Toast} from 'vux'
 
   export default {
     name: "confirmOrder",
     data() {
       return {
-        leid: ['是否使用雷豆抵扣']
+        show2: true,
+        changeValue: 1,
+        pageType: 1,
+        address: [],
+        courseData: {
+          title: '',
+          images: '',
+          price: '',
+        },
+        intLeid: '',//用户输入
+        counstLd: '',//用户输入
+        leidNum: '',//雷豆总数
+        leidChecked: ['0'],
+        leid: [{key: 0, value: '是否使用雷豆抵扣'}],
+        toastStatu: false,
+        toastText: '',
       }
     },
     components: {
-      XHeader, Radio, Group, ViewBox, InlineXNumber, Cell, Checklist
+      XHeader, Radio, Group, ViewBox, Cell, Checklist, XNumber, Loading, Toast
     },
+    activated() {
+      this.getData(this.$route.query.id);
+    },
+    watch: {
+      leidNum(val, oldVal) {
+        if (val) {
+          this.intLeid = val;
+        } else {
+          this.intLeid = '';
+        }
+      }
+
+    },
+    computed: {
+      name() {
+        let num = this.$route.query.num || 0;
+        return this.address.length > 0 ? this.address[num].name : '请填写收货人';
+      },
+      phone() {
+        let num = this.$route.query.num || 0;
+        return this.address.length > 0 ? this.address[num].phone : '请填写联系电话';
+      },
+      addressText() {
+        let num = this.$route.query.num || 0;
+        return this.address.length > 0 ? this.address[num].province + this.address[num].city + this.address[num].area + this.address[num].address : '请填写收货地址';
+      }
+    },
+    methods: {
+      getData(id) {
+        this.$nextTick(function () {
+          const _this = this;
+          let data = {uid: this.$store.state.userInfo.uid};
+          // _this.axios.all()
+          _this.axios.all([
+            _this.axios.get('http://order.gmatonline.cn/pay/wap-api/get-consignee', {params: data}),
+            _this.axios.get("/cn/wap-api/course-detail?contentid=" + id),
+            _this.axios.post('/cn/wap-api/leidou  ', data),
+          ]).then(_this.axios.spread(function (resA, resB, resC) {
+            _this.address = resA.data;
+            _this.courseData = resB.data.data;
+            _this.leidNum = resC.data.integral;
+            _this.show2 = false;
+          }));
+
+        })
+      },
+      counst(val) {
+        this.intLeid = 0 < val < this.leidNum && parseInt(val) ? parseInt(val) : this.leidNum;
+      },
+      change(val) {
+        if (parseInt(val[0]) === 0) {
+          this.intLeid = this.leidNum;
+          // console.log(val,this.intLeid)
+        } else {
+          this.intLeid = '';
+        }
+
+      },
+      pay() {
+        const _this = this;
+        let uid = _this.$store.state.userInfo.uid;
+        let userName = _this.$store.state.userInfo.username;
+        let data = {
+          uid: uid,
+          id: _this.courseData.id,
+          num: _this.changeValue,
+        };
+        let data2 = {
+          consignee: _this.address[this.$route.query.num || 0].id,//地址ID；
+          type: 0,
+          payType: 1,
+          integral: _this.intLeid,
+          orderData: '',
+          uid: uid
+        };
+        if (_this.address.length > 0) {
+          _this.axios.post('cn/wap-api/buy-now', data).then(function (res) {
+            if (res.data.code === 1) {
+              data2.orderData = res.data.data;
+              _this.axios.get('http://order.viplgw.cn/pay/wap-api/sub-order', {params: data2}).then(function (res) {
+                if (res.data.code === 1) {
+                  let payUrl = "http://order.gmatonline.cn/pay/order/pay?orderId=" + res.data.orderId + "&server=wap"
+                    + "&uid=" + uid + "&username=" + userName + "";
+                  window.open(payUrl);
+                } else {
+                  _this.toastStatu = true;
+                  _this.toastText = res.data.message;
+                }
+
+              })
+            }
+
+          })
+        } else {
+          _this.toastStatu = true;
+          _this.toastText = '请添加收货人信息';
+          return false;
+        }
+
+      }
+    }
 
   }
 </script>
@@ -110,6 +231,20 @@
   #confirmOrder {
     height: 100%;
     background: #f3f3f3;
+  }
+
+  #confirmOrder >>> .vux-loading-no-text .weui-toast {
+    top: 50%;
+    margin-top: -49px; /*no*/
+  }
+
+  #confirmOrder >>> .weui-toast.vux-toast-bottom {
+    bottom: 140px; /*px*/
+  }
+
+  #confirmOrder >>> .weui-toast_text .weui-toast__content {
+    font-size: 14px; /*no*/
+    padding: 12px 6px; /*px*/
   }
 
   .header {
@@ -185,12 +320,17 @@
   }
 
   .row_left strong {
+    font-weight: normal;
     padding: 0 14px; /*px*/
   }
 
   .row_right {
     flex: 1;
     /*color: #888888;*/
+  }
+
+  .row_right.black {
+    color: #1e1e1e;
   }
 
   .flex {
@@ -258,6 +398,18 @@
     color: #353535;
     border-radius: 4px; /*no*/
     padding: 6px 12px; /*px*/
+  }
+
+  #confirmOrder >>> .weui-cells_checkbox .weui-check:checked + .vux-checklist-icon-checked:before {
+    color: #5a5ee4 !important;
+  }
+
+  .buyNum >>> .vux-number-selector:active {
+    background: #5a5ee4;
+  }
+
+  .buyNum >>> .vux-number-selector:active svg {
+    fill: #ffffff;
   }
 
   .buyNum >>> .vux-number-selector-sub svg {

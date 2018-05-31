@@ -12,7 +12,7 @@
         </div>
         <div class="tm result_2">正确率<strong>（{{resData.doCorrect}}/{{resData.totalCount}}）</strong></div>
         <div class="circleWrap tm">
-          <x-circle :percent="resData.corretRate" :stroke-width="8" :trail-width="8" :stroke-color="['#fc9051', '#ff5d27']"
+          <x-circle :percent="resData.corretRate||0" :stroke-width="8" :trail-width="8" :stroke-color="['#fc9051', '#ff5d27']"
                     trail-color="#d2d2d2">
             <span class="cir_num">{{resData.corretRate}}%</span>
           </x-circle>
@@ -31,33 +31,38 @@
         </div>
         <ul class="testDe">
           <li v-for="(item,index) in resData.questions">
-            <router-link class="linkBtn" :class=" item.correct>0 ? 'right' : 'error' " to="/testDetails">
+            <!--<router-link class="linkBtn"  :class=" item.correct>0 ? 'right' : 'error' " to="/testDetails">-->
+            <router-link class="linkBtn" :class="item.isDo>0?item.correct>0?'right':'error':'noDo'" :to="{name:'testDetails',query: {libraryId:item.libId,questionId:item.questionId,curIndex:index}}">
               {{index+1}}
             </router-link>
           </li>
         </ul>
       </div>
-      <tabbar slot="bottom" class="vux-1px-t footer">
-        <tabbar-item class="vux-1px-r" @on-item-click="reStart">
+      <tabbar slot="bottom" class="footer">
+        <tabbar-item v-if="resData.doNum>0" @on-item-click="reStart" :class="resData.doNum!=resData.totalCount?'vux-1px-r':''">
           <span class="userExit" slot="label">重新做题</span>
         </tabbar-item>
         <!--未完成显示-->
-        <tabbar-item>
+        <tabbar-item v-if="resData.doNum>0" @on-item-click="continueTest">
           <span class="userExit" slot="label">继续做题</span>
+        </tabbar-item>
+        <tabbar-item v-if="resData.doNum===0" @on-item-click="continueTest">
+          <span class="userExit" slot="label">开始做题</span>
         </tabbar-item>
       </tabbar>
     </view-box>
-
+    <loading :show="show2" text=""></loading>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  import {XHeader, Tabbar, TabbarItem, ViewBox, XCircle} from 'vux'
+  import {XHeader, Tabbar, TabbarItem, ViewBox, XCircle,Loading} from 'vux'
 
   export default {
     name: "testResult",
     data() {
       return {
+        show2:true,
         strokeColor: ['#fc9051', '#ff5d27'],
         resData: {
           averageTime: '',
@@ -67,11 +72,12 @@
           questions: [],
           totalCount: '',
           totalTime: '',
+          doNum: '',
         }
       }
     },
     components: {
-      XHeader, Tabbar, TabbarItem, ViewBox, XCircle
+      XHeader, Tabbar, TabbarItem, ViewBox, XCircle,Loading,
     },
     activated() {
       this.getData();
@@ -91,6 +97,7 @@
           };
           _this.axios.get('/cn/wap-api/make-result', {params: data}).then(function (res) {
             _this.resData = res.data;
+            _this.show2=false;
           })
         })
       },
@@ -101,15 +108,22 @@
           uid: _this.$store.state.userInfo.uid,
           libraryId: _this.$route.query.libraryId,
         };
-        _this.axios.get('/cn/wap-api/do-again', {params: data}).then(function (res) {
-
+        _this.axios.post('/cn/wap-api/do-again', data).then(function (res) {
+          _this.$router.push({name: 'markingDetails', query: {libraryId: _this.$route.query.libraryId}})
         })
+      },
+      continueTest() {
+        this.$router.push({name: 'markingDetails', query: {libraryId: this.$route.query.libraryId}})
       }
     }
   }
 </script>
 
 <style scoped>
+  #testResult >>> .vux-loading-no-text .weui-toast {
+    top: 50%;
+    margin-top: -49px; /*no*/
+  }
   .header {
     width: 100%;
     position: absolute;
@@ -256,7 +270,7 @@
     width: 62px; /*px*/
     height: 62px; /*px*/
     font-size: 36px; /*px*/
-    color: #f42e2e;
+    /*color: #f42e2e;*/
     margin: 16px auto; /*px*/
     line-height: 62px; /*px*/
     border-radius: 6px; /*no*/
@@ -271,6 +285,12 @@
   .testDe li .linkBtn.right {
     color: #1a8109;
     border: 1px solid #1a8109; /*no*/
+
+  }
+
+  .testDe li .linkBtn.noDo {
+    color: #888888;
+    border: 1px solid #888888; /*no*/
 
   }
 

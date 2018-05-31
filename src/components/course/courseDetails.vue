@@ -35,43 +35,11 @@
           </div>
         </div>
         <tab :line-width="2" active-color="#5a5ee4" :scroll-threshold="6" default-color="#444444">
-          <tab-item :selected="0==i" :key="i" v-for="(item,i) in tabItem">{{item}}</tab-item>
+          <tab-item :selected="0==i" :key="i" v-for="(item,i) in tabItem" @on-item-click="handler('item_'+(i+1))">{{item}}</tab-item>
         </tab>
 
         <div class="tab_content_wrap">
-          <div class="tabContent_1">
-            一、适用人群
-            1、有一定英语基础，GRE小白，刚刚开始接触GRE
-            2、初次备考，希望从零开始系统全面学习GRE核心
-            考点，GRE考察内容，GRE正确逻辑思维；
-            3、备考时间不足，希望在雷哥GRE名师指点下通过
-            精准、高效复习一次拿下GRE高分；
-            4．学习自觉性不高，希望通过雷哥GRE一对一学管
-            老师监督、高效完成学习任务，快速出分。
-          </div>
-          <div style="display: none;" class="tabContent_2">
-            <div class="contentList" v-for="i in 2">
-              Sira，雷哥GRE专家讲师 主讲：填空、阅读知名院校
-              英语专业毕业，曾获得实战GRE和TOEFL考试高分，
-              英语基础扎实，多次获得全国创新英语大赛奖项。参
-              加多次国际志愿者教学，西班牙项目交流活动。擅长
-              以最精辟幽默的语言来展现真实生动的课堂，用严密
-              的逻辑带领学生分析文章的篇章结构和论点，锻炼英
-              语阅读能力。
-            </div>
-          </div>
-          <div style="display: none;" class="tabContent_4">
-            <div v-for="i in 6" class="replyItem">
-              <div class="userHead"><img src="/static/images/default.png" alt=""></div>
-              <div class="replyRight">
-                <div class="replyTime">
-                  <span class="nickName">用户名 {{i}}</span>
-                  <span>2018.2.22</span>
-                </div>
-                <div class="replyText">申请美国研究生到底选择GRE还是GMAT呢？ 这是很多学员比较困惑的问题。</div>
-              </div>
-            </div>
-          </div>
+          <item_1 :is="currentTab" v-bind:itemData="resData" keep-alive></item_1>
         </div>
       </div>
       <div class="bottom bg_f">
@@ -88,30 +56,44 @@
           </div>
         </div>
         <button class="bottomRight bottomItem">
-          <router-link to="/confirmOrder">立即购买</router-link>
+          <router-link :to="{name: $store.state.userInfo.uid?'confirmOrder':'login',query:{id:id}}">立即购买</router-link>
         </button>
       </div>
     </view-box>
-
+    <loading :show="show2" text=""></loading>
   </div>
 </template>
 
 <script>
-  import {Tab, TabItem, ViewBox} from 'vux'
+  import item_1 from './child/item_1'
+  import item_2 from './child/item_2'
+  import item_3 from './child/item_3'
+  import item_4 from './child/item_4'
+  import {Tab, TabItem, ViewBox, Loading} from 'vux'
 
   export default {
     name: "courseDetails",
     data() {
       return {
-        tabItem: ['课程介绍', '授课名师', '学习资料', '用户评价(9)'],
+        show2: true,
+        tabItem: ['课程介绍', '授课名师', '学习资料', '用户评价'],
         id: '',
-        resData: '',
+        currentTab: 'item_1',
+        resData: {
+          data: {
+            image: '',
+          },
+          tag: [],
+          parent:{
+            description:'',
+          }
+        },
         countVal: '',
         countText: '',
       }
     },
     components: {
-      Tab, TabItem, ViewBox
+      Tab, TabItem, ViewBox, Loading, item_1, item_2, item_3, item_4
     },
     activated() {
       this.id = this.$route.query.id;
@@ -122,15 +104,19 @@
     },
     methods: {
       getData(id) {
-        this.$nextTick(function () {
-          const _this = this;
-          this.axios.get("/cn/wap-api/course-detail?contentid=" + id)
-            .then(function (res) {
-              _this.resData = res.data;
-              _this.countVal = res.data.data.article;
+        const _this = this;
+        _this.show2=true;
+        this.axios.get("/cn/wap-api/course-detail?contentid=" + id)
+          .then(function (res) {
+            _this.resData = res.data;
+            _this.countVal = res.data.data.article;
+            _this.$nextTick(function () {
+              _this.show2=false;
             })
-
-        })
+          })
+      },
+      handler(index) {
+        this.currentTab = index;
       },
       countTime(time) {
         let mouth = parseInt(time / 60 / 60 / 24 / 30);
@@ -158,6 +144,10 @@
   #courseDetails {
     height: 100%;
     background: #eeeeee;
+  }
+  #courseDetails >>> .vux-loading-no-text .weui-toast {
+    top: 50%;
+    margin-top: -49px; /*no*/
   }
 
   .dataWrap {
@@ -295,83 +285,9 @@
     font-size: 30px; /*px*/
   }
 
-  .tabContent_1 {
-    padding: 30px 0;
-    font-size: 28px; /*px*/
-    color: #444444;
-  }
-
   .tab_content_wrap {
     background: #ffffff;
     padding: 0 24px;
-  }
-
-  .contentList {
-    padding: 25px 0;
-    border-bottom: 1px solid #b5b5b5; /*no*/
-  }
-
-  .tabContent_2 {
-    color: #444444;
-    font-size: 30px; /*px*/
-    line-height: 48px; /*px*/
-  }
-
-  .tabContent_2 .contentList:last-child {
-    border-bottom: none;
-  }
-
-  .userHead {
-    width: 70px; /*px*/
-    height: 70px; /*px*/
-    overflow: hidden;
-    border-radius: 50%;
-  }
-
-  .userHead img {
-    width: 100%;
-    border-radius: 50%;
-  }
-
-  .tabContent_4 .replyItem:last-child {
-    border-bottom: none;
-  }
-
-  .replyItem {
-    display: flex;
-    padding: 25px 0;
-    flex-flow: row nowrap;
-    justify-content: space-between;
-    align-items: flex-start;
-    border-bottom: 1px solid #cfcfcf; /*no*/
-  }
-
-  .replyRight {
-    flex: 1;
-    box-sizing: border-box;
-    padding-left: 15px; /*px*/
-  }
-
-  .replyTime {
-    font-size: 28px; /*px*/
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: space-between;
-    align-items: center;
-    color: #888888;
-    margin-bottom: 10px; /*px*/
-  }
-
-  .nickName {
-    font-size: 28px; /*px*/
-    color: #0b0b0b;
-    padding-right: 30px; /*px*/
-  }
-
-  .replyText {
-    color: #333333;
-    font-size: 30px; /*px*/
-    line-height: 50px; /*px*/
   }
 
   .bottom {

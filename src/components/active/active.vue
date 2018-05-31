@@ -1,4 +1,3 @@
-import index from "../../router";
 <template>
   <div id="active">
     <div class="adImg"><img :src="$store.state.http_gre+adImg" alt=""></div>
@@ -32,17 +31,18 @@ import index from "../../router";
         </router-link>
       </li>
     </ul>
+    <loading :show="show" text=""></loading>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  import {Tab, TabItem, ViewBox} from 'vux'
+  import {Tab, TabItem, ViewBox, Loading} from 'vux'
 
-  const list2 = () => ['全部活动', '公开课', '刷题团', '单词团'];
   export default {
     name: "active",
     data() {
       return {
+        show: false,
         adImg: '',
         resData: '',
         curData: '',
@@ -52,17 +52,21 @@ import index from "../../router";
     },
     components: {
       Tab,
+      Loading,
       TabItem,
       ViewBox
     },
     mounted() {
       const _this = this;
-      this.axios.get('/cn/wap-api/activity')
-        .then(function (response) {
-          _this.adImg = response.data.carousel[0].image;
-          _this.resData = response.data.data;
-          _this.curData = response.data.data.all;
+      _this.show = true;
+      this.axios.get('/cn/wap-api/activity').then(function (response) {
+        _this.adImg = response.data.carousel[0].image;
+        _this.resData = response.data.data;
+        _this.curData = response.data.data.all;
+        _this.$nextTick(function () {
+          _this.show = false;
         })
+      })
     },
     methods: {
       handler(index) {
@@ -83,7 +87,12 @@ import index from "../../router";
   }
 </script>
 
-<style lang="less" scoped>
+<style scoped>
+  #active >>> .vux-loading-no-text .weui-toast {
+    top: 50%;
+    margin-top: -49px; /*no*/
+  }
+
   .courseLIst {
     padding: 0 20px;
   }

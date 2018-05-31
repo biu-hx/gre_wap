@@ -57,11 +57,12 @@
         <div class="relative scBtn" :class="collectStatu === 0 ?'scNo':'scYes'" @click="collect(id)"></div>
       </div>
     </view-box>
+    <loading :show="show2" text=""></loading>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  import {XHeader, Tab, TabItem, Tabbar, TabbarItem, ViewBox, Badge, Toast} from 'vux'
+  import {XHeader, Tab, TabItem, Tabbar, TabbarItem, ViewBox, Badge, Toast,Loading} from 'vux'
 
   export default {
     name: "bkDownload",
@@ -70,15 +71,16 @@
         id: '',
         article: '',
         hot: '',
-        reply: '',
+        reply: {data:[]},
         repley_val: '',
         toastStatu: false,
         toastText: '',
         collectStatu: '',
+        show2:true,
       }
     },
     components: {
-      XHeader, Tab, TabItem, Tabbar, TabbarItem, ViewBox, Badge, Toast
+      XHeader, Tab, TabItem, Tabbar, TabbarItem, ViewBox, Badge, Toast,Loading
     },
     activated() {
       this.id = this.$route.query.id;
@@ -86,9 +88,9 @@
     },
     methods: {
       getData(id) {
-        let uid = this.$store.state.userInfo.uid;
-        this.$nextTick(function () {
+        let uid = this.$store.state.userInfo.uid||'';
           const _this = this;
+          _this.show2=true;
           this.axios.get("/cn/wap-api/article-detail?contentid=" + id + "&uid=" + uid)
             .then(function (response) {
               _this.id = id;
@@ -96,9 +98,11 @@
               _this.hot = response.data.hotarticle;
               _this.reply = response.data.userComment;
               _this.collectStatu = response.data.collecte;
+              _this.$nextTick(function () {
+                _this.show2=false;
+              })
             })
 
-        })
       },
       update(id) {
         this.getData(id);
@@ -117,7 +121,7 @@
         if (this.repley_val) {
           this.axios.post('/cn/wap-api/article-comment', {
             content: data.content,
-            uid: data.userInfo.uid,
+            uid: data.userInfo.uid||'',
             contentId: id
           }).then(function (res) {
             _this.toastText = res.data.message;
@@ -186,7 +190,7 @@
         let data = {
           collecte: this.collectStatu === 0 ? 1 : 2,
           contentId: contentId,
-          uid: userInfo.uid,
+          uid: userInfo.uid||'',
         };
         this.axios.post('/cn/wap-api/content-collection', data).then(function (res) {
           if (res.data.code === 1) {
@@ -223,7 +227,10 @@
     font-size: 14px; /*no*/
     padding: 12px 6px; /*px*/
   }
-
+  #bkDownload >>> .vux-loading-no-text .weui-toast {
+    top: 50%;
+    margin-top: -49px; /*no*/
+  }
   .header {
     background: #5a5ee4;
     position: absolute;
