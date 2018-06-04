@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <keep-alive>
-      <router-view keep-alive></router-view>
+        <router-view keep-alive></router-view>
     </keep-alive>
     <!--<index></index>-->
   </div>
@@ -17,28 +17,29 @@
       // index,
       // information
     },
-    mounted(){
+    mounted() {
+      console.log("/***\n" +
+        " *                    .::::.\n" +
+        " *                  .::::::::.\n" +
+        " *                 :::::::::::  FUCK YOU\n" +
+        " *             ..:::::::::::'\n" +
+        " *           '::::::::::::'\n" +
+        " *             .::::::::::\n" +
+        " *        '::::::::::::::..\n" +
+        " *             ..::::::::::::.\n" +
+        " *           ``::::::::::::::::\n" +
+        " *            ::::``:::::::::'        .:::.\n" +
+        " *           ::::'   ':::::'       .::::::::.\n" +
+        " *         .::::'      ::::     .:::::::'::::.\n" +
+        " *        .:::'       :::::  .:::::::::' ':::::.\n" +
+        " *       .::'        :::::.:::::::::'      ':::::.\n" +
+        " *      .::'         ::::::::::::::'         ``::::.\n" +
+        " *  ...:::           ::::::::::::'              ``::.\n" +
+        " * ```` ':.          ':::::::::'                  ::::..\n" +
+        " *                    '.:::::'                    ':'````..\n" +
+        " */");
       // console.log("/***\n" +
-      //   " *                    .::::.\n" +
-      //   " *                  .::::::::.\n" +
-      //   " *                 :::::::::::  FUCK YOU\n" +
-      //   " *             ..:::::::::::'\n" +
-      //   " *           '::::::::::::'\n" +
-      //   " *             .::::::::::\n" +
-      //   " *        '::::::::::::::..\n" +
-      //   " *             ..::::::::::::.\n" +
-      //   " *           ``::::::::::::::::\n" +
-      //   " *            ::::``:::::::::'        .:::.\n" +
-      //   " *           ::::'   ':::::'       .::::::::.\n" +
-      //   " *         .::::'      ::::     .:::::::'::::.\n" +
-      //   " *        .:::'       :::::  .:::::::::' ':::::.\n" +
-      //   " *       .::'        :::::.:::::::::'      ':::::.\n" +
-      //   " *      .::'         ::::::::::::::'         ``::::.\n" +
-      //   " *  ...:::           ::::::::::::'              ``::.\n" +
-      //   " * ```` ':.          ':::::::::'                  ::::..\n" +
-      //   " *                    '.:::::'                    ':'````..\n" +
-      //   " */");
-      // console.log("/***\n" +
+      //
       //   " *               ii.                                         ;9ABH,          \n" +
       //   " *              SA391,                                    .r9GG35&G          \n" +
       //   " *              &#ii13Gh;                               i3X31i;:,rB1         \n" +
@@ -83,6 +84,7 @@
 
 <style lang="less">
   @import '~vux/src/styles/1px.less';
+
   #app {
     height: 100%;
     box-sizing: border-box;
@@ -90,4 +92,38 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+  /*过度动画*/
+  .vux-pop-out-enter-active,
+  .vux-pop-out-leave-active,
+  .vux-pop-in-enter-active,
+  .vux-pop-in-leave-active {
+    will-change: transform;
+    transition: all 250ms;
+    height: 100%;
+    top: 0;
+    position: absolute;
+    backface-visibility: hidden;
+    perspective: 1000;
+  }
+
+  .vux-pop-out-enter {
+    opacity: 0;
+    transform: translate3d(-100%, 0, 0);
+  }
+
+  .vux-pop-out-leave-active {
+    opacity: 0;
+    transform: translate3d(100%, 0, 0);
+  }
+
+  .vux-pop-in-enter {
+    opacity: 0;
+    transform: translate3d(100%, 0, 0);
+  }
+
+  .vux-pop-in-leave-active {
+    opacity: 0;
+    transform: translate3d(-100%, 0, 0);
+  }
+
 </style>

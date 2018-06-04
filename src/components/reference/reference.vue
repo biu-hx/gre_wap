@@ -2,17 +2,17 @@
   <div id="reference">
     <div class="iconWap">
       <ul class="pageTo bg_f">
-        <li v-for="item in navs">
+        <router-link tag="li" v-for="(item,index) in navs" :key="index" :to="{path:'/articleDetails',query: {id: item.id}}">
           <img :src="item.navimg" alt="">
           <p class="barName">{{item.navtext}}</p>
-        </li>
+        </router-link>
       </ul>
     </div>
     <tab :line-width="2" active-color="#5a5ee4" :scroll-threshold="6" default-color="#333333" custom-bar-width="40px">
       <tab-item :selected="0==i" :key="i" v-for="(item,i) in tabItem" @on-item-click="handler(i)">{{item}}</tab-item>
     </tab>
     <ul class="articleList bg_f">
-      <li v-for="(item,index) in resBkdata">
+      <li v-for="(item,index) in resBkdata" :key="index">
         <router-link :to="{path:'/articleDetails',query: {id: item.id}}">
           <div class="artContiner">
             <div class="artLeft">
@@ -39,15 +39,15 @@
       return {
         show: true,
         navs: [
-          {navimg: '/static/images/reference/bk_1.png', navtext: 'GREvsGMAT'},
-          {navimg: '/static/images/reference/bk_2.png', navtext: '考试地点'},
-          {navimg: '/static/images/reference/bk_3.png', navtext: '分数说明'},
-          {navimg: '/static/images/reference/bk_4.png', navtext: '常见问题'},
-          {navimg: '/static/images/reference/bk_5.png', navtext: '报名流程'},
-          {navimg: '/static/images/reference/bk_6.png', navtext: '考试费用'},
-          {navimg: '/static/images/reference/bk_7.png', navtext: '考试流程'},
-          {navimg: '/static/images/reference/bk_8.png', navtext: 'GRE入门'},
-          {navimg: '/static/images/reference/bk_9.png', navtext: '考试介绍'},
+          {navimg: '/static/images/reference/bk_1.png', navtext: 'GREvsGMAT', id: 4249},
+          {navimg: '/static/images/reference/bk_2.png', navtext: '考试地点', id: 4246},
+          {navimg: '/static/images/reference/bk_3.png', navtext: '分数说明', id: 4243},
+          {navimg: '/static/images/reference/bk_4.png', navtext: '常见问题', id: 4241},
+          {navimg: '/static/images/reference/bk_5.png', navtext: '报名流程', id: 4237},
+          {navimg: '/static/images/reference/bk_6.png', navtext: '考试费用', id: 4236},
+          {navimg: '/static/images/reference/bk_7.png', navtext: '考试流程', id: 4235},
+          {navimg: '/static/images/reference/bk_8.png', navtext: 'GRE入门', id: 4234},
+          {navimg: '/static/images/reference/bk_9.png', navtext: '考试介绍', id: 4233},
         ],
         resData: '',
         resBkdata: '',

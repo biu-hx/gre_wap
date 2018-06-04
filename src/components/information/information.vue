@@ -21,15 +21,17 @@
         </router-link>
       </li>
     </ul>
+    <loading :show="show"></loading>
   </div>
 </template>
 <script type="text/ecmascript-6">
-  import {ViewBox} from 'vux'
+  import {ViewBox, Loading} from 'vux'
 
   export default {
     name: 'information',
     data() {
       return {
+        show: true,
         bannerItem: '',
         dataList: '',
         swiperOption: {
@@ -52,14 +54,18 @@
       }
     },
     components: {
-      ViewBox,
+      ViewBox, Loading
     },
     mounted() {
       const _this = this;
+      _this.show = true;
       this.axios.get('/cn/wap-api/consult')
         .then(function (response) {
           _this.bannerItem = response.data.carousel;
           _this.dataList = response.data.data.data;
+          _this.$nextTick(function () {
+            _this.show = false;
+          })
         })
     }
   }
@@ -77,6 +83,11 @@
 
   #information >>> .swiper-pagination .swiper-pagination-bullet-active {
     background: #ffffff;
+  }
+
+  #information >>> .vux-loading-no-text .weui-toast {
+    top: 50%;
+    margin-top: -49px; /*no*/
   }
 
   .articleList {

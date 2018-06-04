@@ -20,11 +20,11 @@
         <div class="userData">
           <div class="flexWrap grid bg_f">
             <div class="flexItem vux-1px-r">
-              <p class="dataNum">{{resData.totalTime}}</p>
+              <p class="dataNum">{{formatSeconds(resData.totalTime)}}</p>
               <p>总用时</p>
             </div>
             <div class="flexItem">
-              <p class="dataNum">{{resData.averageTime}}</p>
+              <p class="dataNum">{{formatSeconds(resData.averageTime)}}</p>
               <p>平均用时</p>
             </div>
           </div>
@@ -32,7 +32,8 @@
         <ul class="testDe">
           <li v-for="(item,index) in resData.questions">
             <!--<router-link class="linkBtn"  :class=" item.correct>0 ? 'right' : 'error' " to="/testDetails">-->
-            <router-link class="linkBtn" :class="item.isDo>0?item.correct>0?'right':'error':'noDo'" :to="{name:'testDetails',query: {libraryId:item.libId,questionId:item.questionId,curIndex:index}}">
+            <router-link class="linkBtn" :class="item.isDo>0?item.correct>0?'right':'error':'noDo'"
+                         :to="{name:'testDetails',query: {libraryId:item.libId,questionId:item.questionId,curIndex:index}}">
               {{index+1}}
             </router-link>
           </li>
@@ -43,7 +44,7 @@
           <span class="userExit" slot="label">重新做题</span>
         </tabbar-item>
         <!--未完成显示-->
-        <tabbar-item v-if="resData.doNum>0" @on-item-click="continueTest">
+        <tabbar-item v-if="resData.doNum>0&&resData.doNum!=resData.totalCount" @on-item-click="continueTest">
           <span class="userExit" slot="label">继续做题</span>
         </tabbar-item>
         <tabbar-item v-if="resData.doNum===0" @on-item-click="continueTest">
@@ -56,13 +57,13 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import {XHeader, Tabbar, TabbarItem, ViewBox, XCircle,Loading} from 'vux'
+  import {XHeader, Tabbar, TabbarItem, ViewBox, XCircle, Loading} from 'vux'
 
   export default {
     name: "testResult",
     data() {
       return {
-        show2:true,
+        show2: true,
         strokeColor: ['#fc9051', '#ff5d27'],
         resData: {
           averageTime: '',
@@ -77,7 +78,7 @@
       }
     },
     components: {
-      XHeader, Tabbar, TabbarItem, ViewBox, XCircle,Loading,
+      XHeader, Tabbar, TabbarItem, ViewBox, XCircle, Loading,
     },
     activated() {
       this.getData();
@@ -85,7 +86,14 @@
     methods: {
       // 退出
       reBack() {
-        this.$router.push({name: 'markingIndex'})
+        if (this.$route.query.testing) {
+          let urlPath = sessionStorage.getItem('testUrl_path');
+          let urlQuery = JSON.parse(sessionStorage.getItem('testUrl_query'));
+          this.$router.push({path: urlPath,query:urlQuery})
+        } else {
+          this.$router.go(-1);
+        }
+
       },
       // 初始化数据
       getData() {
@@ -97,7 +105,7 @@
           };
           _this.axios.get('/cn/wap-api/make-result', {params: data}).then(function (res) {
             _this.resData = res.data;
-            _this.show2=false;
+            _this.show2 = false;
           })
         })
       },
@@ -114,9 +122,31 @@
       },
       continueTest() {
         this.$router.push({name: 'markingDetails', query: {libraryId: this.$route.query.libraryId}})
+      },
+      formatSeconds(value) {
+        let theTime = parseInt(value);// 秒
+        let theTime1 = 0;// 分
+        let theTime2 = 0;// 小时
+        if(theTime > 60) {
+          theTime1 = parseInt(theTime/60);
+          theTime = parseInt(theTime%60);
+          if(theTime1 > 60) {
+            theTime2 = parseInt(theTime1/60);
+            theTime1 = parseInt(theTime1%60);
+          }
+        }
+        let result = ""+parseInt(theTime)+"s";
+        if(theTime1 > 0) {
+          result = ""+parseInt(theTime1)+"m"+result;
+        }
+        if(theTime2 > 0) {
+          result = ""+parseInt(theTime2)+"m"+result;
+        }
+        return result;
       }
     }
   }
+
 </script>
 
 <style scoped>
@@ -124,6 +154,7 @@
     top: 50%;
     margin-top: -49px; /*no*/
   }
+
   .header {
     width: 100%;
     position: absolute;

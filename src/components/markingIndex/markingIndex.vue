@@ -1,7 +1,7 @@
 <template>
   <div id="markingIndex">
     <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="10px">
-      <x-header class="header" @on-click-back="reBack" :left-options="{backText: '',preventGoBack:true}">题库详情</x-header>
+      <x-header slot="header" class="header" @on-click-back="reBack" :left-options="{backText: '',preventGoBack:true}">题库详情</x-header>
       <div class="userData">
         <div class="flexWrap grid bg_f">
           <div class="flexItem vux-1px-r">
@@ -19,7 +19,7 @@
         </div>
       </div>
       <ul class="list">
-        <li @click="routerLink(item.id,state)" v-for="(item,index) in resData.questions" :key="index">
+        <li @click="routerLink(item.id,item.state)" v-for="(item,index) in resData.questions" :key="index">
           <div class="listLeft">
             <h1 class="topicName ellipsis">{{item.name}}</h1>
             <div class="flexWrap time">
@@ -75,6 +75,8 @@
         this.$router.push({name: 'greMarking'})
       },
       getData() {
+        sessionStorage.setItem('testUrl_path', this.$route.path);
+        sessionStorage.setItem('testUrl_query', JSON.stringify(this.$route.query));
         const _this = this;
         _this.show2 = true;
         let data = {
@@ -95,9 +97,9 @@
       routerLink(libId, state) {
         let isLogin = this.$store.state.isLogin;
         if (isLogin) {
-          if(state===0){
+          if (state === 0) {
             this.$router.push({name: 'markingDetails', query: {libraryId: libId}})
-          }else {
+          } else {
             this.$router.push({name: 'testResult', query: {libraryId: libId}})
           }
         } else {

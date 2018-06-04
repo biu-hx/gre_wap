@@ -33,11 +33,11 @@
       <div class="quantWrap">
         <div v-if="childData.question.quantityA" style="padding-bottom: 15px">
           <div class="tm"><span class="quantTit">Quantity A</span></div>
-          <div v-html="childData.question.quantityA"></div>
+          <div class="tm"  v-html="childData.question.quantityA"></div>
         </div>
         <div v-if="childData.question.quantityB">
           <div class="tm"><span class="quantTit">Quantity B</span></div>
-          <div v-html="childData.question.quantityB"></div>
+          <div class="tm"  v-html="childData.question.quantityB"></div>
         </div>
       </div>
       <!--选项题型组件-->
@@ -137,7 +137,8 @@
       },
       // 退出
       reBack() {
-        this.$router.push({name: 'testResult', query: {libraryId: this.$route.query.libraryId}})
+        // this.$router.push({name: 'testResult', query: {libraryId: this.$route.query.libraryId}})
+        this.$router.go(-1);
       },
       getData(libId, quesId, curIndex) {
         const _this = this;
@@ -310,7 +311,6 @@
   }
 
   .footer {
-    bottom: 1px; /*no*/
     background: #f3f3f3;
     border-top: 1px solid #a0a0a0; /*px*/
   }

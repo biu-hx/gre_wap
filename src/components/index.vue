@@ -1,3 +1,4 @@
+import index from "../router";
 <template>
   <div id="index">
     <div class="indexHeader">
@@ -14,7 +15,7 @@
     </tab>
     <swiper class="bg_f" :options="swiperOption" ref="mySwiper">
       <swiper-slide :key="index" v-for="(item,index) in bannerItem">
-        <img :src="$store.state.http_gre+item.image" alt="">
+        <a :href="item.url" target="_blank"><img :src="$store.state.http_gre+item.image" alt=""></a>
       </swiper-slide>
       <div class="swiper-pagination" slot="pagination"></div>
     </swiper>
@@ -105,7 +106,7 @@
       <tab-item :selected="0==i" :key="i" v-for="(item,i) in tabItem" @on-item-click="handler(i)">{{item}}</tab-item>
     </tab>
     <ul class="articleList bg_f">
-      <li v-for="(item,index) in resBkdata">
+      <li v-for="(item,index) in resBkdata" v-if="index<4">
         <router-link :to="{path:'/articleDetails',query: {id: item.id}}">
           <div class="artContiner">
             <div class="artLeft">
@@ -120,7 +121,7 @@
       </li>
     </ul>
     <div class="bg_f addImg_1"><img src="/static/images/index/deImg.png" alt=""></div>
-    <div class="bg_f addImg"><img src="/static/images/index/addImg.png" alt=""></div>
+    <div class="bg_f addImg"><router-link :to="{name:'register'}"><img src="/static/images/index/addImg.png" alt=""></router-link></div>
     <div class="bg_f copyRight">
       2018 greonline.cn All Rights Reserved 京ICP备16000003号-3<br>京公网安备11010802017681 免责声明
     </div>
@@ -140,7 +141,7 @@
         resBkdata: '',
         bannerItem: '',
         currentTab: '0',
-        header: ['GMAT', 'GRE', 'TOELF', 'IELTS', 'SAT', '留学'],
+        header: ['GMAT', 'GRE', 'TOEFL', 'IELTS', 'SAT', '留学'],
         tabItem: ['热门', '词汇', '阅读', '填空', '数学', '写作'],
         swiperOption: {
           notNextTick: true,

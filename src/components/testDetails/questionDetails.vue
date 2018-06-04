@@ -21,11 +21,11 @@
       <div class="quantWrap">
         <div v-if="childData.question.quantityA" style="padding-bottom: 15px">
           <div class="tm"><span class="quantTit">Quantity A</span></div>
-          <div v-html="childData.question.quantityA"></div>
+          <div class="tm"  v-html="childData.question.quantityA"></div>
         </div>
         <div v-if="childData.question.quantityB">
           <div class="tm"><span class="quantTit">Quantity B</span></div>
-          <div v-html="childData.question.quantityB"></div>
+          <div class="tm"  v-html="childData.question.quantityB"></div>
         </div>
       </div>
       <!--选项题型组件-->
@@ -44,7 +44,7 @@
       <div class="answerJs">
         <h1 class="answer">正确答案：{{childData.question.answer}}</h1>
         <div class="answerInfo">
-          <div v-for="(item,index) in childData.question.analysis" v-html="item.analysisContent"></div>
+          <div style="margin-bottom: 10px;" v-for="(item,index) in childData.question.analysis" v-html="item.analysisContent"></div>
         </div>
       </div>
     </popup>
@@ -133,7 +133,7 @@
       getData(uid, qid, type) {
         const _this = this;
         let data = {
-          uid: _this.$store.state.userInfo.uid,
+          uid: _this.$store.state.userInfo.uid||'',
           questionId: qid,
           type: type,
         };
@@ -300,7 +300,6 @@
   }
 
   .footer {
-    bottom: 1px; /*no*/
     background: #f3f3f3;
     border-top: 1px solid #a0a0a0; /*px*/
   }
@@ -387,7 +386,6 @@
   }
 
   .window {
-    bottom: 50px; /*no*/
     border-top-left-radius: 14px; /*px*/
     border-top-right-radius: 14px; /*px*/
   }

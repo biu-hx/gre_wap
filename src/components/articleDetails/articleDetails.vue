@@ -279,6 +279,7 @@
     font-size: 28px; /*px*/
     padding: 30px 0; /*px*/
     line-height: 46px; /*px*/
+    overflow-x:auto;
     text-align: justify;
   }
 

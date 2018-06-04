@@ -32,13 +32,9 @@
             <p class="priceName">促销价</p>
             <p class="price_2">￥{{resData.data.data.price}}</p>
           </div>
-          <div class="consultBtn">
-            <i class="icon_3"></i>
-            <span>咨询</span>
-          </div>
         </div>
         <button class="bottomRight bottomItem">
-          <a href="mqqwpa://im/chat?chat_type=wpa&uin=1746295647&version=1&src_type=web&web_src=http://m.haishiit.com/">立即购买</a>
+          <a href="mqqwpa://im/chat?chat_type=wpa&uin=1746295647&version=1&src_type=web&web_src=http://m.haishiit.com/">立即咨询</a>
         </button>
       </div>
     </view-box>

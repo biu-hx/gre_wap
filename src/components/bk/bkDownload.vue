@@ -166,35 +166,42 @@
           userInfo: store.state.userInfo,
           content: _this.repley_val,
         };
-        if (this.repley_val) {
+        if(_this.$store.state.isLogin){
+          if (this.repley_val) {
             this.axios.post(this.$store.state.http_bbs+'/cn/wap-api/post-reply', {
-            content: data.content,
-            type: '',
-            uid: data.userInfo.uid,
-            id: id
-          }).then(function (res) {
-            _this.toastText = res.data.message;
-            _this.toastStatu = true;
-            _this.repley_val = '';
-            if (_this.is_reply != 1) {
-              _this.is_reply = 1;
-            }
-            // 评论成功 追加数据
-            const addTime = new Date().getTime();
-            _this.reply.unshift({
-              nickname: data.userInfo.nickname,
               content: data.content,
-              image: data.userInfo.image,
-              fine:res.data.fine,
-              id:res.data.id,
-              createTime: parseInt(addTime / 1000),
-            });
-          })
-        } else {
-          _this.toastText = '请输入评论内容';
+              type: '',
+              uid: data.userInfo.uid,
+              id: id
+            }).then(function (res) {
+              _this.toastText = res.data.message;
+              _this.toastStatu = true;
+              _this.repley_val = '';
+              if (_this.is_reply != 1) {
+                _this.is_reply = 1;
+              }
+              // 评论成功 追加数据
+              const addTime = new Date().getTime();
+              _this.reply.unshift({
+                nickname: data.userInfo.nickname,
+                content: data.content,
+                image: data.userInfo.image,
+                fine:res.data.fine,
+                id:res.data.id,
+                createTime: parseInt(addTime / 1000),
+              });
+            })
+          } else {
+            _this.toastText = '请输入评论内容';
+            _this.toastStatu = true;
+            return false;
+          }
+        }else {
+          _this.toastText = '当前未登录';
           _this.toastStatu = true;
           return false;
         }
+
       },
       // 用户点赞
       userFine(id, type, commentId, fine,index) {
@@ -327,6 +334,7 @@
     color: #444444;
     font-size: 32px; /*px*/
     padding: 30px 0; /*px*/
+    overflow-x:auto;
   }
 
   .hideContent {

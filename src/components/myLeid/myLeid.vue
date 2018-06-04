@@ -1,6 +1,7 @@
 <template>
   <div id="myLeid" style="height: 100%;">
-    <x-header style="background: #5a5ee4;" :left-options="{backText: ''}">我的雷豆</x-header>
+    <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="10px">
+    <x-header slot="header" class="header" :left-options="{backText: ''}">我的雷豆</x-header>
     <div class="userLed flex tm">
       <div class="ledItem">
         <p class="num">{{resData.integral}}</p>
@@ -33,7 +34,9 @@
       <!--</tbody>-->
       <!--</table>-->
     </div>
-  <loading :show="show" text=""></loading>
+
+    </view-box>
+    <loading :show="show" text=""></loading>
   </div>
 </template>
 
@@ -41,13 +44,13 @@
   import ld_1 from './child/ld_1'
   import ld_2 from './child/ld_2'
   import ld_3 from './child/ld_3'
-  import {XHeader, Tab, TabItem, Loading} from 'vux'
+  import {XHeader, Tab, TabItem, Loading,ViewBox} from 'vux'
 
   export default {
     name: "recordMarking",
     data() {
       return {
-        show:false,
+        show: false,
         currentTab: 'ld_1',
         tabItem: ['雷豆明细', '收入雷豆', '支出雷豆', ''],
         resData: {
@@ -78,6 +81,7 @@
       ld_2,
       ld_3,
       Tab,
+      ViewBox,
       XHeader,
       TabItem,
       Loading,
@@ -87,19 +91,19 @@
     },
     methods: {
       getData() {
-          const _this = this;
-          _this.show=true;
-          //已登录&未登录状态
-          if (this.$store.state.isLogin) {
-            _this.axios.post('/cn/wap-api/leidou', {uid: this.$store.state.userInfo.uid}).then(function (res) {
-              _this.resData = res.data;
-              _this.$nextTick(function () {
-                _this.show=false;
-              })
+        const _this = this;
+        _this.show = true;
+        //已登录&未登录状态
+        if (this.$store.state.isLogin) {
+          _this.axios.post('/cn/wap-api/leidou', {uid: this.$store.state.userInfo.uid}).then(function (res) {
+            _this.resData = res.data;
+            _this.$nextTick(function () {
+              _this.show = false;
             })
-          } else {
-            console.log('未登录')
-          }
+          })
+        } else {
+          console.log('未登录')
+        }
 
       },
       handler(index) {
@@ -114,6 +118,16 @@
     top: 50%;
     margin-top: -49px; /*no*/
   }
+
+  .header {
+    background: #5a5ee4;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+  }
+
   .test {
     padding: 20px;
   }

@@ -1,45 +1,41 @@
 <template>
   <div id="greMarking" style="height: 100%;">
-    <x-header style="background: #5a5ee4;" @on-click-back="reBack" :left-options="{backText: '',preventGoBack:true}">GRE做题</x-header>
-    <tab :line-width="2" active-color="#5a5ee4" :scroll-threshold="4" default-color="#444444" custom-bar-width="70px">
-      <tab-item :selected="0==i" :key="i" v-for="(item,i) in tabItem" @on-item-click="handler">{{item}}</tab-item>
-    </tab>
-    <!--单项显示-->
-    <div style="padding: 20px 40px 0">
-      <!--仅单项显示-->
-      <button-tab v-if="tabType<1" :height="35" style="margin-bottom: 20px">
-        <button-tab-item :selected="0==index" @on-item-click="handleBtn(item.id)" v-for="(item,index) in sectionA" :key="index">{{item.name}}
-        </button-tab-item>
-      </button-tab>
-    </div>
-    <div class="testListWrap">
-      <group class="testList" gutter="0">
-        <!--link="/markingIndex"-->
-        <cell :border-intent="false"
-              :link="{path:'/markingIndex',query: {sourceId:tabType<1?item.id:'',sectionId:sectionId,knowId:tabType>0?item.id:''}}"
-              v-for="(item,index) in resDataItem" :key="index">
-          <span slot="title" class="testName">{{item.name}}</span>
-          <span class="testNum">{{item.totalDoNum}}/{{item.totalNum}}</span>
-        </cell>
-      </group>
-    </div>
-    <loading :show="show2" text=""></loading>
-    <!--考点显示-->
-
+    <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="10px">
+      <x-header class="header" @on-click-back="reBack" :left-options="{backText: '',preventGoBack:true}">GRE做题</x-header>
+      <div>
+        <sticky scroll-box="vux_view_box_body" ref="sticky" :offset="46" :check-sticky-support="false" :disabled="false">
+          <tab :line-width="2" active-color="#5a5ee4" :scroll-threshold="4" default-color="#444444" custom-bar-width="70px">
+            <tab-item :selected="0==i" :key="i" v-for="(item,i) in tabItem" @on-item-click="handler">{{item}}</tab-item>
+          </tab>
+        </sticky>
+      </div>
+      <!--单项显示-->
+      <div style="padding: 20px 40px 0">
+        <!--仅单项显示-->
+        <button-tab v-if="tabType<1" :height="35" style="margin-bottom: 20px">
+          <button-tab-item :selected="0==index" @on-item-click="handleBtn(item.id)" v-for="(item,index) in sectionA" :key="index">{{item.name}}
+          </button-tab-item>
+        </button-tab>
+      </div>
+      <div class="testListWrap">
+        <group class="testList" gutter="0">
+          <!--link="/markingIndex"-->
+          <cell :border-intent="false"
+                :link="{path:'/markingIndex',query: {sourceId:tabType<1?item.id:'',sectionId:sectionId,knowId:tabType>0?item.id:''}}"
+                v-for="(item,index) in resDataItem" :key="index">
+            <span slot="title" class="testName">{{item.name}}</span>
+            <span class="testNum">{{item.totalDoNum}}/{{item.totalNum}}</span>
+          </cell>
+        </group>
+      </div>
+      <loading :show="show2" text=""></loading>
+      <!--考点显示-->
+    </view-box>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  import {
-    XHeader,
-    Tab,
-    TabItem,
-    Group,
-    Cell,
-    Loading,
-    ButtonTab,
-    ButtonTabItem
-  } from 'vux'
+  import {XHeader, Tab, TabItem, Group, Cell, Loading, ViewBox, Sticky, ButtonTab, ButtonTabItem} from 'vux'
 
   export default {
     name: "greMarking",
@@ -61,6 +57,8 @@
       Cell,
       Loading,
       Group,
+      ViewBox,
+      Sticky,
       TabItem,
       ButtonTab,
       ButtonTabItem
@@ -70,8 +68,8 @@
       this.getData();
     },
     methods: {
-      reBack(){
-        this.$router.push({name:'index'})
+      reBack() {
+        this.$router.push({name: 'index'})
       },
       getData() {
         this.$nextTick(function () {
@@ -85,12 +83,12 @@
           _this.axios.get('/cn/wap-api/make', {params: data}).then(function (res) {
             _this.sectionA = res.data.sections;
             _this.resDataItem = res.data.comes;
-            _this.show2=false;
+            _this.show2 = false;
           })
         })
       },
       handler(index) {
-        this.show2=true;
+        this.show2 = true;
         this.tabType = index > 0 ? 1 : 0;
         this.tabIndex = index + 1;
         if (this.tabType > 0) {
@@ -104,7 +102,7 @@
 
       },
       handleBtn(id) {
-        this.show2=true;
+        this.show2 = true;
         this.sectionId = id;
         this.upData(id);
       },
@@ -119,7 +117,7 @@
           _this.axios.get('/cn/wap-api/make', {params: data}).then(function (res) {
             _this.sectionA = res.data.sections;
             _this.resDataItem = res.data.comes;
-            _this.show2=false;
+            _this.show2 = false;
           })
         })
       },
@@ -131,10 +129,22 @@
   #greMarking {
     background: #f3f3f3;
   }
+
   #greMarking >>> .vux-loading-no-text .weui-toast {
     top: 50%;
     margin-top: -49px; /*no*/
   }
+
+  .header {
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 100;
+
+    background: #5a5ee4;
+  }
+
   .vux-tab .vux-tab-item {
     font-size: 30px; /*px*/
   }
@@ -179,9 +189,6 @@
   }
 
   .testList {
-    /*max-height: 12.4rem;*/
-    max-height: 740px;
-    overflow-y: auto;
     border-radius: 12px; /*px*/
     border: 1px solid #d9d9d9; /*no*/
   }

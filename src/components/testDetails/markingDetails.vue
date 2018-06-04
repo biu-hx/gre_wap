@@ -23,11 +23,11 @@
       <div class="quantWrap">
         <div v-if="childData.question.quantityA" style="padding-bottom: 15px">
           <div class="tm"><span class="quantTit">Quantity A</span></div>
-          <div v-html="childData.question.quantityA"></div>
+          <div class="tm" v-html="childData.question.quantityA"></div>
         </div>
         <div v-if="childData.question.quantityB">
           <div class="tm"><span class="quantTit">Quantity B</span></div>
-          <div v-html="childData.question.quantityB"></div>
+          <div class="tm"  v-html="childData.question.quantityB"></div>
         </div>
       </div>
       <!--选项题型组件-->
@@ -133,14 +133,15 @@
     methods: {
       // 退出
       reBack() {
-        this.$router.push({name: 'markingIndex'})
+        // this.$router.push({name: 'markingIndex'})
+        this.$router.go(-1);
       },
       // 初始化数据
       getData() {
         this.$nextTick(function () {
           const _this = this;
           let data = {
-            uid: _this.$store.state.userInfo.uid,
+            uid: _this.$store.state.userInfo.uid||'',
             libraryId: _this.$route.query.libraryId,
           };
           _this.axios.get('/cn/wap-api/go-make', {params: data}).then(function (res) {
@@ -180,7 +181,7 @@
 
             }
             if (res.data.code === 0) {
-              _this.$router.push({name: 'testResult', query: {libraryId: _this.$route.query.libraryId}})
+              _this.$router.push({name: 'testResult', query: {libraryId: _this.$route.query.libraryId,testing:1}})
             }
           })
         })
@@ -199,7 +200,7 @@
       nextQuestion(id) {
         const _this = this;
         let data = {
-          uid: _this.$store.state.userInfo.uid,
+          uid: _this.$store.state.userInfo.uid||'',
           questionId: id,
           libraryId: _this.$route.query.libraryId,
           answer: _this.userAnswer.join(","),
@@ -274,7 +275,6 @@
   }
 
   .footer {
-    bottom: 1px; /*no*/
     background: #f3f3f3;
     border-top: 1px solid #a0a0a0; /*px*/
   }
@@ -362,7 +362,6 @@
   }
 
   .window {
-    bottom: 50px; /*no*/
     border-top-left-radius: 14px; /*px*/
     border-top-right-radius: 14px; /*px*/
   }

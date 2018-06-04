@@ -1,40 +1,43 @@
 <template>
   <div id="userCenter" class="clearfix">
     <view-box ref="viewBox" body-padding-bottom="62px">
-      <div class="tm userWap relative">
-        <div class="bgColor"></div>
-        <div class="ani userInfo">
-          <div class="userImg"><img :src="resData.user.image?$store.state.http_gre+resData.user.image:'/static/images/default.png'" alt=""></div>
-          <p class="nickName">{{resData.user.nickname}}</p>
-        </div>
-      </div>
-      <div class="userData">
-        <div class="flexWrap bg_f">
-          <div class="flexItem vux-1px-r">
-            <p class="dataNum">{{resData.questionTotal}}</p>
-            <p>做题总数</p>
-          </div>
-          <div class="flexItem vux-1px-r">
-            <p class="dataNum">{{resData.correctRate}}%</p>
-            <p>正确率</p>
-          </div>
-          <div class="flexItem">
-            <p class="dataNum">{{resData.days}}</p>
-            <p>复习天数</p>
+      <div>
+        <div class="tm userWap relative">
+          <div class="bgColor"></div>
+          <div class="ani userInfo">
+            <div class="userImg"><img :src="resData.user.image?$store.state.http_gre+resData.user.image:'/static/images/default.png'" alt=""></div>
+            <p class="nickName">{{resData.user.nickname}}</p>
           </div>
         </div>
+        <div class="userData">
+          <div class="flexWrap bg_f">
+            <div class="flexItem vux-1px-r">
+              <p class="dataNum">{{resData.questionTotal}}</p>
+              <p>做题总数</p>
+            </div>
+            <div class="flexItem vux-1px-r">
+              <p class="dataNum">{{resData.correctRate}}%</p>
+              <p>正确率</p>
+            </div>
+            <div class="flexItem">
+              <p class="dataNum">{{resData.days}}</p>
+              <p>复习天数</p>
+            </div>
+          </div>
+        </div>
+        <group gutter="10px">
+          <cell v-for="(item, index) in cellList" @click.native="cellClick(item.url)" :key="item.index" :title="item.cellTit" is-link>
+            <img width="20" style="display:block;margin-right:25px;" :src="item.imgUrl" slot="icon" alt="">
+          </cell>
+        </group>
+        <group gutter="10px">
+          <cell v-for="(item, index) in cellList2" @click.native="cellClick(item.url)" :key="item.index" :title="item.cellTit" is-link>
+            <img width="20" style="display:block;margin-right:25px;" :src="item.imgUrl" slot="icon" alt="">
+          </cell>
+        </group>
       </div>
-      <group gutter="10px">
-        <cell v-for="(item, index) in cellList" @click.native="cellClick(item.url)" :key="item.index" :title="item.cellTit" is-link>
-          <img width="20" style="display:block;margin-right:25px;" :src="item.imgUrl" slot="icon" alt="">
-        </cell>
-      </group>
-      <group gutter="10px">
-        <cell v-for="(item, index) in cellList2" @click.native="cellClick(item.url)" :key="item.index" :title="item.cellTit" is-link>
-          <img width="20" style="display:block;margin-right:25px;" :src="item.imgUrl" slot="icon" alt="">
-        </cell>
-      </group>
-      <tabbar solt="bottom" style="bottom: 2px;" class="bg_f">
+
+      <tabbar solt="bottom" class="bg_f">
         <tabbar-item v-if="$store.state.isLogin" @on-item-click="ext">
           <span class="userExit" slot="label">退出登录</span>
         </tabbar-item>
@@ -42,9 +45,9 @@
           <span class="userExit" slot="label">登录</span>
         </tabbar-item>
       </tabbar>
-      <loading :show="show" text=""></loading>
-      <toast v-model="toastStatu" :text="toastText" width="4rem" type="text" :time="1000" position="bottom"></toast>
     </view-box>
+    <loading :show="show" text=""></loading>
+    <toast v-model="toastStatu" :text="toastText" width="4rem" type="text" :time="1000" position="bottom"></toast>
   </div>
 </template>
 
@@ -78,13 +81,7 @@
       }
     },
     components: {
-      Group,
-      Cell,
-      Toast,
-      Loading,
-      ViewBox,
-      Tabbar,
-      TabbarItem
+      Group, Cell, Toast, Loading, ViewBox, Tabbar, TabbarItem
     },
     activated() {
       this.getData();
@@ -149,7 +146,6 @@
 
   #userCenter {
     height: 100%;
-    position: relative;
     background: #f3f3f3;
   }
 
@@ -225,4 +221,5 @@
     color: #888888;
     font-size: 36px; /*px*/
   }
+
 </style>
