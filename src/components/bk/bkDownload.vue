@@ -9,7 +9,7 @@
           <!--</router-link>-->
         </div>
       </x-header>
-      <div slot="default" class="content">
+      <div class="content">
         <div class="cardTop">
           <h1 class="ellipsis_3 cardName">{{info.title}}</h1>
           <div class="cardInfo">
@@ -70,26 +70,30 @@
       </div>
       <toast v-model="toastStatu" :text="toastText" width="4rem" type="text" :time="1000" position="bottom"></toast>
       <div slot="bottom" class="bottom">
-        <input class="replyInt" type="text" placeholder="评论..." v-model="repley_val">
-        <div class="replyNum relative" @click="userReply(id)">
-          <badge v-show="reply.length>0" class="badge_1 ani" :text="reply.length"></badge>
+        <input :style="{width:show3?'80%':'53%'}" class="replyInt" @focus="show3=true" @blur="show3=false" type="text" placeholder="评论..." v-model="repley_val">
+        <div v-if="show3" class="btnPl" @click="userReply(id)">发送</div>
+        <div v-else class="btFlex">
+          <div class="replyNum relative" @click="userReply(id)">
+            <badge v-show="reply.length>0" class="badge_1 ani" :text="reply.length"></badge>
+          </div>
+          <div class="goodNum relative" @click="userFine(id,1)">
+            <badge v-show="postFine>0" class="badge_2 ani" :text="postFine"></badge>
+          </div>
+          <div class="relative scBtn" :class="collectStatu === 0 ?'scNo':'scYes'" @click="collect(id)"></div>
         </div>
-        <div class="goodNum relative" @click="userFine(id,1)">
-          <badge v-show="postFine>0" class="badge_2 ani" :text="postFine"></badge>
-        </div>
-        <div class="relative scBtn" :class="collectStatu === 0 ?'scNo':'scYes'" @click="collect(id)"></div>
       </div>
     </view-box>
+    <loading :show="show2" text=""></loading>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  import {XHeader, Tab, TabItem, Tabbar, TabbarItem, ViewBox, Badge, Toast} from 'vux'
+  import {XHeader, Tab, TabItem, Tabbar, TabbarItem, ViewBox, Badge, Toast,Loading} from 'vux'
 
   export default {
     name: "bkDownload",
     components: {
-      XHeader, Tab, TabItem, Tabbar, TabbarItem, ViewBox, Badge, Toast
+      XHeader, Tab, TabItem, Tabbar, TabbarItem, ViewBox, Badge, Toast,Loading
     },
     data() {
       return {
@@ -98,11 +102,13 @@
         hot: '',
         reply: '',
         is_reply: '',
-        postFine:'',
+        postFine: '',
         repley_val: '',
         toastStatu: false,
         toastText: '',
         collectStatu: '',
+        show2:true,
+        show3:false,
       }
     },
     activated() {
@@ -112,18 +118,22 @@
     methods: {
       // 获取帖子数据
       getData(id) {
-        let uid = this.$store.state.userInfo.uid||'';
+        let uid = this.$store.state.userInfo.uid || '';
         this.$nextTick(function () {
           const _this = this;
-          this.axios.get(this.$store.state.http_bbs+"/cn/wap-api/problem-detail?id=" + id + "&uid=" + uid)
+          _this.show2=true;
+          this.axios.get(this.$store.state.http_bbs + "/cn/wap-api/problem-detail?id=" + id + "&uid=" + uid)
             .then(function (res) {
               _this.id = id;
               _this.info = res.data.data;
               _this.hot = res.data.hot;
               _this.reply = res.data.reply;
               _this.is_reply = res.data.is_reply;
-              _this.postFine=res.data.postfine;
+              _this.postFine = res.data.postfine;
               _this.collectStatu = res.data.is_collecte;
+              _this.$nextTick(function () {
+                _this.show2=false;
+              })
             })
         })
       },
@@ -166,9 +176,9 @@
           userInfo: store.state.userInfo,
           content: _this.repley_val,
         };
-        if(_this.$store.state.isLogin){
+        if (_this.$store.state.isLogin) {
           if (this.repley_val) {
-            this.axios.post(this.$store.state.http_bbs+'/cn/wap-api/post-reply', {
+            this.axios.post(this.$store.state.http_bbs + '/cn/wap-api/post-reply', {
               content: data.content,
               type: '',
               uid: data.userInfo.uid,
@@ -186,8 +196,8 @@
                 nickname: data.userInfo.nickname,
                 content: data.content,
                 image: data.userInfo.image,
-                fine:res.data.fine,
-                id:res.data.id,
+                fine: res.data.fine,
+                id: res.data.id,
                 createTime: parseInt(addTime / 1000),
               });
             })
@@ -196,7 +206,7 @@
             _this.toastStatu = true;
             return false;
           }
-        }else {
+        } else {
           _this.toastText = '当前未登录';
           _this.toastStatu = true;
           return false;
@@ -204,7 +214,7 @@
 
       },
       // 用户点赞
-      userFine(id, type, commentId, fine,index) {
+      userFine(id, type, commentId, fine, index) {
         let data;
         const _this = this;
 
@@ -221,7 +231,7 @@
             replyId: commentId,
           };
         }
-        this.axios.post(this.$store.state.http_bbs+'/cn/wap-api/add-fine', data).then(function (res) {
+        this.axios.post(this.$store.state.http_bbs + '/cn/wap-api/add-fine', data).then(function (res) {
           if (res.data.code === 1) {
             // 文章点赞成功
             if (type === 1) {
@@ -229,8 +239,8 @@
             }
             // 评论点赞成功
             if (type === 2) {
-              _this.reply[index].fine=parseInt(_this.reply[index].fine)+1;
-              _this.postFine=res.data.allfine;
+              _this.reply[index].fine = parseInt(_this.reply[index].fine) + 1;
+              _this.postFine = res.data.allfine;
             }
 
           } else {
@@ -248,10 +258,10 @@
         let userInfo = this.$store.state.userInfo;
         let data = {
           collecte: this.collectStatu === 0 ? 1 : 2,
-          postId : contentId,
+          postId: contentId,
           uid: userInfo.uid,
         };
-        this.axios.post(this.$store.state.http_bbs+'/cn/wap-api/post-collecte', data).then(function (res) {
+        this.axios.post(this.$store.state.http_bbs + '/cn/wap-api/post-collecte', data).then(function (res) {
           if (res.data.code === 1) {
             if (data.collecte === 1) {
               _this.toastText = '收藏成功';
@@ -285,6 +295,10 @@
   #bkDownload >>> .weui-toast_text .weui-toast__content {
     font-size: 14px; /*no*/
     padding: 12px 6px; /*px*/
+  }
+  #bkDownload >>> .vux-loading-no-text .weui-toast {
+    top: 50%;
+    margin-top: -49px; /*no*/
   }
 
   .header {
@@ -334,7 +348,7 @@
     color: #444444;
     font-size: 32px; /*px*/
     padding: 30px 0; /*px*/
-    overflow-x:auto;
+    overflow-x: auto;
   }
 
   .hideContent {
@@ -551,5 +565,18 @@
 
   .showHint strong {
     color: #5a5ee4;
+  }
+  .btFlex{
+    width: 35%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .btnPl{
+    padding-right: 20px;
+    height: 64px;/*px*/
+    line-height: 64px;/*px*/
+    font-size: 28px;/*px*/
   }
 </style>

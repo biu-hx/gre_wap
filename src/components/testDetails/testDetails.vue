@@ -66,6 +66,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import "../../style/mathquill-0.9.1/mathquill.css";
   import blank_1 from "./child/blank_1"
   import blank_2 from "./child/blank_2"
   import blank_3 from "./child/blank_3"
@@ -397,7 +398,7 @@
   }
 
   .window {
-    bottom: 50px; /*no*/
+    /*bottom: 50px; !*no*!*/
     border-top-left-radius: 14px; /*px*/
     border-top-right-radius: 14px; /*px*/
   }

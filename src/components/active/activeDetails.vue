@@ -8,8 +8,8 @@
             <h1 class="courseName">{{resData.parent.title}}</h1>
             <div class="courseDe">{{resData.parent.name}}</div>
             <div class="dataBg">
-              <div><i class="iconBg icon_1"></i><span>报名人数：{{resData.parent.numbering}}</span></div>
-              <div><i class="iconBg icon_2"></i><span>距离报名结束：{{resData.parent.commencement}}</span></div>
+              <div style="flex: 1;"><i class="iconBg icon_1"></i><span>报名人数：{{resData.parent.numbering}}</span></div>
+              <div class="ellipsis"><i class="iconBg icon_2"></i><span>距离报名结束：{{countText}}</span></div>
             </div>
             <div class="startTime">
               <div><span class="blue">{{resData.parent.problemComplement}}</span><span> （课程时长）</span></div>
@@ -44,7 +44,7 @@
 <script>
   import item_1 from './child/item_1'
   import item_2 from './child/item_2'
-  import {Tab, TabItem, ViewBox,Loading} from 'vux'
+  import {Tab, TabItem, ViewBox, Loading} from 'vux'
 
   export default {
     name: "activeDetails",
@@ -55,15 +55,17 @@
         currentTab: 'item_1',
         id: '',
         resData: {
-          parent:{title:''},
-          data:{
-            data:{}
+          parent: {title: ''},
+          data: {
+            data: {}
           }
         },
+        countVal: '',
+        countText: '',
       }
     },
     components: {
-      Tab, TabItem, ViewBox, item_1, item_2,Loading
+      Tab, TabItem, ViewBox, item_1, item_2, Loading
     },
     activated() {
       this.id = this.$route.query.id;
@@ -76,6 +78,15 @@
         this.axios.get("/cn/wap-api/activity-detail?contentid=" + id)
           .then(function (res) {
             _this.resData = res.data;
+            _this.countVal = res.data.parent.commencement;
+            if (isNaN(parseInt(_this.countVal))) {
+              _this.countText = _this.countVal;
+            } else {
+              let time = setInterval(() => {
+                _this.countTime(_this.countVal--);
+              }, 1000);
+
+            }
             _this.$nextTick(function () {
               _this.show = false;
             })
@@ -83,6 +94,21 @@
       },
       handler(index) {
         this.currentTab = index;
+      },
+      countTime(time) {
+        let mouth = parseInt(time / 60 / 60 / 24 / 30);
+        let day = parseInt(time / 60 / 60 / 24 % 30);
+        let hour = parseInt(time / 60 / 60 % 24);
+        let minute = parseInt(time / 60 % 60);
+        let seconds = parseInt(time % 60);
+        if (mouth > 0) {
+          return this.countText = mouth + "月" + day + "天" + hour + "小时" + minute + "分钟" + seconds + "秒";
+        }
+        if (day > 0) {
+          return this.countText = day + "天" + hour + "小时" + minute + "分钟" + seconds + "秒";
+        } else {
+          return this.countText = hour + "小时" + minute + "分钟" + seconds + "秒";
+        }
       }
     }
 
@@ -306,6 +332,7 @@
     flex-flow: row wrap;
     justify-content: space-between;
     align-items: center;
+    z-index: 100;
   }
 
   .bottomItem {

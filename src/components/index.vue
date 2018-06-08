@@ -1,4 +1,3 @@
-import index from "../router";
 <template>
   <div id="index">
     <div class="indexHeader">

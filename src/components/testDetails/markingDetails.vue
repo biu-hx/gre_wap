@@ -4,7 +4,10 @@
       <x-header slot="header" class="header bg_f">
         <span class="headerTit"><strong class="curNum">{{resData.currentSite}}</strong>/{{resData.totalCount}}</span>
         <div slot="overwrite-left" @click="reBack"><img class="exitIcon" src="/static/images/testDetails/exit.png" alt=""></div>
-        <div slot="right"><img class="scIcon" src="/static/images/testDetails/sc_icon.png" alt=""></div>
+        <div slot="right">
+          <div @click="scQuestion($store.state.userInfo.uid,resData.question.id)" class="scIcon"
+               :class="{'scIcon_1':childData.question.collect===0,'scIcon_2':childData.question.collect===1}"></div>
+        </div>
       </x-header>
 
       <!--阅读-->
@@ -21,13 +24,14 @@
       <div v-if="childData.question.details" class="topicData" v-html="childData.question.details"></div>
       <!--quantity-->
       <div class="quantWrap">
+        <div></div>
         <div v-if="childData.question.quantityA" style="padding-bottom: 15px">
           <div class="tm"><span class="quantTit">Quantity A</span></div>
           <div class="tm" v-html="childData.question.quantityA"></div>
         </div>
         <div v-if="childData.question.quantityB">
           <div class="tm"><span class="quantTit">Quantity B</span></div>
-          <div class="tm"  v-html="childData.question.quantityB"></div>
+          <div class="tm" v-html="childData.question.quantityB"></div>
         </div>
       </div>
       <!--选项题型组件-->
@@ -36,7 +40,7 @@
       <!--底部-->
       <tabbar slot="bottom" class="vux-1px-t footer">
         <!--<tabbar-item class="vux-1px-r" @on-item-click="toggle(show)">-->
-          <!--<span class="userExit" slot="label">查看解析</span>-->
+        <!--<span class="userExit" slot="label">查看解析</span>-->
         <!--</tabbar-item>-->
         <tabbar-item @on-item-click="nextQuestion(resData.question.id)">
           <span class="userExit" slot="label">下一题</span>
@@ -67,11 +71,12 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import "../../style/mathquill-0.9.1/mathquill.css";
   import blank_1 from "./child/blank_1"
   import blank_2 from "./child/blank_2"
   import blank_3 from "./child/blank_3"
   import blank_int from "./child/blank_int"
-  import {XHeader, Tabbar, TabbarItem, ViewBox, Group, Checklist, Popup, TransferDom,Toast} from 'vux'
+  import {XHeader, Tabbar, TabbarItem, ViewBox, Group, Checklist, Popup, TransferDom, Toast,Popover } from 'vux'
 
   export default {
     directives: {
@@ -88,6 +93,7 @@
         },
         childData: {
           question: {
+            collect: '',
             optionA: '',
             optionB: '',
             optionC: '',
@@ -98,10 +104,10 @@
             quantityB: '',
             readStem: '',
           },
-          pageType:0,
+          pageType: 0,
           maxVal: null,
-          trueAnswer:[],
-          userAnswer:[],
+          trueAnswer: [],
+          userAnswer: [],
         },
         flag: false,
         curSpan: '',
@@ -115,7 +121,7 @@
       }
     },
     components: {
-      XHeader, Tabbar, TabbarItem, ViewBox, Group, Checklist, Popup, TransferDom,Toast,
+      XHeader, Tabbar, TabbarItem, ViewBox, Group, Checklist, Popup, TransferDom, Toast,Popover,
       blank_1, blank_2, blank_3, blank_int
     },
     computed: {
@@ -141,7 +147,7 @@
         this.$nextTick(function () {
           const _this = this;
           let data = {
-            uid: _this.$store.state.userInfo.uid||'',
+            uid: _this.$store.state.userInfo.uid || '',
             libraryId: _this.$route.query.libraryId,
           };
           _this.axios.get('/cn/wap-api/go-make', {params: data}).then(function (res) {
@@ -166,12 +172,18 @@
                 _this.curTemp = 'blank_3';
                 _this.childData.maxVal = 1;
               } else if (resType === 4) {
+                //多选提示
                 _this.curTemp = 'blank_1';
                 _this.childData.maxVal = 2;
                 _this.childData.question.optionsA = resetArry(res.data.question.optionsA);
+                _this.toastText = '当前6选2题型';
+                _this.toastStatu = true;
               } else if (resType === 10) {
                 _this.curTemp = 'blank_int';
               } else if (resType === 6 || resType === 9) {
+                //多选提示
+                _this.toastText = '当前多选题型';
+                _this.toastStatu = true;
                 _this.curTemp = 'blank_1';
                 _this.childData.maxVal = 10;
                 _this.childData.question.optionsA = resetArry(res.data.question.optionsA);
@@ -181,10 +193,32 @@
 
             }
             if (res.data.code === 0) {
-              _this.$router.push({name: 'testResult', query: {libraryId: _this.$route.query.libraryId,testing:1}})
+              _this.$router.push({name: 'testResult', query: {libraryId: _this.$route.query.libraryId, testing: 1}})
             }
           })
         })
+      },
+      // 题目收藏
+      scQuestion(uid, qid) {
+        if (uid) {
+          const _this = this;
+          let data = {uid: uid, questionId: qid};
+          _this.axios.post('/cn/wap-api/user-question-collection', data).then(function (res) {
+            if (res.data.code === 1) {
+              _this.childData.question.collect = 1;
+            }
+            if (res.data.code === 2) {
+              _this.childData.question.collect = 0;
+            }
+            _this.$nextTick(function () {
+              _this.toastText = res.data.message;
+              _this.toastStatu = true;
+            })
+          });
+
+        } else {
+          return false;
+        }
       },
       //取子组件值
       upAnswer(data) {
@@ -194,13 +228,13 @@
       selected(e, index) {
         let dom = e.target;
         this.curSpan = index;
-        this.userAnswer=[dom.innerHTML];
+        this.userAnswer = [dom.innerHTML];
       },
       //下一题
       nextQuestion(id) {
         const _this = this;
         let data = {
-          uid: _this.$store.state.userInfo.uid||'',
+          uid: _this.$store.state.userInfo.uid || '',
           questionId: id,
           libraryId: _this.$route.query.libraryId,
           answer: _this.userAnswer.join(","),
@@ -208,8 +242,8 @@
         };
         // 判断题型、是否选择答案
         if (_this.userAnswer.includes('')) {
-          _this.toastText='请选择答案';
-          _this.toastStatu=true;
+          _this.toastText = '请选择答案';
+          _this.toastStatu = true;
           return false;
         } else {
           clearInterval(_this.timeObj);//清除计时器
@@ -251,6 +285,7 @@
     font-size: 14px; /*no*/
     padding: 12px 6px; /*px*/
   }
+
   #markingDetails >>> .weui-cells {
     font-size: 32px; /*px*/
   }
@@ -310,8 +345,8 @@
   }
 
   .readStem span.active {
-    background: #5a5ee4!important;
-    color: #ffffff!important;
+    background: #5a5ee4 !important;
+    color: #ffffff !important;
   }
 
   .readStem >>> p, .readStem >>> span {
@@ -381,6 +416,21 @@
 
   #markingDetails >>> .weui-cells_checkbox .weui-check:checked + .weui-icon-checked:before {
     color: #5a5ee4;
+  }
+
+  .scIcon {
+    width: 40px; /*px*/
+    height: 40px; /*px*/
+  }
+
+  .scIcon_1 {
+    background: url("/static/images/testDetails/sc_icon.png") no-repeat 0 0;
+    background-size: cover;
+  }
+
+  .scIcon_2 {
+    background: url("/static/images/testDetails/sc_icon2.png") no-repeat 0 0;
+    background-size: cover;
   }
 
 

@@ -47,14 +47,18 @@
       </div>
       <toast v-model="toastStatu" :text="toastText" width="4rem" type="text" :time="1000" position="bottom"></toast>
       <div slot="bottom" class="bottom">
-        <input class="replyInt" type="text" placeholder="评论..." v-model="repley_val">
-        <div class="replyNum relative" @click="userReply(id)">
-          <badge v-show="reply.data.length>0" class="badge_1 ani" :text="reply.data.length"></badge>
+        <input :style="{width:show3?'80%':'53%'}" class="replyInt" @focus="show3=true" @blur="show3=false" type="text" placeholder="评论..." v-model="repley_val">
+        <div v-if="show3" class="btnPl" @click="userReply(id)">发送</div>
+        <div v-else class="btFlex">
+          <div class="replyNum relative">
+            <badge v-show="reply.data.length>0" class="badge_1 ani" :text="reply.data.length"></badge>
+          </div>
+          <div class="goodNum relative" @click="userFine(id,1)">
+            <badge v-show="article.fine>0" class="badge_2 ani" :text="article.fine"></badge>
+          </div>
+          <div class="relative scBtn" :class="collectStatu === 0 ?'scNo':'scYes'" @click="collect(id)"></div>
         </div>
-        <div class="goodNum relative" @click="userFine(id,1)">
-          <badge v-show="article.fine>0" class="badge_2 ani" :text="article.fine"></badge>
-        </div>
-        <div class="relative scBtn" :class="collectStatu === 0 ?'scNo':'scYes'" @click="collect(id)"></div>
+
       </div>
     </view-box>
     <loading :show="show2" text=""></loading>
@@ -77,6 +81,7 @@
         toastText: '',
         collectStatu: '',
         show2:true,
+        show3:false,
       }
     },
     components: {
@@ -418,7 +423,7 @@
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: center;
 
   }
 
@@ -449,5 +454,18 @@
 
   .showHint strong {
     color: #5a5ee4;
+  }
+  .btFlex{
+    width: 35%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .btnPl{
+    padding-right: 20px;
+    height: 64px;/*px*/
+    line-height: 64px;/*px*/
+    font-size: 28px;/*px*/
   }
 </style>

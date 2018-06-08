@@ -96,7 +96,7 @@
       Cell,
       Tab
     },
-    mounted() {
+    activated() {
       this.getData();
     },
     methods: {

@@ -14,7 +14,7 @@
         <div class="tagItem">
           <h1 class="checkName">题目来源</h1>
           <ul class="tm tagList">
-            <li class="on" v-for="(item,index) in sources" @click="activeA(index,item.id)" :class="{'active':index ==selectedA }">
+            <li class="on ellipsis" v-for="(item,index) in sources" @click="activeA(index,item.id)" :class="{'active':index ==selectedA }">
               {{item.name}}
             </li>
           </ul>
@@ -83,7 +83,7 @@
     components: {
       XHeader, ViewBox, Tab, TabItem, Toast, Confirm, Loading
     },
-    activated() {
+    mounted() {
       this.getData();
     },
     methods: {
@@ -161,6 +161,12 @@
           dotype: _this.requestId.typeId,
         };
         _this.axios.get('/cn/wap-api/search-type', {params: data}).then(function (res) {
+          _this.categorys = res.data.categorys;
+          _this.categorys.unshift({id: 0, name: "全部"});
+          _this.levels = res.data.levels;
+          _this.levels.unshift({id: 0, name: "全部"});
+          _this.sources = res.data.sources;
+          _this.sources.unshift({id: 0, name: "全部"});
           if (res.data.data.length > 0) {
             _this.resData = res.data.data;
           } else {

@@ -3,13 +3,18 @@
     <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="51px">
       <x-header slot="header" class="header bg_f">
         <span class="headerTit">{{childData.question.section}}-{{childData.question.source.name}}</span>
-        <div slot="overwrite-left" @click="reBack"><x-icon style=" fill: #333333;" type="ios-arrow-left" size="30"></x-icon></div>
-        <div slot="right"><img class="scIcon" src="/static/images/testDetails/sc_icon.png" alt=""></div>
+        <div slot="overwrite-left" @click="reBack">
+          <x-icon style=" fill: #333333;" type="ios-arrow-left" size="30"></x-icon>
+        </div>
+        <div slot="right">
+          <div @click="scQuestion($store.state.userInfo.uid,childData.question.id)" class="scIcon"
+               :class="{'scIcon_1':childData.question.collect===0,'scIcon_2':childData.question.collect===1}"></div>
+        </div>
       </x-header>
       <!--阅读-->
       <div v-if="childData.question.readArticle" class="readStemWrap">
         <div v-if="typeId===7" class="readStem" :class="{'ellipsis-5':!showAll}">
-          <span v-for="(item,index) in childData.question.readStems" :class="curSpan!=index?'':'active'"
+          <span v-for="(item,index) in childData.question.articles" :class="{'active':curSpan===index}"
                 @click="selected($event,index)">{{item}}</span>
         </div>
         <div v-else class="readStem" :class="{'ellipsis-5':!showAll}" v-html="childData.question.readArticle"></div>
@@ -21,11 +26,11 @@
       <div class="quantWrap">
         <div v-if="childData.question.quantityA" style="padding-bottom: 15px">
           <div class="tm"><span class="quantTit">Quantity A</span></div>
-          <div class="tm"  v-html="childData.question.quantityA"></div>
+          <div class="tm" v-html="childData.question.quantityA"></div>
         </div>
         <div v-if="childData.question.quantityB">
           <div class="tm"><span class="quantTit">Quantity B</span></div>
-          <div class="tm"  v-html="childData.question.quantityB"></div>
+          <div class="tm" v-html="childData.question.quantityB"></div>
         </div>
       </div>
       <!--选项题型组件-->
@@ -54,6 +59,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import "../../style/mathquill-0.9.1/mathquill.css";
   import blank_1 from "./child/blank_1"
   import blank_2 from "./child/blank_2"
   import blank_3 from "./child/blank_3"
@@ -72,6 +78,7 @@
         totalNum: '',
         childData: {
           question: {
+            collect: '',
             optionA: '',
             optionB: '',
             optionC: '',
@@ -81,8 +88,8 @@
             quantityA: '',
             quantityB: '',
             readStem: '',
-            source:{
-              name:''
+            source: {
+              name: ''
             }
           },
           pageType: 1,
@@ -133,7 +140,7 @@
       getData(uid, qid, type) {
         const _this = this;
         let data = {
-          uid: _this.$store.state.userInfo.uid||'',
+          uid: _this.$store.state.userInfo.uid || '',
           questionId: qid,
           type: type,
         };
@@ -205,6 +212,28 @@
           });
         });
       },
+      // 题目收藏
+      scQuestion(uid, qid) {
+        if (uid) {
+          const _this = this;
+          let data = {uid: uid, questionId: qid};
+          _this.axios.post('/cn/wap-api/user-question-collection', data).then(function (res) {
+            if (res.data.code === 1) {
+              _this.childData.question.collect = 1;
+            }
+            if (res.data.code === 2) {
+              _this.childData.question.collect = 0;
+            }
+            _this.$nextTick(function () {
+              _this.toastText = res.data.message;
+              _this.toastStatu = true;
+            })
+          });
+
+        } else {
+          return false;
+        }
+      },
       //取子组件值
       upAnswer(data) {
         this.userAnswer = data;
@@ -212,11 +241,17 @@
       select(libId, quesId, index) {
         this.getData(libId, quesId, index);
       },
+      // 句子点选
+      selected(e, index) {
+        let dom = e.target;
+        this.curSpan = index;
+        this.userAnswer = [dom.innerHTML];
+      },
       toggle(show) {
         // 判断题型、是否选择答案
         if (this.userAnswer.includes('')) {
-          this.toastText='请先选择答案';
-          this.toastStatu=true;
+          this.toastText = '请先选择答案';
+          this.toastStatu = true;
           return false;
         } else {
           this.show = show ? false : true;
@@ -280,8 +315,9 @@
   #questionDetails >>> .weui-cell__bd {
     font-size: 32px; /*px*/
   }
-  #questionDetails>>>.vux-header .vux-header-left{
-    top: 10px;/*no*/
+
+  #questionDetails >>> .vux-header .vux-header-left {
+    top: 10px; /*no*/
   }
 
   .header {
@@ -467,5 +503,19 @@
     color: #5a5ee4;
   }
 
+  .scIcon {
+    width: 40px; /*px*/
+    height: 40px; /*px*/
+  }
+
+  .scIcon_1 {
+    background: url("/static/images/testDetails/sc_icon.png") no-repeat 0 0;
+    background-size: cover;
+  }
+
+  .scIcon_2 {
+    background: url("/static/images/testDetails/sc_icon2.png") no-repeat 0 0;
+    background-size: cover;
+  }
 
 </style>

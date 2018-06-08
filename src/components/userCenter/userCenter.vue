@@ -37,7 +37,7 @@
         </group>
       </div>
 
-      <tabbar solt="bottom" class="bg_f">
+      <tabbar solt="bottom" class="bg_f" style="position: fixed">
         <tabbar-item v-if="$store.state.isLogin" @on-item-click="ext">
           <span class="userExit" slot="label">退出登录</span>
         </tabbar-item>
