@@ -39,30 +39,22 @@
 
       <!--底部-->
       <tabbar slot="bottom" class="vux-1px-t footer">
-        <!--<tabbar-item class="vux-1px-r" @on-item-click="toggle(show)">-->
-        <!--<span class="userExit" slot="label">查看解析</span>-->
-        <!--</tabbar-item>-->
+        <tabbar-item class="vux-1px-r" @on-item-click="toggle(show)">
+        <span class="userExit" slot="label">查看解析</span>
+        </tabbar-item>
         <tabbar-item @on-item-click="nextQuestion(resData.question.id)">
           <span class="userExit" slot="label">下一题</span>
         </tabbar-item>
       </tabbar>
-      <toast v-model="toastStatu" :text="toastText" width="4rem" type="text" :time="1200" position="bottom"></toast>
+      <toast v-model="toastStatu" :text="toastText" width="4rem" type="text" :time="hideTime" position="bottom"></toast>
     </view-box>
     <!--解析-->
     <div v-transfer-dom>
       <popup class="window" v-model="show" max-height="60%">
         <div class="answerJs">
-          <h1 class="answer">正确答案：C</h1>
+          <h1 class="answer">正确答案：{{childData.question.answer}}</h1>
           <div class="answerInfo">
-            考点：主谓一致 平行 代词
-            分析：that从句是修饰communities的定语从句
-            ，谓语动词用复数；use their waterfronts中
-            their指代communities；improve和attract平行
-            A.主谓不一致；its无法指代指代communitie；
-            as a way for it表达wordy；
-            B.主谓不一致；look at表示看，在此用动词
-            不定式表示目的；
-            C.正确；
+            <div style="margin-bottom: 10px;" v-for="(item,index) in childData.question.analysis" v-html="item.analysisContent"></div>
           </div>
         </div>
       </popup>
@@ -85,6 +77,7 @@
     name: "markingDetails",
     data() {
       return {
+        hideTime:1200,
         showAll: false,
         show: false,
         resData: {
@@ -176,12 +169,14 @@
                 _this.curTemp = 'blank_1';
                 _this.childData.maxVal = 2;
                 _this.childData.question.optionsA = resetArry(res.data.question.optionsA);
+                _this.hideTime=2000;
                 _this.toastText = '当前6选2题型';
                 _this.toastStatu = true;
               } else if (resType === 10) {
                 _this.curTemp = 'blank_int';
               } else if (resType === 6 || resType === 9) {
                 //多选提示
+                _this.hideTime=2000;
                 _this.toastText = '当前多选题型';
                 _this.toastStatu = true;
                 _this.curTemp = 'blank_1';

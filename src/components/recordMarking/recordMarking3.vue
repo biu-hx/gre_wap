@@ -272,6 +272,7 @@
     line-height: 45px;
     font-size: 30px; /*px*/
     max-height: 90px;
+    box-sizing: border-box;
     /*word-break: break-word;*/
     padding-bottom: 15px; /*px*/
   }

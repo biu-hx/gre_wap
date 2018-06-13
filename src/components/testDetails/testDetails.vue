@@ -4,7 +4,10 @@
       <x-header slot="header" class="header bg_f">
         <span class="headerTit"><strong class="curNum">{{currentSite}}</strong>/{{totalNum}}</span>
         <div slot="overwrite-left" @click="reBack"><img class="exitIcon" src="/static/images/testDetails/exit.png" alt=""></div>
-        <div slot="right"><img class="scIcon" src="/static/images/testDetails/sc_icon.png" alt=""></div>
+        <div slot="right">
+          <div @click="scQuestion($store.state.userInfo.uid,childData.question.id)" class="scIcon"
+               :class="{'scIcon_1':childData.question.collect===0,'scIcon_2':childData.question.collect===1}"></div>
+        </div>
       </x-header>
       <!--结果模板不显示-->
       <div class="vux-1px-b">
@@ -228,6 +231,28 @@
           }
         });
       },
+      // 题目收藏
+      scQuestion(uid, qid) {
+        if (uid) {
+          const _this = this;
+          let data = {uid: uid, questionId: qid};
+          _this.axios.post('/cn/wap-api/user-question-collection', data).then(function (res) {
+            if (res.data.code === 1) {
+              _this.childData.question.collect = 1;
+            }
+            if (res.data.code === 2) {
+              _this.childData.question.collect = 0;
+            }
+            _this.$nextTick(function () {
+              _this.toastText = res.data.message;
+              _this.toastStatu = true;
+            })
+          });
+
+        } else {
+          return false;
+        }
+      },
       //取子组件值
       upAnswer(data) {
         this.userAnswer = data;
@@ -318,10 +343,6 @@
 
   .exitIcon {
     height: 40px; /*px*/
-  }
-
-  .scIcon {
-    width: 40px; /*px*/
   }
 
   .headerTit {
@@ -480,5 +501,19 @@
     color: #5a5ee4;
   }
 
+  .scIcon {
+    width: 40px; /*px*/
+    height: 40px; /*px*/
+  }
+
+  .scIcon_1 {
+    background: url("/static/images/testDetails/sc_icon.png") no-repeat 0 0;
+    background-size: cover;
+  }
+
+  .scIcon_2 {
+    background: url("/static/images/testDetails/sc_icon2.png") no-repeat 0 0;
+    background-size: cover;
+  }
 
 </style>

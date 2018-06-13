@@ -3,10 +3,8 @@
     <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="60px">
       <x-header class="header" slot="header" :left-options="{backText: ''}">
         <span>备考文章</span>
-        <div slot="right">
-          <!--<router-link to="/search">-->
+        <div slot="right"  @click="toggle(show)">
           <img class="scIcon" src="/static/images/bk/share.png" alt="">
-          <!--</router-link>-->
         </div>
       </x-header>
       <div class="content" ref="conatnet">
@@ -17,7 +15,7 @@
             <span><img class="eyes" src="/static/images/bk/eyes.png" alt="">{{article.viewCount}}</span>
           </div>
         </div>
-        <div class="articleText" v-html="article.description"></div>
+        <div class="articleText" v-html="removeCss(article.description)"></div>
         <!--详细内容列表-->
         <ul class="listData">
           <li v-for="item in hot" @click="update(item.id)">{{item.name}}</li>
@@ -32,11 +30,11 @@
                 <div class="replyTime">
                   <div>
                     <span class="nickName">{{item.nickname}}</span>
-                    <span>{{item.createTime | moment("YYYY-MM-DD")}}</span>
+                    <span>{{parseInt(item.createTime) | moment("YYYY-MM-DD")}}</span>
                   </div>
-                  <div @click="userFine(id,2,item.id,item.fine,index)">
+                  <div @click="userFine(id,2,item.id,item.fane||0,index)">
                     <i class="icon good"></i>
-                    <span style="vertical-align: middle;">{{item.fine}}</span>
+                    <span style="vertical-align: middle;">{{item.fane||0}}</span>
                   </div>
                 </div>
                 <div class="replyText">{{item.content}}</div>
@@ -45,9 +43,8 @@
           </div>
         </div>
       </div>
-      <toast v-model="toastStatu" :text="toastText" width="4rem" type="text" :time="1000" position="bottom"></toast>
       <div slot="bottom" class="bottom">
-        <input :style="{width:show3?'80%':'53%'}" class="replyInt" @focus="show3=true" @blur="show3=false" type="text" placeholder="评论..." v-model="repley_val">
+        <input :style="{width:show3?'80%':'53%'}" class="replyInt" @focus="showSend" @blur="hideSend" type="text" placeholder="评论..." v-model="repley_val">
         <div v-if="show3" class="btnPl" @click="userReply(id)">发送</div>
         <div v-else class="btFlex">
           <div class="replyNum relative">
@@ -61,12 +58,16 @@
 
       </div>
     </view-box>
+    <toast v-model="toastStatu" :text="toastText" width="4rem" type="text" :time="1000" position="bottom"></toast>
     <loading :show="show2" text=""></loading>
+    <popup v-model="show"  @click="toggle(show)" :popup-style="{'background':'none'}" position="bottom" >
+      <share class="shareWrap" :config="config"></share>
+    </popup>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  import {XHeader, Tab, TabItem, Tabbar, TabbarItem, ViewBox, Badge, Toast,Loading} from 'vux'
+  import {XHeader, Tab, TabItem, Tabbar, TabbarItem, ViewBox, Badge, Toast, Loading, Popup, XDialog} from 'vux'
 
   export default {
     name: "bkDownload",
@@ -75,17 +76,23 @@
         id: '',
         article: '',
         hot: '',
-        reply: {data:[]},
+        reply: {data: []},
         repley_val: '',
         toastStatu: false,
         toastText: '',
         collectStatu: '',
-        show2:true,
-        show3:false,
+        show: false,
+        show2: true,
+        show3: false,
+        config: {
+          sites: ['weibo', 'qq', 'wechat', 'qzone', 'douban'], // 启用的站点
+          wechatQrcodeTitle: '微信扫一扫：分享', // 微信二维码提示文字
+          wechatQrcodeHelper: '<p>微信里扫一扫</p><p>分享本文至朋友圈。</p>'
+        }
       }
     },
     components: {
-      XHeader, Tab, TabItem, Tabbar, TabbarItem, ViewBox, Badge, Toast,Loading
+      XHeader, Tab, TabItem, Tabbar, TabbarItem, ViewBox, Badge, Toast, Loading, Popup, XDialog
     },
     activated() {
       this.id = this.$route.query.id;
@@ -93,20 +100,20 @@
     },
     methods: {
       getData(id) {
-        let uid = this.$store.state.userInfo.uid||'';
-          const _this = this;
-          _this.show2=true;
-          this.axios.get("/cn/wap-api/article-detail?contentid=" + id + "&uid=" + uid)
-            .then(function (response) {
-              _this.id = id;
-              _this.article = response.data.data[0];
-              _this.hot = response.data.hotarticle;
-              _this.reply = response.data.userComment;
-              _this.collectStatu = response.data.collecte;
-              _this.$nextTick(function () {
-                _this.show2=false;
-              })
+        let uid = this.$store.state.userInfo.uid || '';
+        const _this = this;
+        _this.show2 = true;
+        this.axios.get("/cn/wap-api/article-detail?contentid=" + id + "&uid=" + uid)
+          .then(function (response) {
+            _this.id = id;
+            _this.article = response.data.data[0];
+            _this.hot = response.data.hotarticle;
+            _this.reply = response.data.userComment;
+            _this.collectStatu = response.data.collecte;
+            _this.$nextTick(function () {
+              _this.show2 = false;
             })
+          })
 
       },
       update(id) {
@@ -123,70 +130,83 @@
           userInfo: store.state.userInfo,
           content: _this.repley_val,
         };
-        if (this.repley_val) {
-          this.axios.post('/cn/wap-api/article-comment', {
-            content: data.content,
-            uid: data.userInfo.uid||'',
-            contentId: id
-          }).then(function (res) {
-            _this.toastText = res.data.message;
-            _this.toastStatu = true;
-            _this.repley_val = '';
-            // 评论成功 追加数据
-            const addTime = new Date().getTime();
-            _this.reply.data.unshift({
-              nickname: data.userInfo.nickname,
+        if(data.userInfo.uid){
+          if (this.repley_val) {
+            this.axios.post('/cn/wap-api/article-comment', {
               content: data.content,
-              image: data.userInfo.image,
-              fine: 0,
-              id:res.data.id,
-              createTime: parseInt(addTime / 1000),
-            });
-          })
-        } else {
-          _this.toastText = '请输入评论内容';
+              uid: data.userInfo.uid,
+              contentId: id
+            }).then(function (res) {
+              _this.toastText = res.data.message;
+              _this.toastStatu = true;
+              _this.repley_val = '';
+              // 评论成功 追加数据
+              const addTime = new Date().getTime();
+              _this.reply.data.unshift({
+                nickname: data.userInfo.nickname,
+                content: data.content,
+                image: data.userInfo.image,
+                fane: 0,
+                id: res.data.id,
+                createTime: parseInt(addTime / 1000),
+              });
+            })
+          } else {
+            _this.toastText = '请输入评论内容';
+            _this.toastStatu = true;
+            return false;
+          }
+        }else {
+          _this.toastText = '当前未登录';
           _this.toastStatu = true;
           return false;
         }
 
+
       },
       // 用户点赞
-      userFine(id, type, commentId, fine,index) {
+      userFine(id, type, commentId, fine, index) {
         let data;
         const _this = this;
-        if (type === 1) {
-          data = {
-            contentId: id,
-            type: type,
-          };
-        } else {
-          data = {
-            fine: fine,
-            contentId: id,
-            type: type,
-            commentId: commentId,
-          };
-        }
-        this.axios.post('/cn/wap-api/add-fine', data).then(function (res) {
-          if (res.data.code === 1) {
-            // 文章点赞成功
-            if (type === 1) {
-              _this.article.fine = res.data.fine;
-            }
-            // 评论点赞成功
-            if (type === 2) {
-              _this.reply.data[index].fine=parseInt(_this.reply.data[index].fine)+1;
-              _this.article.fine = res.data.allfine;
-            }
-
-
+        if(this.$store.state.isLogin){
+          if (type === 1) {
+            data = {
+              contentId: id,
+              type: type,
+            };
           } else {
-            _this.toastText = res.data.message;
-            _this.toastStatu = true;
+            data = {
+              fine: fine,
+              contentId: id,
+              type: type,
+              commentId: commentId,
+            };
           }
+          this.axios.post('/cn/wap-api/add-fine', data).then(function (res) {
+            if (res.data.code === 1) {
+              // 文章点赞成功
+              if (type === 1) {
+                _this.article.fine = parseInt(res.data.fine)+1;
+              }
+              // 评论点赞成功
+              if (type === 2) {
+                _this.reply.data[index].fane = parseInt(_this.reply.data[index].fane) + 1;
+                _this.article.fine = res.data.allfine;
+              }
 
 
-        })
+            } else {
+              _this.toastText = res.data.message;
+              _this.toastStatu = true;
+            }
+
+
+          })
+        }else {
+          _this.toastText = '当前未登录';
+          _this.toastStatu = true;
+        }
+
       },
       // 文章收藏
       collect(contentId) {
@@ -195,7 +215,7 @@
         let data = {
           collecte: this.collectStatu === 0 ? 1 : 2,
           contentId: contentId,
-          uid: userInfo.uid||'',
+          uid: userInfo.uid || '',
         };
         this.axios.post('/cn/wap-api/content-collection', data).then(function (res) {
           if (res.data.code === 1) {
@@ -214,9 +234,28 @@
           }
         })
       },
+      removeCss(html) {
+        // const newContent ;
+        return  html.replace(/style="[^"]*"/g,'');
+      },
+      toggle(show) {
+        this.show = show ? false : true;
+      },
+      showSend(){
+        this.show3=true;
+      },
+      hideSend(){
+        this.show3=false;
+      }
 
     }
   }
+  function scrollEnd(){
+    setTimeout(function(){
+      document.body.scrollTop = document.body.scrollHeight;
+    },300);
+  }
+
 </script>
 
 <style scoped>
@@ -232,10 +271,12 @@
     font-size: 14px; /*no*/
     padding: 12px 6px; /*px*/
   }
+
   #bkDownload >>> .vux-loading-no-text .weui-toast {
     top: 50%;
     margin-top: -49px; /*no*/
   }
+
   .header {
     background: #5a5ee4;
     position: absolute;
@@ -284,8 +325,13 @@
     font-size: 28px; /*px*/
     padding: 30px 0; /*px*/
     line-height: 46px; /*px*/
-    overflow-x:auto;
+    overflow-x: auto;
     text-align: justify;
+  }
+
+  .articleText img {
+    margin: auto !important;
+    transform: none !important;
   }
 
   .listData li {
@@ -407,6 +453,7 @@
     left: 56px; /*px*/
     top: -18px; /*px*/
   }
+
   .badge_2 {
     left: 40px; /*px*/
     top: -18px; /*px*/
@@ -424,7 +471,7 @@
     flex-flow: row nowrap;
     justify-content: space-between;
     align-items: center;
-
+    z-index: 500;
   }
 
   .replyInt {
@@ -455,17 +502,36 @@
   .showHint strong {
     color: #5a5ee4;
   }
-  .btFlex{
+
+  .btFlex {
     width: 35%;
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
     align-items: flex-end;
   }
-  .btnPl{
+
+  .btnPl {
     padding-right: 20px;
-    height: 64px;/*px*/
-    line-height: 64px;/*px*/
-    font-size: 28px;/*px*/
+    height: 64px; /*px*/
+    line-height: 64px; /*px*/
+    font-size: 28px; /*px*/
+  }
+  .shareWrap {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 20px 30px;
+    box-sizing: border-box;
+    background: #eee;
+
+  }
+  #bkDownload>>>.vux-popup-dialog{
+    overflow-y: unset;
+  }
+  #bkDownload>>>.social-share .icon-wechat .wechat-qrcode{
+    z-index: 600;
   }
 </style>

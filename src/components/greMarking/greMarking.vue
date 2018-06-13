@@ -1,6 +1,6 @@
 <template>
   <div id="greMarking" style="height: 100%;">
-    <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="10px">
+    <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="20px">
       <x-header class="header" @on-click-back="reBack" :left-options="{backText: '',preventGoBack:true}">GRE做题</x-header>
       <div>
         <sticky scroll-box="vux_view_box_body" ref="sticky" :offset="46" :check-sticky-support="false" :disabled="false">

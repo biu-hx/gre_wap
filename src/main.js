@@ -1,17 +1,20 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue';
-import rest from './style/reset.css'
+import rest from './style/reset.css';
 import App from './App';
 import 'swiper/dist/css/swiper.css';
 import VueAwesomeSwiper from 'vue-awesome-swiper';
 import router from './router';
 import store from './store';
-import qs from 'qs'
+import qs from 'qs';
 import axios from 'axios';
-import VueAxios from 'vue-axios'
-import 'lib-flexible'
-import 'es6-promise/auto'
+import VueAxios from 'vue-axios';
+import 'lib-flexible';
+import 'es6-promise/auto';
+import Share from 'vue-social-share';
+import 'vue-social-share/dist/client.css';
+
 require('vue2-animate/dist/vue2-animate.min.css');
 
 // 时间格式化
@@ -27,6 +30,7 @@ Vue.use(SwiperItem);
 Vue.use(Tab);
 Vue.use(TabItem);
 /*vux 组件 End*/
+Vue.use(Share);
 Vue.use(VueAxios, axios);
 
 

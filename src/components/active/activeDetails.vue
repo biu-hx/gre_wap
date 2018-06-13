@@ -25,8 +25,7 @@
           <item_1 :is="currentTab" v-bind:itemData="resData.parent" keep-alive></item_1>
         </div>
       </div>
-
-      <div class="bottom bg_f">
+      <div slot="bottom" class="bottom bg_f">
         <div class="bottomLeft bottomItem">
           <div class="priceWrap_2">
             <p class="priceName">促销价</p>
@@ -75,8 +74,7 @@
       getData(id) {
         const _this = this;
         _this.show = true;
-        this.axios.get("/cn/wap-api/activity-detail?contentid=" + id)
-          .then(function (res) {
+        this.axios.get("/cn/wap-api/activity-detail?contentid=" + id).then(function (res) {
             _this.resData = res.data;
             _this.countVal = res.data.parent.commencement;
             if (isNaN(parseInt(_this.countVal))) {
@@ -332,7 +330,7 @@
     flex-flow: row wrap;
     justify-content: space-between;
     align-items: center;
-    z-index: 100;
+    z-index: 500;
   }
 
   .bottomItem {

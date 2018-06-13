@@ -127,6 +127,7 @@
       blank_1, blank_2, blank_3, blank_int
     },
     activated() {
+      this.childData.checkAnswer=[];
       this.getData(this.$store.state.userInfo.uid, this.$route.query.qid, this.$route.query.type);
     },
     methods: {
