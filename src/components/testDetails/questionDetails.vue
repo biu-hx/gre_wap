@@ -24,11 +24,11 @@
       <div v-if="childData.question.details" class="topicData" v-html="childData.question.details"></div>
       <!--quantity-->
       <div class="quantWrap">
-        <div v-if="childData.question.quantityA" style="padding-bottom: 15px">
+        <div v-if="childData.question.quantityA&&childData.question.quantityA!='<p><br></p>'" style="padding-bottom: 15px">
           <div class="tm"><span class="quantTit">Quantity A</span></div>
           <div class="tm" v-html="childData.question.quantityA"></div>
         </div>
-        <div v-if="childData.question.quantityB">
+        <div v-if="childData.question.quantityB&&childData.question.quantityB!='<p><br></p>'">
           <div class="tm"><span class="quantTit">Quantity B</span></div>
           <div class="tm" v-html="childData.question.quantityB"></div>
         </div>
@@ -208,9 +208,14 @@
             _this.childData.maxVal = 1;
           }
           // dom数据渲染完成执行
-          _this.$nextTick(function () {
+          _this.$nextTick(() => {
             _this.show2 = false;
-          });
+            //设置SEO
+            document.title = res.data.stem + '_GRE真题机经搜索_gre真题题库_GRE真题题目解析_雷哥GRE题库';
+            document.querySelector('meta[name="keywords"]').setAttribute('content',  res.data.stem +'雷哥培训');
+            document.querySelector('meta[name="description"]').setAttribute('content',  res.data.stem );
+          })
+
         });
       },
       // 题目收藏

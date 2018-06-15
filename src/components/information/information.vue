@@ -6,7 +6,7 @@
       </swiper-slide>
       <div class="swiper-pagination" slot="pagination"></div>
     </swiper>
-    <ul class="articleList bg_f">
+    <ul class="articleList bg_f" v-model="dataList">
       <li v-for="(item,index) in dataList">
         <router-link :to="{path:'/articleDetails',query: {id: item.id}}">
           <div class="artContiner">
@@ -25,6 +25,7 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
+  import ScrollFlipPage from 'scroll-flip-page'
   import {ViewBox, Loading} from 'vux'
 
   export default {
@@ -54,7 +55,7 @@
       }
     },
     components: {
-      ViewBox, Loading
+      ViewBox, Loading, ScrollFlipPage
     },
     mounted() {
       const _this = this;

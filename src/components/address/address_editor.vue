@@ -2,8 +2,8 @@
   <div id="adressEditor">
     <view-box ref="viewBox" body-padding-top="60px" body-padding-bottom="62px">
       <x-header solt="header" @click="reBack" class="header" :left-options="{backText: '',fontSize:'16px'}">选择地址<a class="navRight"
-                                                                                                                                      @click="reBack"
-                                                                                                                                      slot="right">完成</a>
+                                                                                                                   @click="reBack"
+                                                                                                                   slot="right">完成</a>
       </x-header>
       <div class="content">
         <div class="tm hintText" v-if="itemList.length===0">快去添加一个地址吧</div>
@@ -78,7 +78,7 @@
     methods: {
       getData() {
         const _this = this;
-        let data = {uid: _this.$store.state.userInfo.uid||''};
+        let data = {uid: _this.$store.state.userInfo.uid || ''};
         _this.axios.get('http://order.gmatonline.cn/pay/wap-api/get-consignee', {params: data}).then(function (res) {
           _this.itemList = res.data;
           _this.show2 = false;

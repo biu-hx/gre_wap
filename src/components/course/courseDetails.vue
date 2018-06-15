@@ -112,6 +112,7 @@
             _this.countVal = res.data.data.article;
             _this.$nextTick(function () {
               _this.show2=false;
+              document.title=res.data.data.title+'|GRE培训课程|GRE在线课程|GRE网课|GRE培训_雷哥GRE培训官网';
             })
           })
       },

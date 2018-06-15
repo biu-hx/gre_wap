@@ -14,16 +14,20 @@ import 'lib-flexible';
 import 'es6-promise/auto';
 import Share from 'vue-social-share';
 import 'vue-social-share/dist/client.css';
+import VueClipboard from 'vue-clipboard2';
+
+
 
 require('vue2-animate/dist/vue2-animate.min.css');
 
 // 时间格式化
 Vue.use(require('vue-moment'));
-
+Vue.use(VueClipboard);
 // swiper组件
 Vue.use(VueAwesomeSwiper);
 /*vux 组件*/
 import {ViewBox, Tab, TabItem, Swiper, SwiperItem} from 'vux'
+
 Vue.use(ViewBox);
 Vue.use(Swiper);
 Vue.use(SwiperItem);
@@ -45,9 +49,17 @@ axios.defaults.transformRequest = [function (data) {
 }];
 // 或者使用箭头函数
 // axios.defaults.transformRequest = [data => qs.stringify(data)];
+router.beforeEach((to, from, next) => {
+  /* 路由发生变化修改页面title */
+  if (to.meta.title) {
+    //设置SEO
+    document.title = to.meta.title;
+    document.querySelector('meta[name="keywords"]').setAttribute('content', to.meta.keywords);
+    document.querySelector('meta[name="description"]').setAttribute('content', to.meta.description);
+  }
+  next();
+});
 
-
-/* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,

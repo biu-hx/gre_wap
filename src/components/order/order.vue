@@ -35,7 +35,7 @@
           </div>
           <div v-if="item.status!=3" class="handle flex">
             <router-link :to="{name:'orderDetails',query:{id:item.id}}" class="linkBtn">立即付款</router-link>
-            <span class="cancelBtn">取消订单</span>
+            <span class="cancelBtn" @click="deletOrder(item.id)">取消订单</span>
           </div>
           <div v-else class="handle flex">
             <router-link :to="{name:'orderDetails',query:{id:item.id}}" class="linkBtn">查看详情</router-link>
@@ -44,17 +44,21 @@
       </ul>
     </view-box>
     <loading :show="show" text=""></loading>
+    <confirm theme="ios" v-model="show2" :title="title" @on-confirm="onConfirm"></confirm>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  import {XHeader, ViewBox,Sticky, Tab, TabItem, Group, Loading} from 'vux'
+  import {XHeader, ViewBox,Sticky, Tab, TabItem, Group, Loading,Confirm} from 'vux'
 
   export default {
     name: "order",
     data() {
       return {
         show: false,
+        show2:false,
+        orderId:'',
+        title: '请确认是否要删除该订单?',
         tabItem: ['全部订单', '已付款', '待付款'],
         tabIndex: 1,
         dataWrap: '',
@@ -68,6 +72,7 @@
       TabItem,
       Loading,
       Group,
+      Confirm,
       Tab,
     },
     activated() {
@@ -98,6 +103,25 @@
         if (index + 1 === 3) {
           this.resData = this.dataWrap.notPay;
         }
+      },
+      deletOrder(id){
+        this.orderId=id;
+        this.show2=true;
+      },
+      onConfirm(){
+        const _this = this;
+        _this.show=true;
+        let data = {
+          id: this.orderId,
+        };
+        _this.axios.get('http://order.gmatonline.cn/pay/wap-api/cancel', {params: data}).then(function (res) {
+          if(res.data.code===1){
+          _this.getData();
+          }
+          _this.$nextTick(function () {
+            _this.show = false;
+          })
+        })
       }
     }
   }
@@ -107,6 +131,19 @@
   #order >>> .vux-loading-no-text .weui-toast {
     top: 50%;
     margin-top: -49px; /*no*/
+  }
+  #order >>> .weui-dialog__bd {
+    display: none;
+  }
+  #order>>>.weui-dialog__title{
+    font-size: 30px;/*px*/
+  }
+  #order >>> .weui-dialog__btn_primary {
+    color: #5a5ee4;
+
+  }
+  #order>>>.weui-dialog__ft{
+    font-size: 28px;/*px*/
   }
 
   .header {

@@ -34,11 +34,11 @@
       <div v-if="childData.question.details" class="topicData" v-html="childData.question.details"></div>
       <!--quantity-->
       <div class="quantWrap">
-        <div v-if="childData.question.quantityA" style="padding-bottom: 15px">
+        <div v-if="childData.question.quantityA&&childData.question.quantityA!='<p><br></p>'" style="padding-bottom: 15px">
           <div class="tm"><span class="quantTit">Quantity A</span></div>
           <div class="tm"  v-html="childData.question.quantityA"></div>
         </div>
-        <div v-if="childData.question.quantityB">
+        <div v-if="childData.question.quantityB&&childData.question.quantityB!='<p><br></p>'">
           <div class="tm"><span class="quantTit">Quantity B</span></div>
           <div class="tm"  v-html="childData.question.quantityB"></div>
         </div>
@@ -229,6 +229,12 @@
           } else {
             _this.childData.maxVal = 1;
           }
+          _this.$nextTick(() => {
+            //设置SEO
+            document.title = res.data.question.stem + '_GRE在线做题_GRE真题练习_GRE免费做题_做题报告分析_雷哥GRE在线题库';
+            document.querySelector('meta[name="keywords"]').setAttribute('content', 'GRE题库,GRE真题,GRE机经,GRE题目解析,GRE填空,GRE阅读,GRE逻辑,GRE数学,GRE做题数据分析,错题练习');
+            document.querySelector('meta[name="description"]').setAttribute('content', '雷哥GRE在线练习题库提供GRE历年真题练习、题目解析、题目讨论，包含verbal语文和quant数学单项练习、考点练习、错题练习，做题练习报告与数据分析，让你高效备考');
+          })
         });
       },
       // 题目收藏

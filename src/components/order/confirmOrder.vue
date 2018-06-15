@@ -6,7 +6,10 @@
         <div class="container bg_f">
           <div class="shipWrap vux-1px-b">
             <div class="shippingTit">
-              <span class="titText">收货人信息</span>
+              <div>
+                <span class="titText">收货人信息</span>
+                <span style="color: red;font-size: 12px;">(必填项)</span>
+              </div>
               <button class="edBtn">
                 <router-link tag="span" :to="{name:'adressEditor',query:{id:$route.query.id}}">编辑</router-link>
               </button>
@@ -85,6 +88,7 @@
         </div>
         <div class="bottomItem" style="height: 100%">
           <button class="payBtn" @click="pay">立即支付</button>
+          <a id="linkTag" target="_blank" :href="payUrl">d</a>
         </div>
 
       </div>
@@ -117,6 +121,7 @@
         leid: [{key: 0, value: '是否使用雷豆抵扣'}],
         toastStatu: false,
         toastText: '',
+        payUrl:'',
       }
     },
     components: {
@@ -190,7 +195,7 @@
           num: _this.changeValue,
         };
         let data2 = {
-          consignee: _this.address[this.$route.query.num || 0].id,//地址ID；
+          consignee: _this.address.length>0?_this.address[this.$route.query.num || 0].id:'',//地址ID；
           type: 0,
           payType: 1,
           integral: _this.intLeid,
@@ -205,7 +210,11 @@
                 if (res.data.code === 1) {
                   let payUrl = "http://order.gmatonline.cn/pay/order/pay?orderId=" + res.data.orderId + "&server=wap"
                     + "&uid=" + uid + "&username=" + userName + "";
-                  window.open(payUrl);
+                  _this.payUrl=payUrl;
+                  _this.$nextTick(()=>{
+                    document.getElementById("linkTag").click();//Window.opend被拦截用a标签打开新窗口
+                  })
+
                 } else {
                   _this.toastStatu = true;
                   _this.toastText = res.data.message;

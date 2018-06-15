@@ -141,7 +141,6 @@
     left: 0;
     top: 0;
     z-index: 100;
-
     background: #5a5ee4;
   }
 

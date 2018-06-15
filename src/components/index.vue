@@ -9,8 +9,8 @@
         </router-link>
       </div>
     </div>
-    <tab :line-width="2" active-color="#5a5ee4" :scroll-threshold="6" default-color="#444444" custom-bar-width="40px">
-      <tab-item :selected="0==i" :key="i" v-for="(item,i) in header">{{item}}</tab-item>
+    <tab :line-width="2" active-color="#5a5ee4" :scroll-threshold="6" default-color="#444444" custom-bar-width="50px">
+      <tab-item :selected="1==i" :key="i" v-for="(item,i) in header" @on-item-click="jumpUrl(item.url)">{{item.name}}</tab-item>
     </tab>
     <swiper class="bg_f" :options="swiperOption" ref="mySwiper">
       <swiper-slide :key="index" v-for="(item,index) in bannerItem">
@@ -140,7 +140,14 @@
         resBkdata: '',
         bannerItem: '',
         currentTab: '0',
-        header: ['GMAT', 'GRE', 'TOEFL', 'IELTS', 'SAT', '留学'],
+        header: [
+          {name:'GMAT',url:'http://m.gmatonline.cn'},
+          {name:'GRE',url:'http://m.greonline.cn'},
+          {name:'TOEFL',url:'http://m.toeflonline.cn/'},
+          {name:'IELTS',url:'http://ielts.viplgw.cn'},
+          {name:'SAT',url:'http://m.thinkusat.com/'},
+          {name:'留学',url:'http://m.smartapply.cn/'},
+        ],
         tabItem: ['热门', '词汇', '阅读', '填空', '数学', '写作'],
         swiperOption: {
           notNextTick: true,
@@ -181,6 +188,9 @@
         })
     },
     methods: {
+      jumpUrl(url){
+        window.open(url);
+      },
       handler(index) {
         if (index + 1 == 1) {
           this.resBkdata = this.resData.oneweek

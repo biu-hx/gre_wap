@@ -87,6 +87,7 @@
             }
             _this.$nextTick(function () {
               _this.show = false;
+              document.title=res.data.data.data.title+'|GRE培训课程|GRE在线课程|GRE网课|GRE培训_雷哥GRE培训官网';
             })
           })
       },

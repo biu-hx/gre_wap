@@ -208,6 +208,8 @@
     justify-content: space-between;
     color: #777777;
     font-size: 28px; /*px*/
+    width: 100%;
+    align-items: center;
   }
 
   .listLeft {

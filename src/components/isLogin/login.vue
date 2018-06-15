@@ -43,6 +43,10 @@
       }
     },
     components: {XHeader, Toast, Loading},
+    activated(){
+      this.passwordVal='';
+      this.userVal='';
+    },
     methods: {
       login(userName,userPass) {
         const _this = this;
@@ -50,7 +54,7 @@
           userName: userName,
           userPass: userPass
         };
-        if (data.userName) {
+        if (data.userName&&data.userPass) {
           _this.axios.get('http://login.gmatonline.cn/cn/wap-api/check-login', {params: data}).then(function (res) {
             let str = res.data;
             let data2 = JSON.parse(str.substr(1, str.length - 2));

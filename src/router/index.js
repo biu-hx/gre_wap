@@ -114,6 +114,18 @@ const ld_3 = (resolve) => {
     resolve(module)
   })
 };
+// 邀请好友
+const invite = (resolve) => {
+  import('../components/userCenter/invite').then((module) => {
+    resolve(module)
+  })
+};
+// 个人资料
+const userInfo = (resolve) => {
+  import('../components/userCenter/userInfo').then((module) => {
+    resolve(module)
+  })
+};
 // GRE做题
 const greMarking = (resolve) => {
   import('../components/greMarking/greMarking').then((module) => {
@@ -275,12 +287,15 @@ const adressEditor = (resolve) => {
 };
 
 export default new Router({
-  mode: 'history',
+  // mode: 'history',
   routes: [
     {
       path: "/",
-      name:'index',
-      component: index
+      name: 'index',
+      component: index,
+      meta: {
+        title: 'GRE培训|GRE考试|GRE在线课程|GRE网课|GRE机经真题_雷哥GRE培训官网',
+      }
     },
     {
       path: '/login',
@@ -301,11 +316,21 @@ export default new Router({
       path: '/information',
       name: 'information',
       component: information,
+      meta: {
+        title: '如何备考GRE|GRE备考攻略|GRE考试内容|GRE填空|GRE阅读|GRE词汇|GRE培训_雷哥GRE培训官网',
+        keywords: '如何备考GRE,GRE备考攻略,GRE考试内容,GRE填空,GRE阅读,GRE词汇,GRE数学,GRE写作,GRE培训,GRE是什么考试,GRE考试辅导,GRE在线课程,GRE网课,GRE机经真题,雷哥GRE培训中心,美国留学，雷哥培训',
+        description: '雷哥GRE培训官网，提供GRE备考攻略，GRE备考知识，GRE备考经验，GRE填空阅读数学写作考试内容详解，GRE在线课程，GRE网课，GRE视频课程，GRE考试辅导等GRE备考服务，帮助学生快速提分，早日考出满意的GRE成绩。'
+      }
     },
     {
       path: '/active',
       name: 'active',
       component: active,
+      meta: {
+        title: 'GRE名师公开课|GRE刷题团|GRE词汇团|GRE培训_雷哥GRE培训官网',
+        keywords: 'GRE名师公开课,GRE刷题团,GRE培训,GRE是什么考试,GRE考试辅导,GRE在线课程,GRE网课,GRE机经真题,雷哥GRE培训中心,美国留学，雷哥培训',
+        description: '雷哥GRE培训官网，提供GRE名师公开课，GRE刷题团，GRE词汇团，GRE培训课程，GRE在线课程，GRE网课，GRE视频课程，GRE考试辅导等GRE备考服务，帮助学生快速提分，早日考出满意的GRE成绩。',
+      }
     },
     {
       path: '/activeDetails',
@@ -320,12 +345,21 @@ export default new Router({
       path: '/reference',
       name: 'reference',
       component: reference,
+      meta:{
+        title:'如何备考GRE|GRE备考攻略|GRE考试内容|GRE填空|GRE阅读|GRE词汇|GRE培训_雷哥GRE培训官网',
+        keywords:'如何备考GRE,GRE备考攻略,GRE考试内容,GRE填空,GRE阅读,GRE词汇,GRE数学,GRE写作,GRE培训,GRE是什么考试,GRE考试辅导,GRE在线课程,GRE网课,GRE机经真题,雷哥GRE培训中心,美国留学，雷哥培训',
+        description:'雷哥GRE培训官网，提供GRE备考攻略，GRE备考知识，GRE备考经验，GRE填空阅读数学写作考试内容详解，GRE在线课程，GRE网课，GRE视频课程，GRE考试辅导等GRE备考服务，帮助学生快速提分，早日考出满意的GRE成绩。'
+      }
     },
     {
       path: '/userCenter',
       name: 'userCenter',
       component: userCenter,
+      meta: {
+        title: '个人中心_雷哥GRE在线做题平台'
+      }
     },
+    //订单
     {
       path: '/order',
       name: 'order',
@@ -341,28 +375,53 @@ export default new Router({
       path: '/recordMarking',
       name: 'recordMarking',
       component: recordMarking,
+      meta: {
+        title: '个人中心_雷哥GRE在线做题平台'
+      }
     },
     // 做题
     {
       path: '/recordMarking2',
       name: 'recordMarking2',
       component: recordMarking2,
+      meta: {
+        title: '个人中心_雷哥GRE在线做题平台'
+      }
     },
     // 错题
     {
       path: '/recordMarking3',
       name: 'recordMarking3',
       component: recordMarking3,
+      meta: {
+        title: '个人中心_雷哥GRE在线做题平台'
+      }
     },
+    // 雷豆
     {
       path: '/myLeid',
       name: 'myLeid',
       component: myLeid,
-      child:[
-        {path: '/ld',name:'ld_1' ,component: ld_1},
-        {path: '/ld',name:'ld_2' ,component: ld_2},
-        {path: '/ld',name:'ld_3' ,component: ld_3},
+      child: [
+        {path: '/ld', name: 'ld_1', component: ld_1},
+        {path: '/ld', name: 'ld_2', component: ld_2},
+        {path: '/ld', name: 'ld_3', component: ld_3},
       ]
+    },
+    // 错题
+    {
+      path: '/invite',
+      name: 'invite',
+      component: invite,
+    },
+    // 个人资料
+    {
+      path: '/userInfo',
+      name: 'userInfo',
+      component: userInfo,
+      meta: {
+        title: '个人中心_雷哥GRE在线做题平台'
+      }
     },
     {
       path: '/greMarking',
@@ -373,16 +432,19 @@ export default new Router({
       path: '/markingIndex',
       name: 'markingIndex',
       component: markingIndex,
+      meta: {
+        title: 'GRE在线做题_GRE真题练习_GRE免费做题_做题报告分析_雷哥GRE在线题库'
+      }
     },
     {
       path: '/markingDetails',
       name: 'markingDetails',
       component: markingDetails,
-      child:[
-        {path: '/blank_1',name:'blank_1' ,component: blank_1},
-        {path: '/blank_2',name:'blank_2' ,component: blank_2},
-        {path: '/blank_3',name:'blank_3' ,component: blank_3},
-        {path: '/blank_int',name:'blank_int' ,component: blank_int},
+      child: [
+        {path: '/blank_1', name: 'blank_1', component: blank_1},
+        {path: '/blank_2', name: 'blank_2', component: blank_2},
+        {path: '/blank_3', name: 'blank_3', component: blank_3},
+        {path: '/blank_int', name: 'blank_int', component: blank_int},
       ]
     },
     {
@@ -394,28 +456,31 @@ export default new Router({
       path: '/testDetails',
       name: 'testDetails',
       component: testDetails,
-      child:[
-        {path: '/blank_1',name:'blank_1' ,component: blank_1},
-        {path: '/blank_2',name:'blank_2' ,component: blank_2},
-        {path: '/blank_3',name:'blank_3' ,component: blank_3},
-        {path: '/blank_int',name:'blank_int' ,component: blank_int},
+      child: [
+        {path: '/blank_1', name: 'blank_1', component: blank_1},
+        {path: '/blank_2', name: 'blank_2', component: blank_2},
+        {path: '/blank_3', name: 'blank_3', component: blank_3},
+        {path: '/blank_int', name: 'blank_int', component: blank_int},
       ]
     },
     {
       path: '/questionDetails',
       name: 'questionDetails',
       component: questionDetails,
-      child:[
-        {path: '/blank_1',name:'blank_1' ,component: blank_1},
-        {path: '/blank_2',name:'blank_2' ,component: blank_2},
-        {path: '/blank_3',name:'blank_3' ,component: blank_3},
-        {path: '/blank_int',name:'blank_int' ,component: blank_int},
+      child: [
+        {path: '/blank_1', name: 'blank_1', component: blank_1},
+        {path: '/blank_2', name: 'blank_2', component: blank_2},
+        {path: '/blank_3', name: 'blank_3', component: blank_3},
+        {path: '/blank_int', name: 'blank_int', component: blank_int},
       ]
     },
     {
       path: '/searchTopic',
       name: 'searchTopic',
       component: searchTopic,
+      meta: {
+        title: 'GRE真题机经搜索_gre真题题库_GRE真题题目解析_雷哥GRE题库'
+      }
     },
     {
       path: '/search',
@@ -426,6 +491,11 @@ export default new Router({
       path: '/bkIndex',
       name: 'bkIndex',
       component: bkIndex,
+      meta: {
+        title: 'GRE社团-雷哥网社区，GMAT/GRE/托福/雅思/美国留学/英国留学/澳洲留学/留学文书/留学DIY申请/留学中介机构/慧申科技旗下教育品牌',
+        keywords: '雷哥培训，GMAT网课，GMAT培训，托福网课，托福培训，雅思网课，雅思培训，零中介留学，美国留学，出国留学，留学申请，留学文书、海外实习',
+        description:'content="雷哥网社区，GMAT/GRE/托福/雅思/美国留学/英国留学/澳洲留学/留学文书/留学DIY申请/留学中介机构/慧申科技旗下教育品牌，出国留学考试资料免费分享社区。' ,
+      },
       child: [
         {path: '/list_1', component: list_1},
         {path: '/list_2', component: list_2},
@@ -447,16 +517,21 @@ export default new Router({
       path: '/courseIndex',
       name: 'courseIndex',
       component: courseIndex,
+      meta: {
+        title: 'GRE培训课程|GRE在线课程|GRE网课|GRE培训_雷哥GRE培训官网',
+        keywords:'GRE培训课程,GRE培训,GRE是什么考试,GRE考试辅导,GRE在线课程,GRE网课,GRE机经真题,雷哥GRE培训中心,美国留学，雷哥培训',
+        description:'雷哥GRE培训官网，提供GRE培训课程，GRE在线课程，GRE网课，GRE视频课程，GRE考试辅导等GRE备考服务，帮助学生快速提分，早日考出满意的GRE成绩。',
+      }
     },
     {
       path: '/courseDetails',
       name: 'courseDetails',
       component: courseDetails,
-      child:[
-        {path:'/course_item_1',component:course_item_1},
-        {path:'/course_item_2',component:course_item_2},
-        {path:'/course_item_3',component:course_item_3},
-        {path:'/course_item_4',component:course_item_4},
+      child: [
+        {path: '/course_item_1', component: course_item_1},
+        {path: '/course_item_2', component: course_item_2},
+        {path: '/course_item_3', component: course_item_3},
+        {path: '/course_item_4', component: course_item_4},
       ]
     },
     {

@@ -141,6 +141,8 @@
               _this.collectStatu = res.data.is_collecte;
               _this.$nextTick(function () {
                 _this.show2 = false;
+                // 设置SEO
+                document.title = res.data.data.title;
               })
             })
         })
@@ -614,7 +616,7 @@
 
   }
   #bkDownload>>>.vux-popup-dialog{
-    overflow-y: unset;
+    overflow-y: visible;
   }
   #bkDownload>>>.social-share .icon-wechat .wechat-qrcode{
     z-index: 600;

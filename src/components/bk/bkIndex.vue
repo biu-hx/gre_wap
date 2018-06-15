@@ -10,7 +10,7 @@
     <tab :line-width="2" active-color="#5a5ee4" :scroll-threshold="4" default-color="#444444">
       <tab-item :selected="0==i" :key="i" v-for="(item,i) in tabItem" @on-item-click="handler('list_'+(i+1))">{{item}}</tab-item>
     </tab>
-      <list_1 :is="currentTab" v-bind:listData="data" keep-alive></list_1>
+    <list_1 :is="currentTab" v-bind:listData="data" keep-alive></list_1>
     <!--<div class="postBtn"><router-link :to="{name:'sendTz'}"><img src="/static/images/bk/postBtn.png" alt=""></router-link></div>-->
     <loading :show="show" text=""></loading>
   </div>
@@ -20,12 +20,13 @@
   import list_1 from './bkList/list_1'
   import list_2 from './bkList/list_2'
   import list_3 from './bkList/list_3'
-  import {Tab, TabItem,Loading} from 'vux'
+  import {Tab, TabItem, Loading} from 'vux'
+
   export default {
     name: "bkIndex",
     data() {
       return {
-        show:false,
+        show: false,
         tabItem: ['全部', '备考资料', '机经真题'],
         count: '',
         today: '',
@@ -34,22 +35,21 @@
       }
     },
     components: {
-      Tab, TabItem, list_1, list_2, list_3,Loading
+      Tab, TabItem, list_1, list_2, list_3, Loading
     },
     mounted() {
       const _this = this;
-      _this.show=true;
+      _this.show = true;
       this.axios({
-        url: this.$store.state.http_bbs+'/cn/wap-api/real-problem'
+        url: this.$store.state.http_bbs + '/cn/wap-api/real-problem'
       }).then(function (res) {
         _this.today = res.data.today;
         _this.count = res.data.count;
         _this.data = res.data.data;
         _this.$nextTick(function () {
-          _this.show=false;
+          _this.show = false;
         })
-      })
-
+      });
     },
     methods: {
       handler(index) {

@@ -70,6 +70,15 @@
       },
 
     },
+    activated(){
+      this.phoneVal='';
+      this.codeYz='';
+      this.passwordVal='';
+      this.rePasswordVal='';
+      this.disabled=false;
+      this.time=0;
+      this.codeTxt= "验证码";
+    },
     methods: {
       // 验证用户名格式
       regex(curVal) {

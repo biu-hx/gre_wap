@@ -25,11 +25,11 @@
       <!--quantity-->
       <div class="quantWrap">
         <div></div>
-        <div v-if="childData.question.quantityA" style="padding-bottom: 15px">
+        <div v-if="childData.question.quantityA&&childData.question.quantityA!='<p><br></p>'" style="padding-bottom: 15px">
           <div class="tm"><span class="quantTit">Quantity A</span></div>
           <div class="tm" v-html="childData.question.quantityA"></div>
         </div>
-        <div v-if="childData.question.quantityB">
+        <div v-if="childData.question.quantityB&&childData.question.quantityB!='<p><br></p>'">
           <div class="tm"><span class="quantTit">Quantity B</span></div>
           <div class="tm" v-html="childData.question.quantityB"></div>
         </div>
@@ -40,7 +40,7 @@
       <!--底部-->
       <tabbar slot="bottom" class="vux-1px-t footer">
         <tabbar-item class="vux-1px-r" @on-item-click="toggle(show)">
-        <span class="userExit" slot="label">查看解析</span>
+          <span class="userExit" slot="label">查看解析</span>
         </tabbar-item>
         <tabbar-item @on-item-click="nextQuestion(resData.question.id)">
           <span class="userExit" slot="label">下一题</span>
@@ -68,7 +68,7 @@
   import blank_2 from "./child/blank_2"
   import blank_3 from "./child/blank_3"
   import blank_int from "./child/blank_int"
-  import {XHeader, Tabbar, TabbarItem, ViewBox, Group, Checklist, Popup, TransferDom, Toast,Popover } from 'vux'
+  import {XHeader, Tabbar, TabbarItem, ViewBox, Group, Checklist, Popup, TransferDom, Toast, Popover} from 'vux'
 
   export default {
     directives: {
@@ -77,7 +77,7 @@
     name: "markingDetails",
     data() {
       return {
-        hideTime:1200,
+        hideTime: 1200,
         showAll: false,
         show: false,
         resData: {
@@ -114,7 +114,7 @@
       }
     },
     components: {
-      XHeader, Tabbar, TabbarItem, ViewBox, Group, Checklist, Popup, TransferDom, Toast,Popover,
+      XHeader, Tabbar, TabbarItem, ViewBox, Group, Checklist, Popup, TransferDom, Toast, Popover,
       blank_1, blank_2, blank_3, blank_int
     },
     computed: {
@@ -137,61 +137,66 @@
       },
       // 初始化数据
       getData() {
-        this.$nextTick(function () {
-          const _this = this;
-          let data = {
-            uid: _this.$store.state.userInfo.uid || '',
-            libraryId: _this.$route.query.libraryId,
-          };
-          _this.axios.get('/cn/wap-api/go-make', {params: data}).then(function (res) {
-            if (res.data.code === 1) {
-              let resType = parseInt(res.data.question.typeId);
-              _this.flag = true;
-              _this.typeId = resType;
-              _this.resData = res.data;
-              _this.childData.question = res.data.question;//子组件数据
-              _this.timeObj = setInterval(function () {
-                _this.useTime++;
-              }, 1000);
-              //判断typeId单选还是多选赋值给checkList
-              if (resType === 1 || resType === 5 || resType === 8) {
-                _this.curTemp = 'blank_1';
-                _this.childData.maxVal = 1;
-                _this.childData.question.optionsA = resetArry(res.data.question.optionsA);
-              } else if (resType === 2) {
-                _this.curTemp = 'blank_2';
-                _this.childData.maxVal = 1;
-              } else if (resType === 3) {
-                _this.curTemp = 'blank_3';
-                _this.childData.maxVal = 1;
-              } else if (resType === 4) {
-                //多选提示
-                _this.curTemp = 'blank_1';
-                _this.childData.maxVal = 2;
-                _this.childData.question.optionsA = resetArry(res.data.question.optionsA);
-                _this.hideTime=2000;
-                _this.toastText = '当前6选2题型';
-                _this.toastStatu = true;
-              } else if (resType === 10) {
-                _this.curTemp = 'blank_int';
-              } else if (resType === 6 || resType === 9) {
-                //多选提示
-                _this.hideTime=2000;
-                _this.toastText = '当前多选题型';
-                _this.toastStatu = true;
-                _this.curTemp = 'blank_1';
-                _this.childData.maxVal = 10;
-                _this.childData.question.optionsA = resetArry(res.data.question.optionsA);
-              } else {
-                _this.childData.maxVal = 1;
-              }
+        const _this = this;
+        let data = {
+          uid: _this.$store.state.userInfo.uid || '',
+          libraryId: _this.$route.query.libraryId,
+        };
+        _this.axios.get('/cn/wap-api/go-make', {params: data}).then(function (res) {
+          if (res.data.code === 1) {
+            let resType = parseInt(res.data.question.typeId);
+            _this.flag = true;
+            _this.typeId = resType;
+            _this.resData = res.data;
+            _this.childData.question = res.data.question;//子组件数据
+            _this.timeObj = setInterval(function () {
+              _this.useTime++;
+            }, 1000);
+            //判断typeId单选还是多选赋值给checkList
+            if (resType === 1 || resType === 5 || resType === 8) {
+              _this.curTemp = 'blank_1';
+              _this.childData.maxVal = 1;
+              _this.childData.question.optionsA = resetArry(res.data.question.optionsA);
+            } else if (resType === 2) {
+              _this.curTemp = 'blank_2';
+              _this.childData.maxVal = 1;
+            } else if (resType === 3) {
+              _this.curTemp = 'blank_3';
+              _this.childData.maxVal = 1;
+            } else if (resType === 4) {
+              //多选提示
+              _this.curTemp = 'blank_1';
+              _this.childData.maxVal = 2;
+              _this.childData.question.optionsA = resetArry(res.data.question.optionsA);
+              _this.hideTime = 2000;
+              _this.toastText = '当前6选2题型';
+              _this.toastStatu = true;
+            } else if (resType === 10) {
+              _this.curTemp = 'blank_int';
+            } else if (resType === 6 || resType === 9) {
+              //多选提示
+              _this.hideTime = 2000;
+              _this.toastText = '当前多选题型';
+              _this.toastStatu = true;
+              _this.curTemp = 'blank_1';
+              _this.childData.maxVal = 10;
+              _this.childData.question.optionsA = resetArry(res.data.question.optionsA);
+            } else {
+              _this.childData.maxVal = 1;
+            }
+            _this.$nextTick(() => {
+              //设置SEO
+              document.title = res.data.question.stem + '_GRE在线做题_GRE真题练习_GRE免费做题_做题报告分析_雷哥GRE在线题库';
+              document.querySelector('meta[name="keywords"]').setAttribute('content', 'GRE题库,GRE真题,GRE机经,GRE题目解析,GRE填空,GRE阅读,GRE逻辑,GRE数学,GRE做题数据分析,错题练习');
+              document.querySelector('meta[name="description"]').setAttribute('content', '雷哥GRE在线练习题库提供GRE历年真题练习、题目解析、题目讨论，包含verbal语文和quant数学单项练习、考点练习、错题练习，做题练习报告与数据分析，让你高效备考');
+            })
 
-            }
-            if (res.data.code === 0) {
-              _this.$router.push({name: 'testResult', query: {libraryId: _this.$route.query.libraryId, testing: 1}})
-            }
-          })
+          }
+          if (res.data.code === 0) {
+            _this.$router.push({name: 'testResult', query: {libraryId: _this.$route.query.libraryId, testing: 1}})
+          }
         })
+
       },
       // 题目收藏
       scQuestion(uid, qid) {

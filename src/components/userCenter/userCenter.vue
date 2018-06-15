@@ -5,7 +5,7 @@
         <div class="tm userWap relative">
           <div class="bgColor"></div>
           <div class="ani userInfo">
-            <div class="userImg"><img :src="resData.user.image?$store.state.http_gre+resData.user.image:'/static/images/default.png'" alt=""></div>
+            <div class="userImg"><img  class="previewer-demo-img" @click="showView(0)" :src="resData.user.image?$store.state.http_gre+resData.user.image:'/static/images/default.png'" alt=""></div>
             <p class="nickName">{{resData.user.nickname}}</p>
           </div>
         </div>
@@ -46,13 +46,14 @@
         </tabbar-item>
       </tabbar>
     </view-box>
+    <previewer :list="list" ref="previewer" :options="options" @on-index-change="logIndexChange"></previewer>
     <loading :show="show" text=""></loading>
     <toast v-model="toastStatu" :text="toastText" width="4rem" type="text" :time="1000" position="bottom"></toast>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  import {Group, Cell, Toast, Tabbar, TabbarItem, ViewBox, Loading} from 'vux'
+  import {Group, Cell, Toast, Tabbar, TabbarItem, ViewBox, Loading,Previewer} from 'vux'
 
   export default {
     name: "userCenter",
@@ -66,8 +67,8 @@
         cellList2: [
           {imgUrl: '/static/images/userCenter/icon_4.png', cellTit: '我的课程', url: '/order'},
           {imgUrl: '/static/images/userCenter/icon_5.png', cellTit: '雷豆管理', url: '/myLeid'},
-          {imgUrl: '/static/images/userCenter/icon_6.png', cellTit: '邀请好友', url: '/order3'},
-          {imgUrl: '/static/images/userCenter/icon_7.png', cellTit: '个人资料', url: '/order4'},
+          {imgUrl: '/static/images/userCenter/icon_6.png', cellTit: '邀请好友', url: '/invite'},
+          {imgUrl: '/static/images/userCenter/icon_7.png', cellTit: '个人资料', url: '/userInfo'},
         ],
         resData: {
           user: '',
@@ -78,15 +79,37 @@
         show: false,
         toastStatu: false,
         toastText: '',
+        list: [],
+        options: {
+          getThumbBoundsFn(index) {
+            // find thumbnail element
+            let thumbnail = document.querySelectorAll('.previewer-demo-img')[index];
+            // get window scroll Y
+            let pageYScroll = window.pageYOffset || document.documentElement.scrollTop;
+            // optionally get horizontal scroll
+            // get position of element relative to viewport
+            let rect = thumbnail.getBoundingClientRect();
+            // w = width
+            return {x: rect.left, y: rect.top + pageYScroll, w: rect.width}
+            // Good guide on how to get element coordinates:
+            // http://javascript.info/tutorial/coordinates
+          }
+        }
       }
     },
     components: {
-      Group, Cell, Toast, Loading, ViewBox, Tabbar, TabbarItem
+      Group, Cell, Toast, Loading, ViewBox, Tabbar, TabbarItem,Previewer
     },
     activated() {
       this.getData();
     },
     methods: {
+      logIndexChange(arg) {
+        console.log(arg)
+      },
+      showView(index) {
+        this.$refs.previewer.show(index)
+      },
       getData() {
         const _this = this;
         //已登录&未登录状态
@@ -94,6 +117,10 @@
           _this.show = true;
           _this.axios.get('/cn/wap-api/personal', {params: {uid: this.$store.state.userInfo.uid}}).then(function (res) {
             _this.resData = res.data;
+            _this.list = [{
+              msrc: res.data.user.image?_this.$store.state.http_gre+res.data.user.image:'/static/images/default.png',
+              src: res.data.user.image?_this.$store.state.http_gre+res.data.user.image:'/static/images/default.png',
+            }];
             _this.$nextTick(function () {
               _this.show = false;
             })
@@ -147,6 +174,10 @@
   #userCenter {
     height: 100%;
     background: #f3f3f3;
+  }
+  #userCenter >>> .vux-loading-no-text .weui-toast {
+    top: 50%;
+    margin-top: -49px; /*no*/
   }
 
   #userCenter >>> .weui-toast.vux-toast-bottom {
