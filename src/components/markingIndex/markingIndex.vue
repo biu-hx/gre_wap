@@ -205,11 +205,12 @@
 
   .time {
     height: 40px;
-    justify-content: space-between;
+    justify-content: space-between!important;
     color: #777777;
     font-size: 28px; /*px*/
     width: 100%;
-    align-items: center;
+    align-items: flex-start;
+    text-align: left;
   }
 
   .listLeft {

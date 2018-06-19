@@ -28,7 +28,7 @@
               <div v-if="resData.tag.length>0" class="infoRow" style="align-items: flex-start">
                 <div class="rowName">课程标签</div>
                 <div class="infoTag">
-                  <span v-for="(item,index) in resData.tag[0].child">{{item.name}}</span>
+                  <span @click="changeCourse(item.id)" v-for="(item,index) in resData.tag[0].child">{{item.name}}</span>
                 </div>
               </div>
             </div>
@@ -84,8 +84,8 @@
             image: '',
           },
           tag: [],
-          parent:{
-            description:'',
+          parent: {
+            description: '',
           }
         },
         countVal: '',
@@ -105,19 +105,30 @@
     methods: {
       getData(id) {
         const _this = this;
-        _this.show2=true;
+        _this.show2 = true;
         this.axios.get("/cn/wap-api/course-detail?contentid=" + id)
           .then(function (res) {
             _this.resData = res.data;
             _this.countVal = res.data.data.article;
             _this.$nextTick(function () {
-              _this.show2=false;
-              document.title=res.data.data.title+'|GRE培训课程|GRE在线课程|GRE网课|GRE培训_雷哥GRE培训官网';
+              _this.show2 = false;
+              document.title = res.data.data.title + '|GRE培训课程|GRE在线课程|GRE网课|GRE培训_雷哥GRE培训官网';
             })
           })
       },
       handler(index) {
         this.currentTab = index;
+      },
+      changeCourse(changeId) {
+        const _this = this;
+        let data = {
+          pid: 7771,
+          tagStr: changeId,
+        };
+        _this.axios.post('/cn/api/change-class', data).then(res => {
+          _this.getData(res.data.id);
+
+        })
       },
       countTime(time) {
         let mouth = parseInt(time / 60 / 60 / 24 / 30);
@@ -146,6 +157,7 @@
     height: 100%;
     background: #eeeeee;
   }
+
   #courseDetails >>> .vux-loading-no-text .weui-toast {
     top: 50%;
     margin-top: -49px; /*no*/

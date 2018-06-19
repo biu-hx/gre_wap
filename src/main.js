@@ -17,7 +17,6 @@ import 'vue-social-share/dist/client.css';
 import VueClipboard from 'vue-clipboard2';
 
 
-
 require('vue2-animate/dist/vue2-animate.min.css');
 
 // 时间格式化
