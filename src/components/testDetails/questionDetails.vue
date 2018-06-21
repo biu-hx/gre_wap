@@ -255,12 +255,13 @@
       },
       toggle(show) {
         // 判断题型、是否选择答案
-        if (this.userAnswer.includes('')) {
+        if (this.userAnswer.indexOf('')<0) {
+          this.show = show ? false : true;
+        } else {
           this.toastText = '请先选择答案';
           this.toastStatu = true;
           return false;
-        } else {
-          this.show = show ? false : true;
+
         }
 
       }

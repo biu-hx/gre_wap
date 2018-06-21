@@ -7,7 +7,6 @@
       <div class="swiper-pagination" slot="pagination"></div>
     </swiper>
     <div class="wrapper">
-      <!--<div><span>下拉刷新</span></div>-->
       <div class="suggest" ref="wrapper">
         <ul class="articleList bg_f" v-model="dataList">
           <li v-for="(item,index) in dataList">

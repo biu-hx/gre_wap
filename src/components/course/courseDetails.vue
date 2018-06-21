@@ -122,7 +122,7 @@
       changeCourse(changeId) {
         const _this = this;
         let data = {
-          pid: 7771,
+          pid: _this.$route.query.id,
           tagStr: changeId,
         };
         _this.axios.post('/cn/api/change-class', data).then(res => {

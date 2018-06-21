@@ -11,26 +11,31 @@
     <tab :line-width="2" active-color="#5a5ee4" :scroll-threshold="6" default-color="#333333" custom-bar-width="40px">
       <tab-item :selected="0==i" :key="i" v-for="(item,i) in tabItem" @on-item-click="handler(i)">{{item}}</tab-item>
     </tab>
-    <ul class="articleList bg_f">
-      <li v-for="(item,index) in resBkdata" :key="index">
-        <router-link :to="{path:'/articleDetails',query: {id: item.id}}">
-          <div class="artContiner">
-            <div class="artLeft">
-              <p class="ellipsis-2 artTit">{{item.title}}</p>
-              <p class="artTime">{{item.createTime}}</p>
-            </div>
-            <div class="artRight">
-              <img :src="$store.state.http_gre+item.image" alt="">
-            </div>
-          </div>
-        </router-link>
-      </li>
-    </ul>
+    <div class="wrapper">
+      <div class="suggest" ref="wrapper">
+        <ul class="articleList bg_f">
+          <li v-for="(item,index) in resBkdata" :key="index">
+            <router-link :to="{path:'/articleDetails',query: {id: item.id}}">
+              <div class="artContiner">
+                <div class="artLeft">
+                  <p class="ellipsis-2 artTit">{{item.title}}</p>
+                  <p class="artTime">{{item.createTime}}</p>
+                </div>
+                <div class="artRight">
+                  <img :src="$store.state.http_gre+item.image" alt="">
+                </div>
+              </div>
+            </router-link>
+          </li>
+        </ul>
+      </div>
+    </div>
     <loading :show="show" text=""></loading>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import BScroll from 'better-scroll';
   import {Tab, TabItem, ViewBox, Loading} from 'vux'
 
   export default {
@@ -51,7 +56,18 @@
         ],
         resData: '',
         resBkdata: '',
-        tabItem: ['热门', '词汇', '阅读', '填空', '数学', '写作']
+        tabItem: ['热门', '词汇', '阅读', '填空', '数学', '写作'],
+        foodsScroll: '',
+        options: {
+          pullUpLoad: {
+            threshold: -20 // 在上拉到超过底部 20px 时，触发 pullingUp 事件
+          },
+          pullDownRefresh: false, //关闭下拉/
+          click: true,
+          probeType: 3,
+          startY: 0,
+          scrollbar: false
+        }
       }
     },
     components: {
@@ -70,10 +86,19 @@
           _this.resBkdata = response.data.oneweek;
           _this.$nextTick(function () {
             _this.show = false;
+            _this._initScroll();
           })
         })
     },
     methods: {
+      _initScroll() {
+        this.foodsScroll = new BScroll(this.$refs.wrapper, this.options);
+      },
+      pullingDownUp() {
+        this.foodsScroll.finishPullDown()
+        this.foodsScroll.finishPullUp()
+        this.foodsScroll.refresh() //重新计算元素高度
+      },
       handler(index) {
         if (index + 1 == 1) {
           this.resBkdata = this.resData.oneweek
@@ -93,6 +118,9 @@
         if (index + 1 == 6) {
           this.resBkdata = this.resData.write
         }
+        this.$nextTick(() => {
+          this.pullingDownUp();
+        })
       }
     }
   }
@@ -106,7 +134,7 @@
 
   .iconWap {
     box-sizing: border-box;
-    padding: 28px 20px;
+    padding: 28px 20px; /*px*/
     background: url("/static/images/reference/bkBg.png") no-repeat 0 0;
     background-size: cover;
   }
@@ -114,7 +142,7 @@
   .pageTo {
     display: flex;
     flex-flow: wrap row;
-    padding: 24px 10px 0;
+    padding: 24px 10px 0; /*px*/
     text-align: center;
     align-items: flex-start;
     justify-content: space-between;
@@ -129,12 +157,12 @@
 
   .pageTo li {
     width: 20%;
-    margin-bottom: 24px;
+    margin-bottom: 24px; /*px*/
   }
 
   .pageTo li img {
-    width: 90px;
-    height: 90px;
+    width: 90px; /*px*/
+    height: 90px; /*px*/
   }
 
   .barName {
@@ -148,11 +176,11 @@
   }
 
   .articleList {
-    padding: 0 20px;
+    padding: 0 20px; /*px*/
   }
 
   .articleList li {
-    padding: 20px 0;
+    padding: 20px 0; /*px*/
     border-bottom: 1px solid #cccccc; /*no*/
   }
 
@@ -173,20 +201,34 @@
 
   .artRight {
     overflow: hidden;
-    max-height: 140px;
+    max-height: 140px; /*px*/
     width: 30%;
   }
 
   .artTit {
     color: #333333;
-    line-height: 40px;
-    font-size: 30px;
-    max-height: 80px;
-    margin-bottom: 20px;
+    line-height: 40px; /*px*/
+    font-size: 30px; /*px*/
+    max-height: 80px; /*px*/
+    margin-bottom: 20px; /*px*/
   }
 
   .artTime {
     font-size: 26px; /*px*/
     color: #888888;
+  }
+
+  .wrapper {
+    position: fixed;
+    width: 100%;
+    top: 480px; /*px*/
+    bottom: 0;
+    overflow: hidden;
+
+  }
+
+  .suggest {
+    height: 100%;
+    overflow: hidden;
   }
 </style>

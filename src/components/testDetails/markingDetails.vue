@@ -241,17 +241,18 @@
           useTime: _this.useTime,
         };
         // 判断题型、是否选择答案
-        if (_this.userAnswer.includes('')) {
-          _this.toastText = '请选择答案';
-          _this.toastStatu = true;
-          return false;
-        } else {
+        if (_this.userAnswer.indexOf('')<0) {
           clearInterval(_this.timeObj);//清除计时器
           _this.axios.post('/cn/wap-api/make-topic', data).then(function (res) {
             if (res.data.code === 1) {
               location.reload();
             }
           });
+
+        } else {
+          _this.toastText = '请选择答案';
+          _this.toastStatu = true;
+          return false;
         }
 
 

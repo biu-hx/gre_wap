@@ -22,7 +22,7 @@
         <li @click="routerLink(item.id,item.state)" v-for="(item,index) in resData.questions" :key="index">
           <div class="listLeft">
             <h1 class="topicName ellipsis">{{item.name}}</h1>
-            <div class="flexWrap time">
+            <div class="time">
               <span>平均正确率: {{item.correctRate}}%</span>
               <span>平均耗时:{{item.averageTime}}</span>
             </div>
@@ -205,16 +205,19 @@
 
   .time {
     height: 40px;
-    justify-content: space-between!important;
+    display: flex;
+    flex: 1;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
     color: #777777;
     font-size: 28px; /*px*/
     width: 100%;
-    align-items: flex-start;
-    text-align: left;
   }
 
   .listLeft {
     width: 75%;
+
   }
 
   .lstRight {
