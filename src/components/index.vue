@@ -189,7 +189,7 @@
     },
     methods: {
       jumpUrl(url){
-        window.open(url);
+        location.href=url;
       },
       handler(index) {
         if (index + 1 == 1) {

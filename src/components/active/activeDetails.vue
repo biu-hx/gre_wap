@@ -33,7 +33,7 @@
           </div>
         </div>
         <button class="bottomRight bottomItem">
-          <a href="mqqwpa://im/chat?chat_type=wpa&uin=1746295647&version=1&src_type=web&web_src=http://m.haishiit.com/">立即咨询</a>
+          <a href="mqqwpa://im/chat?chat_type=wpa&uin=2095453331&version=1&src_type=web&web_src=http://m.haishiit.com/">立即咨询</a>
         </button>
       </div>
     </view-box>

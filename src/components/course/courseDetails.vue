@@ -49,7 +49,7 @@
             <p class="price_2">￥{{resData.data.price}}</p>
           </div>
           <div class="consultBtn">
-            <a href="mqqwpa://im/chat?chat_type=wpa&uin=1746295647&version=1&src_type=web&web_src=http://m.haishiit.com/">
+            <a href="mqqwpa://im/chat?chat_type=wpa&uin=2095453331&version=1&src_type=web&web_src=http://m.haishiit.com/">
               <i class="icon_3"></i>
               <span>咨询</span>
             </a>
