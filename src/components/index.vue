@@ -10,7 +10,8 @@
       </div>
     </div>
     <tab :line-width="2" active-color="#5a5ee4" :scroll-threshold="6" default-color="#444444" custom-bar-width="50px">
-      <tab-item :selected="1==i" :key="i" v-for="(item,i) in header" @on-item-click="jumpUrl(item.url)">{{item.name}}</tab-item>
+      <tab-item :selected="1==i" :key="i" v-for="(item,i) in header" @on-item-click="jumpUrl(item.url)">{{item.name}}
+      </tab-item>
     </tab>
     <swiper class="bg_f" :options="swiperOption" ref="mySwiper">
       <swiper-slide :key="index" v-for="(item,index) in bannerItem">
@@ -63,6 +64,34 @@
       </li>
       <li class="listEmpty"></li>
     </ul>
+    <!--标题栏-->
+    <div class="cellWrap bg_f">
+      <div class="mask">
+        <div class="maskTit">
+          <img class="icon" src="/static/images/index/teacher.png" width="16" alt="">
+          <span>名师介绍</span>
+        </div>
+      </div>
+    </div>
+    <div class="teacherList_wrap bg_f">
+      <swiper :options="swiperOption2" ref="mySwiper">
+        <swiper-slide v-for="(item,index) in resData.teachers" :key="index">
+          <router-link tag="div" :to="{path:'/teacherDetails',query: {id: item.id}}">
+            <div class="teacherItem_wrap tm">
+              <div class="teacher_img"><img :src="$store.state.http_gre+item.image" alt="">
+              </div>
+              <h1 class="teacher_name">{{item.name}}</h1>
+              <p class="teacher_desc ellipsis-2">{{item.introduce}}</p>
+              <div class="enter_desc">查看详情</div>
+            </div>
+          </router-link>
+        </swiper-slide>
+        <div class="swiper-pagination2 tm" slot="pagination"></div>
+      </swiper>
+
+
+    </div>
+
     <!--标题栏-->
     <div class="cellWrap bg_f">
       <div class="mask">
@@ -120,33 +149,35 @@
       </li>
     </ul>
     <div class="bg_f addImg_1"><img src="/static/images/index/deImg.png" alt=""></div>
-    <div class="bg_f addImg"><router-link :to="{name:'register'}"><img src="/static/images/index/addImg.png" alt=""></router-link></div>
+    <div class="bg_f addImg">
+      <router-link :to="{name:'register'}"><img src="/static/images/index/addImg.png" alt=""></router-link>
+    </div>
     <div class="bg_f copyRight">
       2018 greonline.cn All Rights Reserved 京ICP备16000003号-3<br>京公网安备11010802017681 免责声明
     </div>
-<loading :show="show" text=""></loading>
+    <loading :show="show" text=""></loading>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  import {Tab, TabItem, ViewBox,Loading} from 'vux'
+  import {Tab, TabItem, ViewBox, Loading} from 'vux'
 
   export default {
     name: "index",
     data() {
       return {
-        show:false,
+        show: false,
         resData: '',
         resBkdata: '',
         bannerItem: '',
         currentTab: '0',
         header: [
-          {name:'GMAT',url:'http://m.gmatonline.cn'},
-          {name:'GRE',url:'http://m.greonline.cn'},
-          {name:'TOEFL',url:'http://m.toeflonline.cn/'},
-          {name:'IELTS',url:'http://ielts.viplgw.cn'},
-          {name:'SAT',url:'http://m.thinkusat.com/'},
-          {name:'留学',url:'http://m.smartapply.cn/'},
+          {name: 'GMAT', url: 'http://m.gmatonline.cn'},
+          {name: 'GRE', url: 'http://m.greonline.cn'},
+          {name: 'TOEFL', url: 'http://m.toeflonline.cn/'},
+          {name: 'IELTS', url: 'http://ielts.viplgw.cn'},
+          {name: 'SAT', url: 'http://m.thinkusat.com/'},
+          {name: '留学', url: 'http://m.smartapply.cn/'},
         ],
         tabItem: ['热门', '词汇', '阅读', '填空', '数学', '写作'],
         swiperOption: {
@@ -165,6 +196,24 @@
             el: '.swiper-pagination',
             clickable: true,
           },
+        },
+        swiperOption2: {
+          notNextTick: true,
+          slidesPerView: 2,
+          autoplay: {
+            delay: 5000,
+            disableOnInteraction: false,
+          },
+          loop: true,
+          observer: true,
+          observeParents: true,
+          setWrappermtze: true,
+          autoHeight: true,
+          pagination: {
+            el: '.swiper-pagination2',
+            clickable: true,
+          },
+
         }
       }
     },
@@ -176,20 +225,20 @@
     },
     mounted() {
       const _this = this;
-      _this.show=true;
+      _this.show = true;
       this.axios.get('/cn/wap-api/index')
         .then(function (response) {
           _this.resData = response.data;
           _this.bannerItem = response.data.carousel;
           _this.resBkdata = response.data.oneweek;
           _this.$nextTick(function () {
-            _this.show=false;
+            _this.show = false;
           })
         })
     },
     methods: {
-      jumpUrl(url){
-        location.href=url;
+      jumpUrl(url) {
+        location.href = url;
       },
       handler(index) {
         if (index + 1 == 1) {
@@ -220,6 +269,7 @@
   #index {
     background: #eeeeee;
   }
+
   #index >>> .vux-loading-no-text .weui-toast {
     top: 50%;
     margin-top: -49px; /*no*/
@@ -240,6 +290,24 @@
 
   #index >>> .swiper-pagination .swiper-pagination-bullet-active {
     background: #ffffff;
+  }
+
+  #index >>> .swiper-pagination2 .swiper-pagination-bullet {
+    width: 20px; /*px*/
+    height: 20px; /*px*/
+    background: #e8ebf0;
+    opacity: 1;
+    outline: none;
+    border: 1px solid #ffffff; /*no*/
+  }
+
+  #index >>> .swiper-pagination2 .swiper-pagination-bullet-active {
+    /*background: #ffffff;*/
+    background: #02a3e9;
+  }
+
+  .swiper-pagination2 {
+    padding-top: 20px; /*no*/
   }
 
   .vux-tab .vux-tab-item {
@@ -468,5 +536,50 @@
     line-height: 1.4;
     text-align: center;
     color: #3c3c3c;
+  }
+
+  .teacherList_wrap {
+    padding: 30px 0;
+    margin-bottom: 20px;
+  }
+
+  .teacherItem_wrap {
+    /*width: 90%;*/
+    text-align: center;
+    padding: 0 20px;
+  }
+
+  .teacher_img {
+    height: 300px;
+    margin: auto;
+    overflow: hidden;
+  }
+
+  .teacher_img img {
+    height: 100%;
+  }
+
+  .teacher_name {
+    color: #3a3332;
+    font-size: 28px; /*px*/
+    font-weight: normal;
+    padding: 10px 0;
+  }
+
+  .teacher_desc {
+    box-sizing: border-box;
+    margin-bottom: 20px;
+    color: #818181;
+    font-size: 24px; /*px*/
+  }
+
+  .enter_desc {
+    width: 200px; /*px*/
+    color: #029c4d;
+    font-size: 24px; /*px*/
+    border: 1px solid #029c4d; /*no*/
+    margin: auto;
+    padding: 6px; /*px*/
+    border-radius: 8px; /*px*/
   }
 </style>

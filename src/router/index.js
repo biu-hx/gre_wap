@@ -200,6 +200,12 @@ const bkIndex = (resolve) => {
     resolve(module)
   })
 };
+//名师详情
+const teacherDetails = (resolve) => {
+  import('../components/teacherDetails/teacherDetails').then((module) => {
+    resolve(module)
+  })
+};
 //发帖
 const sendTz = (resolve) => {
   import('../components/bk/sendTz').then((module) => {
@@ -345,10 +351,10 @@ export default new Router({
       path: '/reference',
       name: 'reference',
       component: reference,
-      meta:{
-        title:'如何备考GRE|GRE备考攻略|GRE考试内容|GRE填空|GRE阅读|GRE词汇|GRE培训_雷哥GRE培训官网',
-        keywords:'如何备考GRE,GRE备考攻略,GRE考试内容,GRE填空,GRE阅读,GRE词汇,GRE数学,GRE写作,GRE培训,GRE是什么考试,GRE考试辅导,GRE在线课程,GRE网课,GRE机经真题,雷哥GRE培训中心,美国留学，雷哥培训',
-        description:'雷哥GRE培训官网，提供GRE备考攻略，GRE备考知识，GRE备考经验，GRE填空阅读数学写作考试内容详解，GRE在线课程，GRE网课，GRE视频课程，GRE考试辅导等GRE备考服务，帮助学生快速提分，早日考出满意的GRE成绩。'
+      meta: {
+        title: '如何备考GRE|GRE备考攻略|GRE考试内容|GRE填空|GRE阅读|GRE词汇|GRE培训_雷哥GRE培训官网',
+        keywords: '如何备考GRE,GRE备考攻略,GRE考试内容,GRE填空,GRE阅读,GRE词汇,GRE数学,GRE写作,GRE培训,GRE是什么考试,GRE考试辅导,GRE在线课程,GRE网课,GRE机经真题,雷哥GRE培训中心,美国留学，雷哥培训',
+        description: '雷哥GRE培训官网，提供GRE备考攻略，GRE备考知识，GRE备考经验，GRE填空阅读数学写作考试内容详解，GRE在线课程，GRE网课，GRE视频课程，GRE考试辅导等GRE备考服务，帮助学生快速提分，早日考出满意的GRE成绩。'
       }
     },
     {
@@ -494,7 +500,7 @@ export default new Router({
       meta: {
         title: 'GRE社团-雷哥网社区，GMAT/GRE/托福/雅思/美国留学/英国留学/澳洲留学/留学文书/留学DIY申请/留学中介机构/慧申科技旗下教育品牌',
         keywords: '雷哥培训，GMAT网课，GMAT培训，托福网课，托福培训，雅思网课，雅思培训，零中介留学，美国留学，出国留学，留学申请，留学文书、海外实习',
-        description:'content="雷哥网社区，GMAT/GRE/托福/雅思/美国留学/英国留学/澳洲留学/留学文书/留学DIY申请/留学中介机构/慧申科技旗下教育品牌，出国留学考试资料免费分享社区。' ,
+        description: 'content="雷哥网社区，GMAT/GRE/托福/雅思/美国留学/英国留学/澳洲留学/留学文书/留学DIY申请/留学中介机构/慧申科技旗下教育品牌，出国留学考试资料免费分享社区。',
       },
       child: [
         {path: '/list_1', component: list_1},
@@ -509,6 +515,11 @@ export default new Router({
       component: sendTz,
     },
     {
+      path: '/teacherDetails',
+      name: 'teacherDetails',
+      component: teacherDetails,
+    },
+    {
       path: '/bkDownload',
       name: 'bkDownload',
       component: bkDownload,
@@ -519,8 +530,8 @@ export default new Router({
       component: courseIndex,
       meta: {
         title: 'GRE培训课程|GRE在线课程|GRE网课|GRE培训_雷哥GRE培训官网',
-        keywords:'GRE培训课程,GRE培训,GRE是什么考试,GRE考试辅导,GRE在线课程,GRE网课,GRE机经真题,雷哥GRE培训中心,美国留学，雷哥培训',
-        description:'雷哥GRE培训官网，提供GRE培训课程，GRE在线课程，GRE网课，GRE视频课程，GRE考试辅导等GRE备考服务，帮助学生快速提分，早日考出满意的GRE成绩。',
+        keywords: 'GRE培训课程,GRE培训,GRE是什么考试,GRE考试辅导,GRE在线课程,GRE网课,GRE机经真题,雷哥GRE培训中心,美国留学，雷哥培训',
+        description: '雷哥GRE培训官网，提供GRE培训课程，GRE在线课程，GRE网课，GRE视频课程，GRE考试辅导等GRE备考服务，帮助学生快速提分，早日考出满意的GRE成绩。',
       }
     },
     {
