@@ -62,36 +62,14 @@
           <p class="barName">GRE资讯</p>
         </router-link>
       </li>
+      <li>
+        <a href="javascript:void (0);" @click.prevent="custormAnchor('teacher_model')">
+          <img src="/static/images/index/pageIcon_8.png" alt="">
+          <p class="barName">GRE名师</p>
+        </a>
+      </li>
       <li class="listEmpty"></li>
     </ul>
-    <!--标题栏-->
-    <div class="cellWrap bg_f">
-      <div class="mask">
-        <div class="maskTit">
-          <img class="icon" src="/static/images/index/teacher.png" width="16" alt="">
-          <span>名师介绍</span>
-        </div>
-      </div>
-    </div>
-    <div class="teacherList_wrap bg_f">
-      <swiper :options="swiperOption2" ref="mySwiper">
-        <swiper-slide v-for="(item,index) in resData.teachers" :key="index">
-          <router-link tag="div" :to="{path:'/teacherDetails',query: {id: item.id}}">
-            <div class="teacherItem_wrap tm">
-              <div class="teacher_img"><img :src="$store.state.http_gre+item.image" alt="">
-              </div>
-              <h1 class="teacher_name">{{item.name}}</h1>
-              <p class="teacher_desc ellipsis-2">{{item.introduce}}</p>
-              <div class="enter_desc">查看详情</div>
-            </div>
-          </router-link>
-        </swiper-slide>
-        <div class="swiper-pagination2 tm" slot="pagination"></div>
-      </swiper>
-
-
-    </div>
-
     <!--标题栏-->
     <div class="cellWrap bg_f">
       <div class="mask">
@@ -120,6 +98,33 @@
         </router-link>
       </li>
     </ul>
+    <!--标题栏-->
+    <div id="teacher_model" class="cellWrap bg_f">
+      <div class="mask">
+        <div class="maskTit">
+          <img class="icon" src="/static/images/index/teacher.png" width="16" alt="">
+          <span>名师介绍</span>
+        </div>
+      </div>
+    </div>
+    <div class="teacherList_wrap bg_f">
+      <swiper :options="swiperOption2" ref="mySwiper">
+        <swiper-slide v-for="(item,index) in resData.teachers" :key="index">
+          <router-link tag="div" :to="{path:'/teacherDetails',query: {id: item.id}}">
+            <div class="teacherItem_wrap tm">
+              <div class="teacher_img"><img :src="$store.state.http_gre+item.image" alt="">
+              </div>
+              <h1 class="teacher_name">{{item.name}}</h1>
+              <p class="teacher_desc ellipsis-2">{{item.introduce}}</p>
+              <div class="enter_desc">查看详情</div>
+            </div>
+          </router-link>
+        </swiper-slide>
+        <div class="swiper-pagination2 tm" slot="pagination"></div>
+      </swiper>
+
+
+    </div>
     <!--标题栏-->
     <div class="cellWrap bg_f">
       <div class="mask">
@@ -173,9 +178,9 @@
         currentTab: '0',
         header: [
           {name: 'GMAT', url: 'http://m.gmatonline.cn'},
-          {name: 'GRE', url: 'http://m.greonline.cn'},
           {name: 'TOEFL', url: 'http://m.toeflonline.cn/'},
           {name: 'IELTS', url: 'http://ielts.viplgw.cn'},
+          {name: 'GRE', url: 'http://m.greonline.cn'},
           {name: 'SAT', url: 'http://m.thinkusat.com/'},
           {name: '留学', url: 'http://m.smartapply.cn/'},
         ],
@@ -237,6 +242,14 @@
         })
     },
     methods: {
+      custormAnchor(anchorName) {
+        // 找到锚点
+        let anchorElement = document.getElementById(anchorName);
+        // 如果对应id的锚点存在，就跳转到锚点
+        if (anchorElement) {
+          anchorElement.scrollIntoView();
+        }
+      },
       jumpUrl(url) {
         location.href = url;
       },
