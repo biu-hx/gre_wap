@@ -10,7 +10,7 @@
       </div>
     </div>
     <tab :line-width="2" active-color="#5a5ee4" :scroll-threshold="6" default-color="#444444" custom-bar-width="50px">
-      <tab-item :selected="1==i" :key="i" v-for="(item,i) in header" @on-item-click="jumpUrl(item.url)">{{item.name}}
+      <tab-item :selected="3==i" :key="i" v-for="(item,i) in header" @on-item-click="jumpUrl(item.url)">{{item.name}}
       </tab-item>
     </tab>
     <swiper class="bg_f" :options="swiperOption" ref="mySwiper">
